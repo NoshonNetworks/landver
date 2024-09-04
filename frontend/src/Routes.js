@@ -12,6 +12,7 @@ function AppRoutes() {
       <Route path="/register" element={<LandRegistrationForm />} />
       <Route path="/lands" element={<LandList />} />
       <Route path="/lands/:id" element={<LandDetails />} />
+      <Route path="/verify" element={<LandVerification />} />
       <Route path="/lands/:id/verify" element={<LandVerification />} />
     </Routes>
   );

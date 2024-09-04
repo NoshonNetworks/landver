@@ -60,6 +60,14 @@ function Layout({ children }) {
                 About Us
               </button>
             </li>
+            <li>
+              <button
+                onClick={() => scrollToSection("/verify", "verify")}
+                className="hover:text-gray-200 focus:outline-none"
+              >
+                Verify Land
+              </button>
+            </li>
           </ul>
           <div className="mt-4 md:mt-0">
             <WalletConnection />

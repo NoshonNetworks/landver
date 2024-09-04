@@ -24,11 +24,10 @@ async function registerLand(owner, location, area, landUse, documentHash) {
     const landId = generateLandId();
     console.log('Generated landId:', landId);
 
-    // Ensure area is a BigNumber
     let areaBigNumber;
     try {
       if (typeof area === 'string' && area.trim() !== '') {
-        areaBigNumber = ethers.parseUnits(area.trim(), 0); // Use parseUnits with 0 decimals for whole numbers
+        areaBigNumber = ethers.parseUnits(area.trim(), 0);
       } else if (typeof area === 'number') {
         areaBigNumber = ethers.parseUnits(Math.floor(area).toString(), 0);
       } else {
@@ -46,16 +45,43 @@ async function registerLand(owner, location, area, landUse, documentHash) {
     const receipt = await tx.wait();
     console.log('Transaction confirmed:', receipt.transactionHash);
     
-    return { success: true, landId };
+    return { success: true, landId, transactionHash: receipt.transactionHash };
   } catch (error) {
     console.error('Error registering land on blockchain:', error);
     return { success: false, error: error.message, stack: error.stack };
   }
 }
 
-// ... (other functions remain the same)
+async function getLandDetails(landId) {
+  try {
+    console.log('Fetching land details from blockchain for landId:', landId);
+    const landDetails = await contract.getLandDetails(landId);
+    console.log('Raw land details fetched:', landDetails);
+    
+    // Check if landDetails is undefined or null
+    if (!landDetails) {
+      console.log('Land details not found for landId:', landId);
+      return null;
+    }
+    
+    // Assuming the contract returns an array or object, adjust accordingly
+    return {
+      landId: landDetails[0] || landDetails.landId,
+      owner: landDetails[1] || landDetails.owner,
+      location: landDetails[2] || landDetails.location,
+      area: landDetails[3] || landDetails.area,
+      landUse: landDetails[4] || landDetails.landUse,
+      isRegistered: landDetails[5] || landDetails.isRegistered,
+      documentHash: landDetails[6] || landDetails.documentHash
+    };
+  } catch (error) {
+    console.error('Error fetching land details from blockchain:', error);
+    console.error('Error details:', JSON.stringify(error, null, 2));
+    throw error;
+  }
+}
 
 module.exports = {
   registerLand,
-  // ... (other exported functions)
+  getLandDetails
 };
