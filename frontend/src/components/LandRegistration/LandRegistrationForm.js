@@ -99,7 +99,20 @@ function LandRegistrationForm() {
             <TextField fullWidth name="landUse" label="Land Use" value={land.landUse} onChange={handleChange} required />
           </Grid>
           <Grid item xs={12}>
-            <input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={handleFileChange} required />
+            <input 
+              type="file" 
+              accept=".pdf,.jpg,.jpeg,.png" 
+              onChange={handleFileChange} 
+              required 
+              id="certificate-of-occupancy"
+              style={{ display: 'none' }}
+            />
+            <label htmlFor="certificate-of-occupancy">
+              <Button variant="contained" component="span">
+                Upload Certificate of Occupancy
+              </Button>
+            </label>
+            {land.document && <Typography variant="body2">{land.document.name}</Typography>}
           </Grid>
           <Grid item xs={12}>
             <Button type="submit" variant="contained" color="primary">Register Land</Button>

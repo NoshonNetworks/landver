@@ -6,16 +6,25 @@ function LandVerification() {
   const [landId, setLandId] = useState('');
   const [verificationResult, setVerificationResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const handleVerify = async (e) => {
     e.preventDefault();
+    if (!landId.trim()) {
+      setError('Please enter a valid Land ID');
+      return;
+    }
     setLoading(true);
+    setError(null);
     try {
+      console.log('Verifying land with ID:', landId);
       const response = await axios.get(`/api/land/${landId}/verify`);
+      console.log('Verification response:', response.data);
       setVerificationResult(response.data);
     } catch (error) {
       console.error('Error verifying land:', error);
-      setVerificationResult({ error: 'Failed to verify land. Please check the Land ID and try again.' });
+      setError(error.response?.data?.message || 'Failed to verify land. Please check the Land ID and try again.');
+      console.error('Detailed error:', error.response?.data);
     }
     setLoading(false);
   };
@@ -44,38 +53,29 @@ function LandVerification() {
 
       {loading && <CircularProgress style={{ marginTop: '20px' }} />}
 
+      {error && (
+        <Paper elevation={2} style={{ padding: '20px', marginTop: '20px', backgroundColor: '#ffebee' }}>
+          <Typography color="error" variant="h6">Error</Typography>
+          <Typography color="error">{error}</Typography>
+        </Paper>
+      )}
+
       {verificationResult && !loading && (
         <Paper elevation={2} style={{ padding: '20px', marginTop: '20px' }}>
-          {verificationResult.error ? (
-            <Typography color="error">{verificationResult.error}</Typography>
-          ) : (
-            <>
-              <Typography variant="h6" gutterBottom color={verificationResult.isVerified ? 'green' : 'red'}>
-                {verificationResult.isVerified ? 'Verified' : 'Not Verified'}
-              </Typography>
-              <Typography variant="h6" gutterBottom color="primary">
-                This land is {verificationResult.isVerified ? '' : 'not '}in the LandVer Blockchain Registry
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
-                  <Typography variant="h6">Database Details</Typography>
-                  <Typography><strong>Land ID:</strong> {verificationResult.databaseDetails.landId}</Typography>
-                  <Typography><strong>Owner:</strong> {verificationResult.databaseDetails.owner}</Typography>
-                  <Typography><strong>Location:</strong> {verificationResult.databaseDetails.location}</Typography>
-                  <Typography><strong>Area:</strong> {verificationResult.databaseDetails.area} sq. meters</Typography>
-                  <Typography><strong>Land Use:</strong> {verificationResult.databaseDetails.landUse}</Typography>
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Typography variant="h6">Blockchain Details</Typography>
-                  <Typography><strong>Land ID:</strong> {verificationResult.blockchainDetails.landId}</Typography>
-                  <Typography><strong>Owner:</strong> {verificationResult.blockchainDetails.owner}</Typography>
-                  <Typography><strong>Location:</strong> {verificationResult.blockchainDetails.location}</Typography>
-                  <Typography><strong>Area:</strong> {verificationResult.blockchainDetails.area.toString()} sq. meters</Typography>
-                  <Typography><strong>Land Use:</strong> {verificationResult.blockchainDetails.landUse}</Typography>
-                </Grid>
-              </Grid>
-            </>
-          )}
+          <Typography variant="h6" gutterBottom color={verificationResult.isVerified ? 'green' : 'red'}>
+            {verificationResult.message}
+          </Typography>
+          <Grid container spacing={2}>
+            <Grid item xs={12}>
+              <Typography variant="h6">Land Details</Typography>
+              <Typography><strong>Land ID:</strong> {verificationResult.landDetails.landId}</Typography>
+              <Typography><strong>Owner:</strong> {verificationResult.landDetails.owner}</Typography>
+              <Typography><strong>Location:</strong> {verificationResult.landDetails.location}</Typography>
+              <Typography><strong>Area:</strong> {verificationResult.landDetails.area} sq. meters</Typography>
+              <Typography><strong>Land Use:</strong> {verificationResult.landDetails.landUse}</Typography>
+              <Typography><strong>Document Hash:</strong> {verificationResult.landDetails.documentHash}</Typography>
+            </Grid>
+          </Grid>
         </Paper>
       )}
     </Paper>

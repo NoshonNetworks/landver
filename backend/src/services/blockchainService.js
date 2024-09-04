@@ -24,19 +24,7 @@ async function registerLand(owner, location, area, landUse, documentHash) {
     const landId = generateLandId();
     console.log('Generated landId:', landId);
 
-    let areaBigNumber;
-    try {
-      if (typeof area === 'string' && area.trim() !== '') {
-        areaBigNumber = ethers.parseUnits(area.trim(), 0);
-      } else if (typeof area === 'number') {
-        areaBigNumber = ethers.parseUnits(Math.floor(area).toString(), 0);
-      } else {
-        throw new Error('Invalid area value');
-      }
-    } catch (error) {
-      console.error('Error converting area to BigNumber:', error);
-      throw new Error(`Invalid area value: ${area}`);
-    }
+    let areaBigNumber = ethers.parseUnits(area.toString(), 0);
 
     console.log('Calling contract.registerLand with parameters:', landId, owner, location, areaBigNumber.toString(), landUse, documentHash);
     const tx = await contract.registerLand(landId, owner, location, areaBigNumber, landUse, documentHash);
@@ -58,30 +46,61 @@ async function getLandDetails(landId) {
     const landDetails = await contract.getLandDetails(landId);
     console.log('Raw land details fetched:', landDetails);
     
-    // Check if landDetails is undefined or null
-    if (!landDetails) {
+    if (!landDetails || !landDetails.landId) {
       console.log('Land details not found for landId:', landId);
       return null;
     }
     
-    // Assuming the contract returns an array or object, adjust accordingly
+    // Check if landDetails is an array (some contracts return arrays instead of objects)
+    if (Array.isArray(landDetails)) {
+      return {
+        landId: landDetails[0],
+        owner: landDetails[1],
+        location: landDetails[2],
+        area: ethers.formatUnits(landDetails[3], 0),
+        landUse: landDetails[4],
+        isRegistered: landDetails[5],
+        isVerified: landDetails[6],
+        documentHash: landDetails[7],
+        lastTransactionTimestamp: Number(landDetails[8])
+      };
+    }
+    
     return {
-      landId: landDetails[0] || landDetails.landId,
-      owner: landDetails[1] || landDetails.owner,
-      location: landDetails[2] || landDetails.location,
-      area: landDetails[3] || landDetails.area,
-      landUse: landDetails[4] || landDetails.landUse,
-      isRegistered: landDetails[5] || landDetails.isRegistered,
-      documentHash: landDetails[6] || landDetails.documentHash
+      landId: landDetails.landId,
+      owner: landDetails.owner,
+      location: landDetails.location,
+      area: ethers.formatUnits(landDetails.area, 0),
+      landUse: landDetails.landUse,
+      isRegistered: landDetails.isRegistered,
+      isVerified: landDetails.isVerified,
+      documentHash: landDetails.documentHash,
+      lastTransactionTimestamp: Number(landDetails.lastTransactionTimestamp)
     };
   } catch (error) {
     console.error('Error fetching land details from blockchain:', error);
-    console.error('Error details:', JSON.stringify(error, null, 2));
     throw error;
+  }
+}
+
+async function verifyLand(landId) {
+  try {
+    console.log('Verifying land on blockchain...');
+    const tx = await contract.verifyLand(landId);
+    console.log('Transaction sent:', tx.hash);
+    
+    const receipt = await tx.wait();
+    console.log('Transaction confirmed:', receipt.transactionHash);
+    
+    return { success: true, transactionHash: receipt.transactionHash };
+  } catch (error) {
+    console.error('Error verifying land on blockchain:', error);
+    return { success: false, error: error.message, stack: error.stack };
   }
 }
 
 module.exports = {
   registerLand,
-  getLandDetails
+  getLandDetails,
+  verifyLand
 };
