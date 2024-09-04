@@ -1,35 +1,29 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { Typography, Button, Grid, Card, CardContent, CardActions } from '@mui/material';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { AuthContext } from '../../context/AuthContext';
 
 function LandList() {
   const [lands, setLands] = useState([]);
-  const { isAuthenticated } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchLands = async () => {
-      if (isAuthenticated && window.ethereum) {
-        try {
-          const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-          const owner = accounts[0];
-          const response = await axios.get(`/api/land?owner=${owner}`);
-          setLands(response.data);
-        } catch (error) {
-          console.error('Error fetching lands:', error);
-        }
+      try {
+        const response = await axios.get('/api/land');
+        setLands(response.data);
+      } catch (error) {
+        console.error('Error fetching lands:', error);
       }
     };
 
     fetchLands();
-  }, [isAuthenticated]);
+  }, []);
 
   return (
     <div>
-      <Typography variant="h4" gutterBottom>Your Lands</Typography>
+      <Typography variant="h4" gutterBottom>All Registered Lands</Typography>
       <Button component={Link} to="/register" variant="contained" color="primary" style={{ marginBottom: '1rem' }}>
         Register New Land
       </Button>

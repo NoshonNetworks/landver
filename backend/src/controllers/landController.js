@@ -67,12 +67,7 @@ exports.addLand = async (req, res) => {
 
 exports.getAllLands = async (req, res) => {
     try {
-        const owner = req.query.owner;
-        let query = {};
-        if (owner) {
-            query.owner = owner;
-        }
-        const lands = await Land.find(query);
+        const lands = await Land.find();
         res.status(200).json(lands);
     } catch (error) {
         console.error('Error fetching lands:', error);
