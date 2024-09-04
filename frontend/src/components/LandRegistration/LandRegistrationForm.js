@@ -1,0 +1,111 @@
+import React, { useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { TextField, Button, Typography, Grid } from '@mui/material';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import WalletConnection from '../WalletConnection';
+import { AuthContext } from '../../context/AuthContext';
+import { BrowserProvider } from 'ethers';
+
+function LocationMarker({ setLocation }) {
+  const [position, setPosition] = useState(null);
+  const map = useMapEvents({
+    click(e) {
+      setPosition(e.latlng);
+      setLocation(`${e.latlng.lat}, ${e.latlng.lng}`);
+    }
+  });
+
+  return position === null ? null : (
+    <Marker position={position} />
+  );
+}
+
+function LandRegistrationForm() {
+  const navigate = useNavigate();
+  const { isAuthenticated } = useContext(AuthContext);
+  const [land, setLand] = useState({
+    location: '',
+    area: '',
+    landUse: '',
+    document: null
+  });
+
+  const handleChange = (e) => {
+    setLand({ ...land, [e.target.name]: e.target.value });
+  };
+
+  const handleFileChange = (e) => {
+    setLand({ ...land, document: e.target.files[0] });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!isAuthenticated) {
+      alert('Please connect your wallet first');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('location', land.location);
+    formData.append('area', land.area.toString()); // Ensure area is sent as a string
+    formData.append('landUse', land.landUse);
+    formData.append('document', land.document);
+
+    try {
+      const provider = new BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const address = await signer.getAddress();
+      
+      formData.append('owner', address);
+
+      console.log('Submitting land registration form:', Object.fromEntries(formData));
+
+      const response = await axios.post('/api/land/register', formData, {
+        headers: { 
+          'Content-Type': 'multipart/form-data',
+        }
+      });
+      console.log('Land registration response:', response.data);
+      alert('Land registered successfully');
+      navigate('/lands');
+    } catch (error) {
+      console.error('Error registering land:', error);
+      console.error('Error response:', error.response?.data);
+      alert('Failed to register land: ' + (error.response?.data?.error || error.message));
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <Typography variant="h4" gutterBottom>Register Land</Typography>
+      <WalletConnection />
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <MapContainer center={[0, 0]} zoom={2} style={{ height: '400px', width: '100%' }}>
+            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+            <LocationMarker setLocation={(loc) => setLand({ ...land, location: loc })} />
+          </MapContainer>
+        </Grid>
+        <Grid item xs={12}>
+          <TextField fullWidth name="location" label="Location" value={land.location} onChange={handleChange} required />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField fullWidth name="area" label="Area (in sq. meters)" type="number" value={land.area} onChange={handleChange} required />
+        </Grid>
+        <Grid item xs={12}>
+          <TextField fullWidth name="landUse" label="Land Use" value={land.landUse} onChange={handleChange} required />
+        </Grid>
+        <Grid item xs={12}>
+          <input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={handleFileChange} required />
+        </Grid>
+        <Grid item xs={12}>
+          <Button type="submit" variant="contained" color="primary">Register Land</Button>
+        </Grid>
+      </Grid>
+    </form>
+  );
+}
+
+export default LandRegistrationForm;
