@@ -17,9 +17,9 @@ function WalletConnection() {
         const provider = new BrowserProvider(window.ethereum);
         const accounts = await provider.listAccounts();
         if (accounts.length > 0) {
-          setAccount(accounts[0]);
+          setAccount(accounts[0].address);
           setIsAuthenticated(true);
-          localStorage.setItem('walletAddress', accounts[0]);
+          localStorage.setItem('walletAddress', accounts[0].address);
         }
       } catch (error) {
         console.error("Error checking wallet connection:", error);
@@ -31,7 +31,7 @@ function WalletConnection() {
     if (window.ethereum) {
       try {
         const provider = new BrowserProvider(window.ethereum);
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
         const signer = await provider.getSigner();
         const address = await signer.getAddress();
         setAccount(address);
@@ -52,12 +52,19 @@ function WalletConnection() {
     localStorage.removeItem('walletAddress');
   };
 
+  const formatAddress = (address) => {
+    if (typeof address === 'string' && address.length > 10) {
+      return `${address.slice(0, 6)}...${address.slice(-4)}`;
+    }
+    return address;
+  };
+
   return (
     <div>
       {account ? (
         <div>
           <Typography variant="body2" style={{ marginBottom: '8px' }}>
-            Connected: {account.slice(0, 6)}...{account.slice(-4)}
+            Connected: {formatAddress(account)}
           </Typography>
           <Button onClick={disconnectWallet} variant="outlined" color="secondary">
             Disconnect Wallet
