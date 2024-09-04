@@ -1,6 +1,18 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Typography, Paper, Grid, TextField, Button, CircularProgress } from '@mui/material';
+import { Typography, Paper, Grid, TextField, Button, CircularProgress, Box } from '@mui/material';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+import icon from 'leaflet/dist/images/marker-icon.png';
+import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+
+let DefaultIcon = L.icon({
+    iconUrl: icon,
+    shadowUrl: iconShadow
+});
+
+L.Marker.prototype.options.icon = DefaultIcon;
 
 function LandVerification() {
   const [landId, setLandId] = useState('');
@@ -66,7 +78,7 @@ function LandVerification() {
             {verificationResult.message}
           </Typography>
           <Grid container spacing={2}>
-            <Grid item xs={12}>
+            <Grid item xs={12} md={6}>
               <Typography variant="h6">Land Details</Typography>
               <Typography><strong>Land ID:</strong> {verificationResult.landDetails.landId}</Typography>
               <Typography><strong>Owner:</strong> {verificationResult.landDetails.owner}</Typography>
@@ -74,6 +86,21 @@ function LandVerification() {
               <Typography><strong>Area:</strong> {verificationResult.landDetails.area} sq. meters</Typography>
               <Typography><strong>Land Use:</strong> {verificationResult.landDetails.landUse}</Typography>
               <Typography><strong>Document Hash:</strong> {verificationResult.landDetails.documentHash}</Typography>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Typography variant="h6">Location Map</Typography>
+              <Box height={300} width="100%">
+                <MapContainer 
+                  center={verificationResult.landDetails.location.split(',').map(Number)} 
+                  zoom={13} 
+                  style={{ height: '100%', width: '100%' }}
+                >
+                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                  <Marker position={verificationResult.landDetails.location.split(',').map(Number)}>
+                    <Popup>{verificationResult.landDetails.landUse}</Popup>
+                  </Marker>
+                </MapContainer>
+              </Box>
             </Grid>
           </Grid>
         </Paper>
