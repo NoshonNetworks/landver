@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Button } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import { BrowserProvider } from 'ethers';
 import { AuthContext } from '../context/AuthContext';
 
@@ -12,52 +12,64 @@ function WalletConnection() {
   }, []);
 
   const checkWalletConnection = async () => {
-    console.log("Checking wallet connection...");
     if (window.ethereum) {
       try {
         const provider = new BrowserProvider(window.ethereum);
         const accounts = await provider.listAccounts();
-        console.log("Accounts:", accounts);
         if (accounts.length > 0) {
-          setAccount(accounts[0]);
+          setAccount(accounts[0].address);
           setIsAuthenticated(true);
-          localStorage.setItem('walletAddress', accounts[0]);
-          console.log("Wallet already connected:", accounts[0]);
+          localStorage.setItem('walletAddress', accounts[0].address);
         }
       } catch (error) {
         console.error("Error checking wallet connection:", error);
       }
-    } else {
-      console.log("Ethereum object not found, MetaMask not installed?");
     }
   };
 
   const connectWallet = async () => {
-    console.log("Attempting to connect wallet...");
     if (window.ethereum) {
       try {
         const provider = new BrowserProvider(window.ethereum);
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        await window.ethereum.request({ method: 'eth_requestAccounts' });
         const signer = await provider.getSigner();
         const address = await signer.getAddress();
         setAccount(address);
         setIsAuthenticated(true);
         localStorage.setItem('walletAddress', address);
-        console.log("Wallet connected:", address);
       } catch (error) {
         console.error("Error connecting to wallet:", error);
         alert("Failed to connect wallet: " + error.message);
       }
     } else {
-      console.log("Ethereum object not found, MetaMask not installed?");
       alert("Please install MetaMask!");
     }
+  };
+
+  const disconnectWallet = () => {
+    setAccount(null);
+    setIsAuthenticated(false);
+    localStorage.removeItem('walletAddress');
+  };
+
+  const formatAddress = (address) => {
+    if (typeof address === 'string' && address.length > 10) {
+      return `${address.slice(0, 6)}...${address.slice(-4)}`;
+    }
+    return address;
   };
 
   return (
     <div>
       {account ? (
-        <p>Connected: {account.toString()}</p>
+        <div>
+          <Typography variant="body2" style={{ marginBottom: '8px' }}>
+            Connected: {formatAddress(account)}
+          </Typography>
+          <Button onClick={disconnectWallet} variant="outlined" color="secondary">
+            Disconnect Wallet
+          </Button>
+        </div>
       ) : (
         <Button onClick={connectWallet} variant="contained" color="primary">
           Connect Wallet

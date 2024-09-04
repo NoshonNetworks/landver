@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { TextField, Button, Typography, Grid } from '@mui/material';
+import { TextField, Button, Typography, Grid, Paper } from '@mui/material';
 import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import WalletConnection from '../WalletConnection';
@@ -31,6 +31,7 @@ function LandRegistrationForm() {
     landUse: '',
     document: null
   });
+  const [registrationResult, setRegistrationResult] = useState(null);
 
   const handleChange = (e) => {
     setLand({ ...land, [e.target.name]: e.target.value });
@@ -68,8 +69,7 @@ function LandRegistrationForm() {
         }
       });
       console.log('Land registration response:', response.data);
-      alert('Land registered successfully');
-      navigate('/lands');
+      setRegistrationResult(response.data);
     } catch (error) {
       console.error('Error registering land:', error);
       console.error('Error response:', error.response?.data);
@@ -78,33 +78,54 @@ function LandRegistrationForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <Typography variant="h4" gutterBottom>Register Land</Typography>
-      <WalletConnection />
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <MapContainer center={[0, 0]} zoom={2} style={{ height: '400px', width: '100%' }}>
-            <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-            <LocationMarker setLocation={(loc) => setLand({ ...land, location: loc })} />
-          </MapContainer>
+    <Paper elevation={3} style={{ padding: '20px', marginBottom: '20px' }}>
+      <form onSubmit={handleSubmit}>
+        <Typography variant="h4" gutterBottom>Register Land</Typography>
+        <WalletConnection />
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <MapContainer center={[0, 0]} zoom={2} style={{ height: '400px', width: '100%' }}>
+              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+              <LocationMarker setLocation={(loc) => setLand({ ...land, location: loc })} />
+            </MapContainer>
+          </Grid>
+          <Grid item xs={12}>
+            <TextField fullWidth name="location" label="Location" value={land.location} onChange={handleChange} required />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField fullWidth name="area" label="Area (in sq. meters)" type="number" value={land.area} onChange={handleChange} required />
+          </Grid>
+          <Grid item xs={12}>
+            <TextField fullWidth name="landUse" label="Land Use" value={land.landUse} onChange={handleChange} required />
+          </Grid>
+          <Grid item xs={12}>
+            <input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={handleFileChange} required />
+          </Grid>
+          <Grid item xs={12}>
+            <Button type="submit" variant="contained" color="primary">Register Land</Button>
+          </Grid>
         </Grid>
-        <Grid item xs={12}>
-          <TextField fullWidth name="location" label="Location" value={land.location} onChange={handleChange} required />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField fullWidth name="area" label="Area (in sq. meters)" type="number" value={land.area} onChange={handleChange} required />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField fullWidth name="landUse" label="Land Use" value={land.landUse} onChange={handleChange} required />
-        </Grid>
-        <Grid item xs={12}>
-          <input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={handleFileChange} required />
-        </Grid>
-        <Grid item xs={12}>
-          <Button type="submit" variant="contained" color="primary">Register Land</Button>
-        </Grid>
-      </Grid>
-    </form>
+      </form>
+      {registrationResult && (
+        <Paper elevation={2} style={{ padding: '20px', marginTop: '20px' }}>
+          <Typography variant="h5" gutterBottom>Registration Result</Typography>
+          <Typography><strong>Land ID:</strong> {registrationResult.land.landId}</Typography>
+          <Typography><strong>Owner:</strong> {registrationResult.land.owner}</Typography>
+          <Typography><strong>Location:</strong> {registrationResult.land.location}</Typography>
+          <Typography><strong>Area:</strong> {registrationResult.land.area} sq. meters</Typography>
+          <Typography><strong>Land Use:</strong> {registrationResult.land.landUse}</Typography>
+          <Typography><strong>Blockchain Transaction Hash:</strong> {registrationResult.blockchainTransactionHash}</Typography>
+          <Button 
+            variant="contained" 
+            color="primary" 
+            onClick={() => navigate('/lands')} 
+            style={{ marginTop: '10px' }}
+          >
+            View All Lands
+          </Button>
+        </Paper>
+      )}
+    </Paper>
   );
 }
 

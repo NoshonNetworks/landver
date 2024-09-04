@@ -8,12 +8,12 @@ function Layout({ children }) {
   const navigate = useNavigate();
 
   const scrollToSection = (path, id) => {
-    navigate(path); // Change the URL
+    navigate(path);
     const element = document.getElementById(id);
     if (element) {
       setTimeout(() => {
         element.scrollIntoView({ behavior: "smooth" });
-      }, 0); // Scroll after URL changes
+      }, 0);
     }
   };
 
@@ -131,7 +131,7 @@ function Layout({ children }) {
               </h3>
               <p className="text-sm md:text-base">
                 Access your land records from anywhere in the world with
-                LandVer’s intuitive and user-friendly platform.
+                LandVer's intuitive and user-friendly platform.
               </p>
             </div>
           </div>

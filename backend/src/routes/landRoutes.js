@@ -6,6 +6,6 @@ const upload = require('../middleware/upload');
 router.post('/register', upload.single('document'), landController.addLand);
 router.get('/', landController.getAllLands);
 router.get('/:id', landController.getLandById);
-router.put('/:id/verify', landController.verifyLand);
+router.get('/:id/verify', landController.verifyLand);
 
 module.exports = router;

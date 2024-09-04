@@ -54,7 +54,11 @@ exports.addLand = async (req, res) => {
         await newLand.save();
         console.log('Land saved to database:', newLand);
 
-        res.status(201).json({ message: 'Land added successfully', land: newLand });
+        res.status(201).json({ 
+            message: 'Land added successfully', 
+            land: newLand,
+            blockchainTransactionHash: blockchainResult.transactionHash
+        });
     } catch (error) {
         console.error('Error adding land:', error);
         res.status(500).json({ message: 'Error adding land', error: error.message, stack: error.stack });
@@ -97,13 +101,31 @@ exports.getLandById = async (req, res) => {
 exports.verifyLand = async (req, res) => {
     try {
         const { landId } = req.params;
-        const result = await blockchainService.verifyLand(landId);
-        if (result) {
-            await Land.findOneAndUpdate({ landId }, { isVerified: true, verifier: req.user.address });
-            res.status(200).json({ message: 'Land verified successfully' });
-        } else {
-            res.status(500).json({ message: 'Failed to verify land' });
+        const land = await Land.findOne({ landId });
+
+        if (!land) {
+            return res.status(404).json({ message: 'Land not found' });
         }
+
+        const blockchainLandDetails = await blockchainService.getLandDetails(landId);
+
+        if (!blockchainLandDetails) {
+            return res.status(404).json({ message: 'Land not found on blockchain' });
+        }
+
+        const isVerified = (
+            land.owner.toLowerCase() === blockchainLandDetails.owner.toLowerCase() &&
+            land.location === blockchainLandDetails.location &&
+            land.area.toString() === blockchainLandDetails.area.toString() &&
+            land.landUse === blockchainLandDetails.landUse &&
+            land.documentHash === blockchainLandDetails.documentHash
+        );
+
+        res.status(200).json({
+            isVerified,
+            databaseDetails: land,
+            blockchainDetails: blockchainLandDetails
+        });
     } catch (error) {
         console.error('Error verifying land:', error);
         res.status(500).json({ message: 'Error verifying land', error: error.message });
