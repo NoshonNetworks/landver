@@ -1,25 +1,40 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+import { Link, Navigate } from 'react-router-dom';
 import axios from 'axios';
-import { Typography, Button, Grid, Card, CardContent, CardActions } from '@mui/material';
+import { Typography, Button, Grid, Card, CardContent, CardActions, CircularProgress } from '@mui/material';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import { AuthContext } from '../../context/AuthContext';
 
 function LandList() {
   const [lands, setLands] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const { isAuthenticated } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchLands = async () => {
-      try {
-        const response = await axios.get('/api/land');
-        setLands(response.data);
-      } catch (error) {
-        console.error('Error fetching lands:', error);
+      if (isAuthenticated) {
+        try {
+          const response = await axios.get('/api/land');
+          setLands(response.data);
+          setLoading(false);
+        } catch (error) {
+          console.error('Error fetching lands:', error);
+          setLoading(false);
+        }
       }
     };
 
     fetchLands();
-  }, []);
+  }, [isAuthenticated]);
+
+  if (!isAuthenticated) {
+    return <Navigate to="/" />;
+  }
+
+  if (loading) {
+    return <CircularProgress />;
+  }
 
   return (
     <div>

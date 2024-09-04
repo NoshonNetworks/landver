@@ -1,27 +1,35 @@
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+import { useParams, Navigate } from 'react-router-dom';
 import axios from 'axios';
 import { Typography, Paper, Grid, CircularProgress } from '@mui/material';
+import { AuthContext } from '../../context/AuthContext';
 
 function LandVerification() {
   const [verificationResult, setVerificationResult] = useState(null);
   const [loading, setLoading] = useState(true);
   const { id } = useParams();
+  const { isAuthenticated } = useContext(AuthContext);
 
   useEffect(() => {
     const verifyLand = async () => {
-      try {
-        const response = await axios.get(`/api/land/${id}/verify`);
-        setVerificationResult(response.data);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error verifying land:', error);
-        setLoading(false);
+      if (isAuthenticated) {
+        try {
+          const response = await axios.get(`/api/land/${id}/verify`);
+          setVerificationResult(response.data);
+          setLoading(false);
+        } catch (error) {
+          console.error('Error verifying land:', error);
+          setLoading(false);
+        }
       }
     };
 
     verifyLand();
-  }, [id]);
+  }, [id, isAuthenticated]);
+
+  if (!isAuthenticated) {
+    return <Navigate to="/" />;
+  }
 
   if (loading) {
     return <CircularProgress />;
