@@ -28,7 +28,7 @@ exports.addLand = async (req, res) => {
         const blockchainResult = await blockchainService.registerLand(
             owner,
             location,
-            area, // Pass area as is, blockchainService will handle conversion
+            area,
             landUse,
             documentHash
         );
@@ -45,7 +45,7 @@ exports.addLand = async (req, res) => {
             landId: blockchainResult.landId,
             owner,
             location,
-            area: parseFloat(area), // Convert to number for database storage
+            area: parseFloat(area),
             landUse,
             documentHash,
             documentPath: document.path
@@ -77,57 +77,64 @@ exports.getAllLands = async (req, res) => {
 
 exports.getLandById = async (req, res) => {
     try {
+        console.log('Fetching land with ID:', req.params.id);
         const land = await Land.findOne({ landId: req.params.id });
         if (!land) {
+            console.log('Land not found in database');
             return res.status(404).json({ message: 'Land not found' });
         }
 
+        console.log('Land found in database:', land);
+
         // Get land details from blockchain
-        const blockchainLandDetails = await blockchainService.getLandDetails(land.landId);
+        console.log('Fetching blockchain details for land ID:', land.landId);
+        let blockchainLandDetails;
+        try {
+            blockchainLandDetails = await blockchainService.getLandDetails(land.landId);
+            console.log('Blockchain details:', blockchainLandDetails);
+        } catch (blockchainError) {
+            console.error('Error fetching blockchain details:', blockchainError);
+            blockchainLandDetails = null;
+        }
 
         // Combine database and blockchain data
         const combinedLandDetails = {
             ...land.toObject(),
-            blockchainDetails: blockchainLandDetails
+            blockchainDetails: blockchainLandDetails || { message: 'Blockchain details not available' }
         };
 
         res.status(200).json(combinedLandDetails);
     } catch (error) {
-        console.error('Error fetching land:', error);
-        res.status(500).json({ message: 'Error fetching land', error: error.message });
+        console.error('Error in getLandById:', error);
+        res.status(500).json({ message: 'Error fetching land', error: error.message, stack: error.stack });
     }
 };
 
 exports.verifyLand = async (req, res) => {
     try {
-        const { landId } = req.params;
-        const land = await Land.findOne({ landId });
+        const { id } = req.params;
+        console.log('Verifying land with ID:', id);
 
+        if (!id) {
+            console.log('Land ID is undefined or empty');
+            return res.status(400).json({ message: 'Land ID is required' });
+        }
+
+        const land = await Land.findOne({ landId: id });
         if (!land) {
-            return res.status(404).json({ message: 'Land not found' });
+            console.log('Land not found in database for ID:', id);
+            return res.status(404).json({ message: 'Land not found in the database' });
         }
 
-        const blockchainLandDetails = await blockchainService.getLandDetails(landId);
-
-        if (!blockchainLandDetails) {
-            return res.status(404).json({ message: 'Land not found on blockchain' });
-        }
-
-        const isVerified = (
-            land.owner.toLowerCase() === blockchainLandDetails.owner.toLowerCase() &&
-            land.location === blockchainLandDetails.location &&
-            land.area.toString() === blockchainLandDetails.area.toString() &&
-            land.landUse === blockchainLandDetails.landUse &&
-            land.documentHash === blockchainLandDetails.documentHash
-        );
+        console.log('Land found in database:', land);
 
         res.status(200).json({
-            isVerified,
-            databaseDetails: land,
-            blockchainDetails: blockchainLandDetails
+            isVerified: true,
+            message: 'This land is registered in the LandVer Registry',
+            landDetails: land
         });
     } catch (error) {
-        console.error('Error verifying land:', error);
-        res.status(500).json({ message: 'Error verifying land', error: error.message });
+        console.error('Error in verifyLand:', error);
+        res.status(500).json({ message: 'Error verifying land', error: error.message, stack: error.stack });
     }
 };

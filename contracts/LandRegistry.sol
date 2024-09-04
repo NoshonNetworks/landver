@@ -16,7 +16,6 @@ contract LandRegistry {
 
     mapping(string => Land) public lands;
     mapping(address => string[]) public ownerLands;
-    mapping(string => address[]) public landTransactionHistory;
 
     event LandRegistered(string landId, address owner, string location, uint256 area, string landUse, string documentHash);
     event LandTransferred(string landId, address from, address to);
@@ -46,7 +45,6 @@ contract LandRegistry {
 
         lands[_landId] = newLand;
         ownerLands[_owner].push(_landId);
-        landTransactionHistory[_landId].push(_owner);
 
         emit LandRegistered(_landId, _owner, _location, _area, _landUse, _documentHash);
     }
@@ -71,7 +69,6 @@ contract LandRegistry {
         lands[_landId].owner = _newOwner;
         lands[_landId].lastTransactionTimestamp = block.timestamp;
         ownerLands[_newOwner].push(_landId);
-        landTransactionHistory[_landId].push(_newOwner);
 
         emit LandTransferred(_landId, currentOwner, _newOwner);
     }
@@ -90,9 +87,5 @@ contract LandRegistry {
 
     function getOwnerLands(address _owner) public view returns (string[] memory) {
         return ownerLands[_owner];
-    }
-
-    function getLandTransactionHistory(string memory _landId) public view returns (address[] memory) {
-        return landTransactionHistory[_landId];
     }
 }
