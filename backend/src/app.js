@@ -52,11 +52,18 @@ const landOwnerRoutes = require('./routes/landOwnerRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
 const documentRoutes = require('./routes/documentRoutes');
 
+app.use((req, res, next) => {
+  console.log(`Received ${req.method} request for ${req.url}`);
+  next();
+});
+
 app.use('/api/land', landRoutes);
-app.use('/api/admin', adminRoutes);
-app.use('/api/landowner', landOwnerRoutes);
-app.use('/api/transaction', transactionRoutes);
-app.use('/api/document', documentRoutes);
+
+// Add a catch-all route for debugging
+app.use('*', (req, res) => {
+  console.log(`Received request for unknown route: ${req.originalUrl}`);
+  res.status(404).send('Not Found');
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {

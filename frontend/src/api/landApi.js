@@ -20,13 +20,20 @@ export const registerLand = async (landData) => {
 
 export const getAllLands = async () => {
   try {
+    console.log('Fetching all lands from:', `${API_URL}/api/land`);
     const response = await fetch(`${API_URL}/api/land`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include'
     });
-    return await response.json();
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    console.log('Received data:', data);
+    return data;
   } catch (error) {
     console.error('Error getting all lands:', error);
     throw error;
