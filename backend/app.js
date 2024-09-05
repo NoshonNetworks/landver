@@ -2,7 +2,7 @@ const cors = require('cors');
 const landRoutes = require('./routes/landRoutes');
 
 //Animationllowed origins
-const allowedOrigins = ['https://landver01.onrender.com', 'http://localhost:3000'];
+const allowedOrigins = ['https://landver01.onrender.com', 'https://landver.vercel.app', 'http://localhost:3000'];
 
 app.use(
   cors({
