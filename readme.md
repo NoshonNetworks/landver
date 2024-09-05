@@ -2,6 +2,9 @@
 
 LandVer is a decentralized application (dApp) for land registration and verification using blockchain technology. It provides a secure and transparent way to manage land records, verify ownership, and facilitate land transactions.
 
+**LAND_REGISTRY_CONTRACT_ADDRESS=0xd2a5bC10698FD955D1Fe6cb468a17809A08fd005**
+
+
 ## Features
 
 - Land Registration: Users can register their land by providing details such as location, area, land use, and uploading a Certificate of Occupancy.
