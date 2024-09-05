@@ -24,7 +24,6 @@ const Header = () => {
   return (
     <header className="bg-gradient-to-r from-blue-400 to-blue-700 text-white">
       <nav className="flex justify-between items-center p-4 md:p-6 flex-wrap">
-
         <div
           className="text-xl md:text-2xl font-bold cursor-pointer"
           onClick={() => scrollToSection("/", "home")}
@@ -32,7 +31,6 @@ const Header = () => {
           LandVer
         </div>
 
-     
         <button
           className="block md:hidden text-white focus:outline-none"
           onClick={toggleMenu}
@@ -89,7 +87,7 @@ const Header = () => {
               onClick={() => scrollToSection("/lands", "lands")}
               className="block hover:text-gray-200 focus:outline-none py-2 md:py-0"
             >
-              Land List
+              How it works
             </button>
           </li>
           <li className="md:inline-block">
@@ -107,7 +105,6 @@ const Header = () => {
           <WalletConnection />
         </div>
       </nav>
-
 
       <div
         id="home"
@@ -127,12 +124,12 @@ const Header = () => {
           >
             Register Your Land
           </button>
-          <Link
-            to="/lands"
+          <button
+            onClick={() => scrollToSection("/lands", "register")}
             className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 md:py-3 md:px-6 rounded-full text-sm md:text-lg font-semibold transition transform hover:scale-105 hover:shadow-lg"
           >
-            View Lands
-          </Link>
+           View Lands
+          </button>
         </div>
         <img
           src={LandVerSVG}
