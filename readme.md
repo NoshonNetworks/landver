@@ -5,6 +5,9 @@ LandVer is a decentralized application (dApp) for land registration and verifica
 **LAND_REGISTRY_CONTRACT_ADDRESS On SEPOLIA:  0x30245138112a2a7E2577aD16b2740803a50Ec16C**
 
 
+You can monitor the LandRegistered Events Here: [https://sepolia.etherscan.io/address/0x30245138112a2a7e2577ad16b2740803a50ec16c#events](https://sepolia.etherscan.io/address/0x30245138112a2a7e2577ad16b2740803a50ec16c#events)
+
+
 ## Features
 
 - Land Registration: Users can register their land by providing details such as location, area, land use, and uploading a Certificate of Occupancy.
