@@ -56,9 +56,9 @@ function LandVerification() {
             />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <Button type="submit" variant="contained" color="primary" fullWidth>
+            <button className='bg-blue-600 text-white px-6 py-4 rounded hover:bg-blue-400'>
               Verify
-            </Button>
+            </button>
           </Grid>
         </Grid>
       </form>
