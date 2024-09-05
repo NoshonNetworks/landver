@@ -80,8 +80,11 @@ function LandRegistrationForm() {
   return (
     <Paper elevation={3} style={{ padding: '20px', marginBottom: '20px' }}>
       <form onSubmit={handleSubmit}>
+        
         <Typography variant="h4" gutterBottom>Register Land</Typography>
+        
         <WalletConnection />
+        <p className='p-1 text-red-800'>Click on map to scroll to designated location and click to add location</p>
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <MapContainer center={[0, 0]} zoom={2} style={{ height: '400px', width: '100%' }}>
@@ -99,6 +102,7 @@ function LandRegistrationForm() {
             <TextField fullWidth name="landUse" label="Land Use" value={land.landUse} onChange={handleChange} required />
           </Grid>
           <Grid item xs={12}>
+
             <input 
               type="file" 
               accept=".pdf,.jpg,.jpeg,.png" 
