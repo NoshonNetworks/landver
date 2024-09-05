@@ -41,7 +41,7 @@ function LandRegistrationForm() {
     setLand({ ...land, document: e.target.files[0] });
   };
 
-  const handleSubmit = async (e) => {
+ const handleSubmit = async (e) => {
     e.preventDefault();
     if (!isAuthenticated) {
       alert('Please connect your wallet first');
@@ -50,7 +50,7 @@ function LandRegistrationForm() {
 
     const formData = new FormData();
     formData.append('location', land.location);
-    formData.append('area', land.area.toString()); // Ensure area is sent as a string
+    formData.append('area', land.area.toString());
     formData.append('landUse', land.landUse);
     formData.append('document', land.document);
 
@@ -66,7 +66,8 @@ function LandRegistrationForm() {
       const response = await axios.post('/api/land/register', formData, {
         headers: { 
           'Content-Type': 'multipart/form-data',
-        }
+        },
+        timeout: 120000  // Timeout set to 120000ms because it is a blockchain event
       });
       console.log('Land registration response:', response.data);
       setRegistrationResult(response.data);
@@ -75,7 +76,7 @@ function LandRegistrationForm() {
       console.error('Error response:', error.response?.data);
       alert('Failed to register land: ' + (error.response?.data?.error || error.message));
     }
-  };
+};
 
   return (
     <Paper elevation={3} style={{ padding: '20px', marginBottom: '20px' }}>
