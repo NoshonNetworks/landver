@@ -16,4 +16,19 @@ export const registerLand = async (landData) => {
   }
 };
 
-// Similar updates for verifyLand and getAllLands functions
+export const getAllLands = async () => {
+  try {
+    const response = await fetch(`${API_URL}/api/land/all`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Error getting all lands:', error);
+    throw error;
+  }
+};
+
+// Similar updates for verifyLand and other functions
