@@ -1,71 +1,61 @@
-const API_URL = process.env.REACT_APP_API_URL;
-console.log('API_URL:', API_URL);
+import axiosInstance from "./axiosInstance"; // Import the axiosInstance
 
 export const registerLand = async (landData) => {
   try {
-    const response = await fetch(`${API_URL}/api/land/register`, {
-      method: 'POST',
+    const response = await axiosInstance.post("/api/land/register", landData, {
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify(landData),
-      credentials: 'include' // Add this line
     });
-    return await response.json();
+    return response.data; // Access response data
   } catch (error) {
-    console.error('Error registering land:', error);
+    console.error("Error registering land:", error);
     throw error;
   }
 };
 
 export const getAllLands = async () => {
   try {
-    console.log('Fetching all lands from:', `${API_URL}/api/land`);
-    const response = await fetch(`${API_URL}/api/land`, {
-      method: 'GET',
+    console.log(
+      "Fetching all lands from:",
+      `${axiosInstance.defaults.baseURL}/api/land`
+    );
+    const response = await axiosInstance.get("/api/land", {
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
-      credentials: 'include'
     });
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    const data = await response.json();
-    console.log('Received data:', data);
-    return data;
+    return response.data;
   } catch (error) {
-    console.error('Error getting all lands:', error);
+    console.error("Error getting all lands:", error);
     throw error;
   }
 };
 
 export const getLandById = async (id) => {
   try {
-    const response = await fetch(`${API_URL}/api/land/${id}`, {
-      method: 'GET',
+    const response = await axiosInstance.get(`/api/land/${id}`, {
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
-    return await response.json();
+    return response.data;
   } catch (error) {
-    console.error('Error getting land by ID:', error);
+    console.error("Error getting land by ID:", error);
     throw error;
   }
 };
 
 export const verifyLand = async (id) => {
   try {
-    const response = await fetch(`${API_URL}/api/land/${id}/verify`, {
-      method: 'GET',
+    const response = await axiosInstance.get(`/api/land/${id}/verify`, {
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
-    return await response.json();
+    return response.data;
   } catch (error) {
-    console.error('Error verifying land:', error);
+    console.error("Error verifying land:", error);
     throw error;
   }
 };

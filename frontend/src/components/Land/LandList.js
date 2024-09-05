@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link, Navigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../../api/axios';
 import { Typography, Button, Grid, Card, CardContent, CardActions, CircularProgress } from '@mui/material';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';

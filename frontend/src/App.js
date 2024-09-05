@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import AppRoutes from './Routes';
 import Layout from './components/Layout';
 import "./index.css"
+
 function App() {
   return (
     <AuthProvider>
