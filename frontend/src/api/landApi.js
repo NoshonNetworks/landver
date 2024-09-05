@@ -9,6 +9,7 @@ export const registerLand = async (landData) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(landData),
+      credentials: 'include' // Add this line
     });
     return await response.json();
   } catch (error) {
