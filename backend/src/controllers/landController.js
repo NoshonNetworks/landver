@@ -67,10 +67,12 @@ exports.addLand = async (req, res) => {
 
 exports.getAllLands = async (req, res) => {
     try {
+        console.log('Attempting to fetch all lands');
         const lands = await Land.find();
+        console.log(`Successfully fetched ${lands.length} lands`);
         res.status(200).json(lands);
     } catch (error) {
-        console.error('Error fetching lands:', error);
+        console.error('Error in getAllLands:', error);
         res.status(500).json({ message: 'Error fetching lands', error: error.message });
     }
 };
