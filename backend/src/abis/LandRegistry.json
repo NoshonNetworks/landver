@@ -198,9 +198,19 @@
 						"type": "bool"
 					},
 					{
+						"internalType": "bool",
+						"name": "isVerified",
+						"type": "bool"
+					},
+					{
 						"internalType": "string",
 						"name": "documentHash",
 						"type": "string"
+					},
+					{
+						"internalType": "uint256",
+						"name": "lastTransactionTimestamp",
+						"type": "uint256"
 					}
 				],
 				"internalType": "struct LandRegistry.Land",
@@ -271,9 +281,19 @@
 				"type": "bool"
 			},
 			{
+				"internalType": "bool",
+				"name": "isVerified",
+				"type": "bool"
+			},
+			{
 				"internalType": "string",
 				"name": "documentHash",
 				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "lastTransactionTimestamp",
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
