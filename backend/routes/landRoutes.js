@@ -4,7 +4,8 @@ const landController = require('../controllers/landController');
 
 // Remove any authentication middleware for these routes
 router.post('/register', landController.registerLand);
-router.post('/verify', landController.verifyLand);
-router.get('/all', landController.getAllLands);
+router.get('/', landController.getAllLands);
+router.get('/:id', landController.getLandById);
+router.get('/:id/verify', landController.verifyLand);
 
-// ... rest of your code ...
+module.exports = router;

@@ -45,7 +45,6 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "https://landver0.onrender.com",
   "devDependencies": {
     "tailwindcss": "^3.4.1"
   }

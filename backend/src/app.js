@@ -25,7 +25,10 @@ mongoose.connect(process.env.MONGODB_URI, {
   useUnifiedTopology: true,
 })
 .then(() => console.log('Connected to MongoDB'))
-.catch((err) => console.error('MongoDB connection error:', err));
+.catch((err) => {
+  console.error('MongoDB connection error:', err);
+  // You might want to exit the process or handle the error appropriately
+});
 
 // Routes
 const landRoutes = require('./routes/landRoutes');

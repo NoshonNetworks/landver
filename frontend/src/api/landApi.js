@@ -18,7 +18,7 @@ export const registerLand = async (landData) => {
 
 export const getAllLands = async () => {
   try {
-    const response = await fetch(`${API_URL}/api/land/all`, {
+    const response = await fetch(`${API_URL}/api/land`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -31,4 +31,32 @@ export const getAllLands = async () => {
   }
 };
 
-// Similar updates for verifyLand and other functions
+export const getLandById = async (id) => {
+  try {
+    const response = await fetch(`${API_URL}/api/land/${id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Error getting land by ID:', error);
+    throw error;
+  }
+};
+
+export const verifyLand = async (id) => {
+  try {
+    const response = await fetch(`${API_URL}/api/land/${id}/verify`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    return await response.json();
+  } catch (error) {
+    console.error('Error verifying land:', error);
+    throw error;
+  }
+};
