@@ -1,23 +1,20 @@
 # LandVer - Land Verification System
 
-LandVer is a decentralized application (dApp) for land registration and verification using blockchain technology. It provides a secure and transparent way to manage land records, verify ownership, and facilitate land transactions.
+LandVer is a decentralized protocol for land registration and verification, utilizing blockchain technology to provide a secure, transparent, and immutable system for managing land records. The protocol facilitates land transactions and ownership verification across multiple blockchains, starting with StarkNet.
+
+While initially built on StarkNet, LandVer is designed to be cross-chain compatible, allowing land transactions and records to be securely managed across multiple blockchains.
+
+**STARKNET_CONTRACT_ADDRESS: [address]**
 
 **TEST LAND_REGISTRY_CONTRACT_ADDRESS On SEPOLIA:  0x30245138112a2a7E2577aD16b2740803a50Ec16C**
-
-**STARKNET_CONTRACT_ADDRESS:**
 
 
 You can monitor the LandRegistered Events Here: [https://sepolia.etherscan.io/address/0x30245138112a2a7e2577ad16b2740803a50ec16c#events](https://sepolia.etherscan.io/address/0x30245138112a2a7e2577ad16b2740803a50ec16c#events)
 
-
-## Features
-
-- Land Registration: Users can register their land by providing details such as location, area, land use, and uploading a Certificate of Occupancy.
-- Land Verification: Anyone can verify the authenticity of registered land using the unique Land ID.
-- Blockchain Integration: All land records are stored on the Ethereum blockchain, ensuring immutability and transparency.
-- Interactive Map: Users can select land locations using an interactive map interface.
-- Wallet Connection: Integration with MetaMask for secure user authentication and blockchain transactions.
-- Land Listing: View all registered lands with their details a
+## Roadmap
+- Cross-Chain Support: Extend the protocol to support Ethereum, Binance Smart Chain, and other blockchains.
+- Advanced Land Disputes Resolution: Implement on-chain dispute resolution mechanisms.
+- Tokenized Land Ownership: Explore integration with NFTs for land tokenization.
 nd locations on a map.
 
 ## Project Structure
