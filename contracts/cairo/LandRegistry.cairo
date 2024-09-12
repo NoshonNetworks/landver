@@ -89,5 +89,75 @@ mod LandRegistry {
         }));
     }
 
-    // Implement other functions like transfer_land, verify_land, get_land_details, etc.
+    //TODO:Implement other functions like transfer_land, verify_land, get_land_details....
+    #[external(v0)]
+    fn transfer_land(self: @ContractState, land_id: u256, new_owner: ContractAddress) {
+        let caller = get_caller_address();
+        let land = self.lands.read(land_id);
+        assert(land.owner == caller, 'Only the current owner can transfer the land');
+        assert(land.is_registered, 'Land is not registered');
+        land.owner = new_owner;
+        self.lands.write(land_id, land);
+        self.emit(Event::LandTransferred(LandTransferred {
+            land_id: land_id,
+            from_owner: caller,
+            to_owner: new_owner,
+        }));
+    }
+
+    #[external(v0)]
+    fn get_land_details(self: @ContractState, land_id: u256) -> Land {
+        return self.lands.read(land_id);
+    }   
+
+    #[external(v0)]
+    fn get_owner_lands(self: @ContractState, owner: ContractAddress) -> Vec<u256> {
+        let mut lands = Vec::new();
+        let count = self.owner_land_count.read(owner);
+        for i in 0..count {
+            let land_id = self.owner_lands.read((owner, i));
+            lands.push(land_id);
+        }
+        return lands;
+    }
+
+    #[external(v0)]
+    fn get_land_count(self: @ContractState) -> u256 {
+        return self.owner_land_count.read(get_caller_address());
+    }   
+
+    #[external(v0)]
+    fn get_land_count_for_owner(self: @ContractState, owner: ContractAddress) -> u256 {
+        return self.owner_land_count.read(owner);
+    }
+
+    #[external(v0)]
+    fn get_land_owner(self: @ContractState, land_id: u256) -> ContractAddress {
+        return self.lands.read(land_id).owner;
+    }
+
+    #[external(v0)]
+    fn get_land_location(self: @ContractState, land_id: u256) -> felt252 {
+        return self.lands.read(land_id).location;
+    }       
+
+    #[external(v0)]
+    fn get_land_area(self: @ContractState, land_id: u256) -> u256 {
+        return self.lands.read(land_id).area;
+    }
+
+    #[external(v0)]
+    fn get_land_land_use(self: @ContractState, land_id: u256) -> felt252 {
+        return self.lands.read(land_id).land_use;
+    }
+
+    #[external(v0)]
+    fn get_land_document_hash(self: @ContractState, land_id: u256) -> felt252 {
+        return self.lands.read(land_id).document_hash;
+    }
+
+    #[external(v0)]
+    fn get_land_last_transaction_timestamp(self: @ContractState, land_id: u256) -> u64 {
+        return self.lands.read(land_id).last_transaction_timestamp;
+    }
 }
