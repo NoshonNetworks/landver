@@ -2,7 +2,9 @@
 
 LandVer is a decentralized application (dApp) for land registration and verification using blockchain technology. It provides a secure and transparent way to manage land records, verify ownership, and facilitate land transactions.
 
-**LAND_REGISTRY_CONTRACT_ADDRESS On SEPOLIA:  0x30245138112a2a7E2577aD16b2740803a50Ec16C**
+**TEST LAND_REGISTRY_CONTRACT_ADDRESS On SEPOLIA:  0x30245138112a2a7E2577aD16b2740803a50Ec16C**
+
+**STARKNET_CONTRACT_ADDRESS:**
 
 
 You can monitor the LandRegistered Events Here: [https://sepolia.etherscan.io/address/0x30245138112a2a7e2577ad16b2740803a50ec16c#events](https://sepolia.etherscan.io/address/0x30245138112a2a7e2577ad16b2740803a50ec16c#events)
