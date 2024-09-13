@@ -160,4 +160,20 @@ mod LandRegistry {
     fn get_land_last_transaction_timestamp(self: @ContractState, land_id: u256) -> u64 {
         return self.lands.read(land_id).last_transaction_timestamp;
     }
+
+    #[external(v0)]
+    fn get_land_is_registered(self: @ContractState, land_id: u256) -> bool {
+        return self.lands.read(land_id).is_registered;
+    }
+
+    #[external(v0)]
+    fn get_land_is_verified(self: @ContractState, land_id: u256) -> bool {
+        return self.lands.read(land_id).is_verified;
+    }
+
+    #[external(v0)]
+    fn get_land_document_hash(self: @ContractState, land_id: u256) -> felt252 {
+        return self.lands.read(land_id).document_hash;
+    }
+    
 }
