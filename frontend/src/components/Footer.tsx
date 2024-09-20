@@ -10,22 +10,22 @@ const Footer: React.FC = () => {
             <h4 className="text-lg font-semibold mb-4">Resources</h4>
             <ul className="space-y-2">
               <li>
-                <a href="/docs" className="hover:underline">
+                <a href="/" className="hover:underline">
                   Docs
                 </a>
               </li>
               <li>
-                <a href="/api" className="hover:underline">
+                <a href="/" className="hover:underline">
                   API
                 </a>
               </li>
               <li>
-                <a href="/guides" className="hover:underline">
+                <a href="/" className="hover:underline">
                   Guides
                 </a>
               </li>
               <li>
-                <a href="/migrate" className="hover:underline">
+                <a href="/" className="hover:underline">
                   Migrate from v5
                 </a>
               </li>
