@@ -1,11 +1,16 @@
-
+import Navbar from "./components/NavBar";
+import Header from "./components/Header";
+import WhyChooseLandVer from "./components/WhyChooseLandver";
+import Footer from "./components/Footer";
 function App() {
- 
   return (
     <>
-     <h1 className="m-auto bg-red-400">LANDVER BASIC BUILD COMPLETE</h1>
+      <Navbar />
+      <Header />
+      <WhyChooseLandVer/>
+      <Footer/>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
