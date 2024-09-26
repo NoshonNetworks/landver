@@ -125,5 +125,5 @@ mod LandRegistry {
     fn get_land_document_hash(self: @ContractState, land_id: u256) -> felt252 {
         return self.lands.read(land_id).document_hash;
     }
- 
+
 }
