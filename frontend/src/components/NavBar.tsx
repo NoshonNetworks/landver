@@ -1,15 +1,15 @@
 import { useState } from "react";
-import { FaGithub, FaHome } from "react-icons/fa"; // Install react-icons if you haven't
+import { FaGithub } from "react-icons/fa"; // Install react-icons if you haven't
 import landverImg from "/LANDVER_LOGO_WHITE-removebg-preview.png";
 
-import { BsSun } from "react-icons/bs";
-import { FaMagnifyingGlass, FaX } from "react-icons/fa6";
+import { SunDim,Home,Search } from "lucide-react";
+import {  FaX } from "react-icons/fa6";
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   let [isSearchIconClicked, setIsSearchIconClicked] = useState<boolean>(false);
   return (
     <header className="text-black ">
-      <nav className="flex items-center justify-between p-1 border bg-gray-100">
+      <nav className="flex items-center justify-between  border ">
         <div className="flex items-center ">
           <div className="md:hidden ">
             <button
@@ -43,7 +43,7 @@ const Header = () => {
           </div>
           <img src={landverImg} alt="" className="w-[3.5em] ml-3" />
           {isSearchIconClicked ? (
-            <FaHome size={40} />
+            <Home size={40} />
           ) : (
             <ul>
               <li className="hover:text-gray-400 font-bold ">Home</li>
@@ -53,7 +53,11 @@ const Header = () => {
           <ul className="hidden md:flex space-x-6 items-center ml-2">
             <li className="hover:text-gray-400">API</li>
             <li className="hover:text-gray-400">GUIDES</li>
-            <select name="" id="" className="border-2 border-black rounded p-2 bg-inherit">
+            <select
+              name=""
+              id=""
+              className="border-2 border-black rounded p-2 bg-inherit"
+            >
               <option value="">0.3</option>
               <option value="">0.2</option>
               <option value="">0.1</option>
@@ -75,7 +79,7 @@ const Header = () => {
 
           <div>
             <button>
-              <BsSun className="p-3 h-[60px] hidden md:block" size="lg" />
+              <SunDim className="p-3 h-[60px] hidden md:block" size={60} />
             </button>
           </div>
           {/* Search bar */}
@@ -84,7 +88,7 @@ const Header = () => {
               type="search"
               name=""
               id=""
-              className="border-2 p-3 bg-inherit rounded border-black hidden md:block"
+              className="border-2  border-gray-800 p-3 bg-inherit rounded hidden md:block"
               placeholder="Search"
             />
             {isSearchIconClicked ? (
@@ -100,12 +104,12 @@ const Header = () => {
                 />
                 <FaX
                   onClick={() => setIsSearchIconClicked(false)}
-                  className="bg-red-600 p-4 rounded text-white"
+                  className=" p-4 rounded text-gray-700"
                   size={45}
                 />
               </div>
             ) : (
-              <FaMagnifyingGlass
+              <Search
                 className="h-[50px] md:hidden"
                 size={30}
                 onClick={() => setIsSearchIconClicked(!isSearchIconClicked)}
@@ -117,7 +121,7 @@ const Header = () => {
 
       {/* Mobile Menu */}
       <div
-        className={`md:hidden fixed top-0 left-0 w-[80%] h-full bg-gray-100 transition-transform duration-300 ease-in-out ${
+        className={`md:hidden fixed top-0 left-0 w-[80%] h-full bg-white transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "-translate-x-full "
         }`}
       >
@@ -130,7 +134,7 @@ const Header = () => {
           </div>
           <div>
             <button>
-              <BsSun className=" h-[77px] " size={30} />
+              <SunDim className=" h-[77px] " size={40} />
             </button>
           </div>
           <FaX onClick={() => setIsOpen(false)} className=" h-[75px]" />
@@ -143,9 +147,15 @@ const Header = () => {
           <a href="#" onClick={() => setIsOpen(false)}>
             GUIDES
           </a>
-          <a href="#" onClick={() => setIsOpen(false)}>
-            Contact
-          </a>
+          <select
+            name=""
+            id=""
+            className="border-2 border-black rounded p-2 bg-inherit"
+          >
+            <option value="">0.3</option>
+            <option value="">0.2</option>
+            <option value="">0.1</option>
+          </select>
 
           <a
             href="https://github.com/NoshonNetworks/landver/"
