@@ -1,8 +1,12 @@
+use starknet::ContractAddress;
+use openzeppelin::token::erc721::ERC721;
+use models::ModelNFT;
+
 #[starknet::contract]
 mod LandNFT {
-    use starknet::get_caller_address;
-    use starknet::ContractAddress;
-    use openzeppelin::token::erc721::ERC721;
+    use super::ContractAddress;
+    use super::ERC721;
+    use super::ModelNFT::{LandDetails, Event};
 
     #[storage]
     struct Storage {
@@ -10,38 +14,6 @@ mod LandNFT {
         erc721: ERC721::Storage,
         land_details: LegacyMap<u256, LandDetails>,
         land_registry: ContractAddress,
-    }
-
-    #[derive(Copy, Drop, Serde, starknet::Store)]
-    struct LandDetails {
-        location: felt252,
-        area: u256,
-        land_use: felt252,
-        is_verified: bool,
-        document_hash: felt252,
-    }
-
-    #[event]
-    #[derive(Drop, starknet::Event)]
-    enum Event {
-        LandMinted: LandMinted,
-        LandDetailsUpdated: LandDetailsUpdated,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    struct LandMinted {
-        token_id: u256,
-        owner: ContractAddress,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    struct LandDetailsUpdated {
-        token_id: u256,
-        location: felt252,
-        area: u256,
-        land_use: felt252,
-        is_verified: bool,
-        document_hash: felt252,
     }
 
     #[constructor]
@@ -60,7 +32,6 @@ mod LandNFT {
         land_use: felt252,
         document_hash: felt252
     ) {
-        // Only allow minting from the LandRegistry contract
         assert(get_caller_address() == self.land_registry.read(), 'Only LandRegistry can mint');
 
         self.erc721._mint(to, token_id);
@@ -95,7 +66,6 @@ mod LandNFT {
         is_verified: bool,
         document_hash: felt252
     ) {
-        // Only allow updates from the LandRegistry contract
         assert(get_caller_address() == self.land_registry.read(), 'Only LandRegistry can update');
 
         let land_details = LandDetails {
@@ -122,5 +92,5 @@ mod LandNFT {
         self.land_details.read(token_id)
     }
 
-    // Implement other necessary ERC721 functions...
+    // Implement
 }
