@@ -1,6 +1,9 @@
 use starknet::ContractAddress;
 use openzeppelin::token::erc721::ERC721;
 use models::ModelNFT;
+use openzeppelin::introspection::src5::SRC5Component;
+use openzeppelin::token::erc721::{ERC721Component, ERC721HooksEmptyImpl};
+use starknet::ContractAddress;
 
 #[starknet::contract]
 mod LandNFT {
