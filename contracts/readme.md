@@ -1,67 +1,33 @@
-# LandVer Smart Contracts
+# Land Registry Smart Contract System
 
-This directory contains the Solidity smart contracts for the LandVer land verification system.
+This project implements a land registry system using smart contracts on the StarkNet platform.
 
-## Contracts
+## Components
 
-- `LandRegistry.sol`: Main contract for land registration and verification
+- LandNFT: Represents land parcels as non-fungible tokens (NFTs)
+- LandRegistry: Manages land registration and ownership
+- LandTransaction: Handles land transfer transactions
+- LandVerification: Manages land verification process
 
-## Prerequisites
+## Deployment Instructions
 
-- Truffle or Hardhat (for compilation and deployment)
-- An Ethereum wallet with testnet ETH (for deployment)
-
-## Compilation
-
-To compile the contracts:
-```
-truffle compile
-```
-or
-```
-npx hardhat compile
-```
-
-## Deployment
-
-1. Set up your `.env` file with your private key and Ethereum node URL:
-
+1. Install the Starknet CLI and set up your development environment.
+2. Compile the contracts:
    ```
-   PRIVATE_KEY=your_private_key_here
-   ETHEREUM_RPC_URL=your_ethereum_node_url_here
+   starknet-compile contracts/src/lib.cairo --output compiled_contracts/land_registry.sierra.json
    ```
+3. Deploy the contracts in the following order:
+   a. LandNFT
+   b. LandRegistry (pass LandNFT address as constructor argument)
+   c. LandTransaction (pass LandRegistry address as constructor argument)
+   d. LandVerification (pass LandRegistry address as constructor argument)
 
-2. Run the deployment script:
-
+   Example deployment command:
    ```
-   truffle migrate --network sepolia
+   starknet deploy --contract compiled_contracts/land_registry.sierra.json --inputs <constructor_arguments>
    ```
+4. After deployment, note down the contract addresses for future interactions.
 
-   or if using Hardhat:
+## Interacting with the Contracts
 
-   ```
-   npx hardhat run scripts/deploy.js --network sepolia
-   ```
-
-3. Note the deployed contract address and update it in the backend `.env` file.
-
-## Testing
-
-Run the test suite with:
-```
-truffle test
-```
-or
-```
-npx hardhat test
-```
-
-## Contract Functions
-
-- `registerLand`: Register a new land parcel
-- `transferLand`: Transfer ownership of a land parcel
-- `verifyLand`: Verify a land parcel's registration
-- `getLandDetails`: Get details of a registered land parcel
-- `getOwnerLands`: Get all lands owned by an address
-
-For detailed function signatures and events, refer to the contract source code.
+Use the Starknet CLI or a frontend application to interact with the deployed contracts. Ensure you're calling the correct contract functions with the required permissions.
