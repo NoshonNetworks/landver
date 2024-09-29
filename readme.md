@@ -1,35 +1,21 @@
-# Land Registry Smart Contract System
+# LandVer - Land Verification System
+
 LandVer is a decentralized protocol for land registration and verification, utilizing blockchain technology to provide a secure, transparent, and immutable system for managing land records. The protocol facilitates land transactions and ownership verification across multiple blockchains, beginning with StarkNet.
 
 While initially built on StarkNet, LandVer is designed to be cross-chain compatible, allowing land transactions and records to be securely managed across multiple blockchains. LandVer is one of the many products of Noshon Networks, which aims to bring innovation to the world of real estate.
-This project implements a land registry system using smart contracts on the StarkNet platform.
 
-## Components
+## Roadmap
+- Cross-Chain Support: Extend the protocol to support Ethereum, Binance Smart Chain, and other blockchains.
+- Advanced Land Disputes Resolution: Implement on-chain dispute resolution mechanisms.
+- Tokenized Land Ownership: Explore integration with NFTs for land tokenization.
+nd locations on a map.
 
-- LandNFT: Represents land parcels as non-fungible tokens (NFTs)
-- LandRegistry: Manages land registration and ownership
-- LandTransaction: Handles land transfer transactions
-- LandVerification: Manages land verification process
+## Project Structure
 
-## Deployment Instructions
+The project is divided into three main components:
 
-1. Install the Starknet CLI and set up your development environment.
-2. Compile the contracts:
-   ```
-   starknet-compile contracts/src/lib.cairo --output compiled_contracts/land_registry.sierra.json
-   ```
-3. Deploy the contracts in the following order:
-   a. LandNFT
-   b. LandRegistry (pass LandNFT address as constructor argument)
-   c. LandTransaction (pass LandRegistry address as constructor argument)
-   d. LandVerification (pass LandRegistry address as constructor argument)
+- `frontend/`: React-based web application
+- `backend/`: Node.js and Express-based API server
+- `contracts/`: Solidity smart contracts for the Ethereum blockchain
 
-   Example deployment command:
-   ```
-   starknet deploy --contract compiled_contracts/land_registry.sierra.json --inputs <constructor_arguments>
-   ```
-4. After deployment, note down the contract addresses for future interactions.
-
-## Interacting with the Contracts
-
-Use the Starknet CLI or a frontend application to interact with the deployed contracts. Ensure you're calling the correct contract functions with the required permissions.
+## Contributing
