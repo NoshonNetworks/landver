@@ -93,7 +93,71 @@ mod LandRegistry {
         ILandNFT::transferFrom(self.land_nft.read(), caller, new_owner, land_id);
     }
 
-    // Implement (get_land_details, get_owner_lands, etc.) 
+    #[external(v0)]
+    fn get_land_details(self: @ContractState, land_id: u256) -> Land {
+        self.lands.read(land_id)
+    }   
+
+    #[external(v0)]
+    fn get_owner_lands(self: @ContractState, owner: ContractAddress) -> Vec<u256> {
+        let mut lands = Vec::new();
+        let count = self.owner_land_count.read(owner);
+        for i in 0..count {
+            let land_id = self.owner_lands.read((owner, i));
+            lands.push(land_id);
+        }
+        lands
+    }
+
+    #[external(v0)]
+    fn get_land_count(self: @ContractState) -> u256 {
+        self.owner_land_count.read(get_caller_address())
+    }   
+
+    #[external(v0)]
+    fn get_land_count_for_owner(self: @ContractState, owner: ContractAddress) -> u256 {
+        self.owner_land_count.read(owner)
+    }
+
+    #[external(v0)]
+    fn get_land_owner(self: @ContractState, land_id: u256) -> ContractAddress {
+        self.lands.read(land_id).owner
+    }
+
+    #[external(v0)]
+    fn get_land_location(self: @ContractState, land_id: u256) -> felt252 {
+        self.lands.read(land_id).location
+    }       
+
+    #[external(v0)]
+    fn get_land_area(self: @ContractState, land_id: u256) -> u256 {
+        self.lands.read(land_id).area
+    }
+
+    #[external(v0)]
+    fn get_land_land_use(self: @ContractState, land_id: u256) -> felt252 {
+        self.lands.read(land_id).land_use
+    }
+
+    #[external(v0)]
+    fn get_land_is_registered(self: @ContractState, land_id: u256) -> bool {
+        self.lands.read(land_id).is_registered
+    }
+
+    #[external(v0)]
+    fn get_land_is_verified(self: @ContractState, land_id: u256) -> bool {
+        self.lands.read(land_id).is_verified
+    }
+
+    #[external(v0)]
+    fn get_land_document_hash(self: @ContractState, land_id: u256) -> felt252 {
+        self.lands.read(land_id).document_hash
+    }
+
+    #[external(v0)]
+    fn get_land_last_transaction_timestamp(self: @ContractState, land_id: u256) -> u64 {
+        self.lands.read(land_id).last_transaction_timestamp
+    }
 }
 
 #[starknet::interface]
