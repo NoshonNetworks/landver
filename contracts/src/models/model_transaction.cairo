@@ -33,6 +33,7 @@ mod ModelLandTransaction {
     #[storage]
     struct Storage {
         transactions: LegacyMap<u256, Transaction>,
+        transaction_count: u256,
+        land_registry: ContractAddress,
     }
-
 }
