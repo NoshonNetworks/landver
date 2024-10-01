@@ -11,14 +11,6 @@ mod LandNFT {
     use super::ERC721;
     use super::ModelNFT::{LandDetails, Event};
 
-    #[storage]
-    struct Storage {
-        #[substorage(v0)]
-        erc721: ERC721::Storage,
-        land_details: LegacyMap<u256, LandDetails>,
-        land_registry: ContractAddress,
-    }
-
     #[constructor]
     fn constructor(ref self: ContractState, name: felt252, symbol: felt252, land_registry: ContractAddress) {
         self.erc721.initializer(name, symbol);

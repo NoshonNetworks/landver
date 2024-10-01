@@ -6,14 +6,6 @@ mod LandRegistry {
     use super::ContractAddress;
     use super::ModelLandRegistry::{Land, Event};
 
-    #[storage]
-    struct Storage {
-        lands: LegacyMap<u256, Land>,
-        owner_lands: LegacyMap<(ContractAddress, u256), u256>,
-        owner_land_count: LegacyMap<ContractAddress, u256>,
-        land_nft: ContractAddress,
-    }
-
     #[constructor]
     fn constructor(ref self: ContractState, land_nft: ContractAddress) {
         self.land_nft.write(land_nft);
@@ -160,16 +152,16 @@ mod LandRegistry {
     }
 }
 
-#[starknet::interface]
-trait ILandNFT {
-    fn mint_land(
-        ref self: ContractState,
-        to: ContractAddress,
-        token_id: u256,
-        location: felt252,
-        area: u256,
-        land_use: felt252,
-        document_hash: felt252
-    );
-    fn transferFrom(ref self: ContractState, from: ContractAddress, to: ContractAddress, token_id: u256);
-}
+// #[starknet::interface]
+// trait ILandNFT {
+//     fn mint_land(
+//         ref self: ContractState,
+//         to: ContractAddress,
+//         token_id: u256,
+//         location: felt252,
+//         area: u256,
+//         land_use: felt252,
+//         document_hash: felt252
+//     );
+//     fn transferFrom(ref self: ContractState, from: ContractAddress, to: ContractAddress, token_id: u256);
+// }

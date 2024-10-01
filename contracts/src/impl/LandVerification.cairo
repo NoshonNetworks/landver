@@ -3,12 +3,7 @@ mod LandVerification {
     use starknet::get_caller_address;
     use starknet::ContractAddress;
     use super::LandRegistry;
-
-    #[storage]
-    struct Storage {
-        land_registry: ContractAddress,
-        verifiers: LegacyMap<ContractAddress, bool>,
-    }
+    use super::ILandRegistry;
 
     #[constructor]
     fn constructor(ref self: ContractState, land_registry: ContractAddress) {
@@ -32,7 +27,4 @@ mod LandVerification {
     // Implement (reject_land_verification, get_land_verification_status, etc.)
 }
 
-#[starknet::interface]
-trait ILandRegistry {
-    fn verify_land(ref self: ContractState, land_id: u256, verifier: ContractAddress);
-}
+

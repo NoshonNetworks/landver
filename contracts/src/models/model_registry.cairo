@@ -51,5 +51,14 @@ mod ModelLandRegistry {
         lands: LegacyMap<u256, Land>,
         owner_lands: LegacyMap<(ContractAddress, u256), u256>,
         owner_land_count: LegacyMap<ContractAddress, u256>,
+        land_nft: ContractAddress,
+    }
+
+    #[storage]
+    struct LandDetails {
+        owner: ContractAddress,
+        area: u256,
+        location: felt252,
+        status: felt252,
     }
 }

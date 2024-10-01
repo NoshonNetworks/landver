@@ -4,13 +4,6 @@ use models::ModelLandTransaction;
 #[starknet::contract]
 mod LandTransaction {
 
-    #[storage]
-    struct Storage {
-        transactions: LegacyMap<u256, Transaction>,
-        transaction_count: u256,
-        land_registry: ContractAddress,
-    }
-
     #[constructor]
     fn constructor(ref self: ContractState, land_registry: ContractAddress) {
         self.land_registry.write(land_registry);
