@@ -2,7 +2,7 @@ use starknet::ContractAddress;
 use models::ModelLandRegistry;
 
 #[starknet::contract]
-mod LandRegistry {
+pub mod LandRegistry {
     use super::ContractAddress;
     use super::ModelLandRegistry::{Land, Event};
 
@@ -18,8 +18,7 @@ mod LandRegistry {
         location: felt252,
         area: u256,
         land_use: felt252,
-        document_hash: felt252
-    ) {
+    ) -> LandDetails {
         let caller = get_caller_address();
         let new_land = Land {
             owner: caller,
@@ -28,33 +27,30 @@ mod LandRegistry {
             land_use: land_use,
             is_registered: true,
             is_verified: false,
-            document_hash: document_hash,
             last_transaction_timestamp: get_block_timestamp(),
         };
         self.lands.write(land_id, new_land);
-        
+
         let count = self.owner_land_count.read(caller);
         self.owner_lands.write((caller, count), land_id);
         self.owner_land_count.write(caller, count + 1);
 
-        self.emit(Event::LandRegistered(LandRegistered {
-            land_id: land_id,
-            owner: caller,
-            location: location,
-            area: area,
-            land_use: land_use,
-            document_hash: document_hash,
-        }));
+        self
+            .emit(
+                Event::LandRegistered(
+                    LandRegistered {
+                        land_id: land_id,
+                        owner: caller,
+                        location: location,
+                        area: area,
+                        land_use: land_use,
+                    }
+                )
+            );
 
         // Mint NFT
         ILandNFT::mint_land(
-            self.land_nft.read(),
-            caller,
-            land_id,
-            location,
-            area,
-            land_use,
-            document_hash
+            self.land_nft.read(), caller, land_id, location, area, land_use, document_hash
         );
     }
 
@@ -75,11 +71,12 @@ mod LandRegistry {
         self.owner_land_count.write(new_owner, to_count + 1);
         self.owner_land_count.write(caller, from_count - 1);
 
-        self.emit(Event::LandTransferred(LandTransferred {
-            land_id: land_id,
-            from_owner: caller,
-            to_owner: new_owner,
-        }));
+        self
+            .emit(
+                Event::LandTransferred(
+                    LandTransferred { land_id: land_id, from_owner: caller, to_owner: new_owner, }
+                )
+            );
 
         // Transfer NFT
         ILandNFT::transferFrom(self.land_nft.read(), caller, new_owner, land_id);
@@ -88,7 +85,7 @@ mod LandRegistry {
     #[external(v0)]
     fn get_land_details(self: @ContractState, land_id: u256) -> Land {
         self.lands.read(land_id)
-    }   
+    }
 
     #[external(v0)]
     fn get_owner_lands(self: @ContractState, owner: ContractAddress) -> Vec<u256> {
@@ -104,7 +101,7 @@ mod LandRegistry {
     #[external(v0)]
     fn get_land_count(self: @ContractState) -> u256 {
         self.owner_land_count.read(get_caller_address())
-    }   
+    }
 
     #[external(v0)]
     fn get_land_count_for_owner(self: @ContractState, owner: ContractAddress) -> u256 {
@@ -119,7 +116,7 @@ mod LandRegistry {
     #[external(v0)]
     fn get_land_location(self: @ContractState, land_id: u256) -> felt252 {
         self.lands.read(land_id).location
-    }       
+    }
 
     #[external(v0)]
     fn get_land_area(self: @ContractState, land_id: u256) -> u256 {
@@ -151,7 +148,6 @@ mod LandRegistry {
         self.lands.read(land_id).last_transaction_timestamp
     }
 }
-
 // #[starknet::interface]
 // trait ILandNFT {
 //     fn mint_land(
@@ -163,5 +159,7 @@ mod LandRegistry {
 //         land_use: felt252,
 //         document_hash: felt252
 //     );
-//     fn transferFrom(ref self: ContractState, from: ContractAddress, to: ContractAddress, token_id: u256);
+//     fn transferFrom(ref self: ContractState, from: ContractAddress, to: ContractAddress,
+//     token_id: u256);
 // }
+

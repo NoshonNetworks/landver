@@ -1,5 +1,5 @@
 #[starknet::interface]
-pub  trait ILandVerifier {
+pub trait ILandVerifier {
     // Function signature for land verification
     fn verify_land(self: @ContractState, land_id: u256, verifier: ContractAddress);
 
@@ -18,6 +18,4 @@ pub  trait ILandVerifier {
     // Function signature for getting the reason for land verification
     fn get_land_verification_reason(self: @ContractState, land_id: u256) -> felt252;
 }
-
-
 
