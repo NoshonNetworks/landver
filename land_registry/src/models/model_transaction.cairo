@@ -1,4 +1,3 @@
-#[starknet::contract]
 mod ModelLandTransaction {
     use starknet::get_caller_address;
     use starknet::ContractAddress;

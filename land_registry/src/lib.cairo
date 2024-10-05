@@ -1,4 +1,4 @@
-mod impl {
+mod contracts {
     mod LandNFT;
     mod LandRegistry;
     mod LandTransaction;

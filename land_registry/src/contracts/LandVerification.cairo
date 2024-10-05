@@ -23,8 +23,6 @@ mod LandVerification {
 
         ILandRegistry::verify_land(self.land_registry.read(), land_id, caller);
     }
-
     // Implement (reject_land_verification, get_land_verification_status, etc.)
 }
-
 

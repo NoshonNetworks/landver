@@ -12,7 +12,9 @@ mod LandNFT {
     use super::ModelNFT::{LandDetails, Event};
 
     #[constructor]
-    fn constructor(ref self: ContractState, name: felt252, symbol: felt252, land_registry: ContractAddress) {
+    fn constructor(
+        ref self: ContractState, name: felt252, symbol: felt252, land_registry: ContractAddress
+    ) {
         self.erc721.initializer(name, symbol);
         self.land_registry.write(land_registry);
     }
@@ -30,7 +32,7 @@ mod LandNFT {
         assert(get_caller_address() == self.land_registry.read(), 'Only LandRegistry can mint');
 
         self.erc721._mint(to, token_id);
-        
+
         let land_details = LandDetails {
             location: location,
             area: area,
@@ -41,14 +43,19 @@ mod LandNFT {
         self.land_details.write(token_id, land_details);
 
         self.emit(Event::LandMinted(LandMinted { token_id: token_id, owner: to }));
-        self.emit(Event::LandDetailsUpdated(LandDetailsUpdated {
-            token_id: token_id,
-            location: location,
-            area: area,
-            land_use: land_use,
-            is_verified: false,
-            document_hash: document_hash,
-        }));
+        self
+            .emit(
+                Event::LandDetailsUpdated(
+                    LandDetailsUpdated {
+                        token_id: token_id,
+                        location: location,
+                        area: area,
+                        land_use: land_use,
+                        is_verified: false,
+                        document_hash: document_hash,
+                    }
+                )
+            );
     }
 
     #[external(v0)]
@@ -72,20 +79,24 @@ mod LandNFT {
         };
         self.land_details.write(token_id, land_details);
 
-        self.emit(Event::LandDetailsUpdated(LandDetailsUpdated {
-            token_id: token_id,
-            location: location,
-            area: area,
-            land_use: land_use,
-            is_verified: is_verified,
-            document_hash: document_hash,
-        }));
+        self
+            .emit(
+                Event::LandDetailsUpdated(
+                    LandDetailsUpdated {
+                        token_id: token_id,
+                        location: location,
+                        area: area,
+                        land_use: land_use,
+                        is_verified: is_verified,
+                        document_hash: document_hash,
+                    }
+                )
+            );
     }
 
     #[external(v0)]
     fn get_land_details(self: @ContractState, token_id: u256) -> LandDetails {
         self.land_details.read(token_id)
     }
-
     // Implement
 }

@@ -13,7 +13,9 @@ mod LandInspector {
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState, land_registry: ContractAddress, initial_inspector: ContractAddress) {
+    fn constructor(
+        ref self: ContractState, land_registry: ContractAddress, initial_inspector: ContractAddress
+    ) {
         self.land_registry.write(land_registry);
         self.inspectors.write(initial_inspector, true);
     }

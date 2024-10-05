@@ -3,7 +3,6 @@ use models::ModelLandTransaction;
 
 #[starknet::contract]
 mod LandTransaction {
-
     #[constructor]
     fn constructor(ref self: ContractState, land_registry: ContractAddress) {
         self.land_registry.write(land_registry);
@@ -17,7 +16,10 @@ mod LandTransaction {
         to_owner: ContractAddress,
         transaction_type: u8
     ) -> u256 {
-        assert(get_caller_address() == self.land_registry.read(), 'Only LandRegistry can create transactions');
+        assert(
+            get_caller_address() == self.land_registry.read(),
+            'Only LandRegistry can create transactions'
+        );
 
         let transaction_id = self.transaction_count.read() + 1;
         self.transaction_count.write(transaction_id);
@@ -33,13 +35,18 @@ mod LandTransaction {
         };
         self.transactions.write(transaction_id, transaction);
 
-        self.emit(Event::TransactionCreated(TransactionCreated {
-            transaction_id: transaction_id,
-            land_id: land_id,
-            from_owner: from_owner,
-            to_owner: to_owner,
-            transaction_type: transaction_type,
-        }));
+        self
+            .emit(
+                Event::TransactionCreated(
+                    TransactionCreated {
+                        transaction_id: transaction_id,
+                        land_id: land_id,
+                        from_owner: from_owner,
+                        to_owner: to_owner,
+                        transaction_type: transaction_type,
+                    }
+                )
+            );
 
         transaction_id
     }
@@ -55,7 +62,9 @@ mod LandTransaction {
         self.transactions.write(transaction_id, transaction);
 
         // Call LandRegistry to transfer the land
-        ILandRegistry::transfer_land(self.land_registry.read(), transaction.land_id, transaction.to_owner);
+        ILandRegistry::transfer_land(
+            self.land_registry.read(), transaction.land_id, transaction.to_owner
+        );
     }
 
     #[external(v0)]
@@ -86,7 +95,7 @@ mod LandTransaction {
     #[external(v0)]
     fn get_transaction_completion_date(self: @ContractState, transaction_id: u256) -> u64 {
         return self.transactions.read(transaction_id).completion_date;
-    }       
+    }
 
     #[external(v0)]
     fn get_transaction_type(self: @ContractState, transaction_id: u256) -> u8 {
@@ -96,7 +105,7 @@ mod LandTransaction {
     #[external(v0)]
     fn get_transaction_from_owner(self: @ContractState, transaction_id: u256) -> ContractAddress {
         return self.transactions.read(transaction_id).from_owner;
-    }   
+    }
 
     #[external(v0)]
     fn get_transaction_to_owner(self: @ContractState, transaction_id: u256) -> ContractAddress {
