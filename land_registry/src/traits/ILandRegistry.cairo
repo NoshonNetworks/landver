@@ -1,3 +1,4 @@
+use core::starknet::ContractAddress;
 #[starknet::interface]
 trait ILandRegistry<TContractState> {
     fn verify_land(self: @TContractState, land_id: u256, verifier: ContractAddress);

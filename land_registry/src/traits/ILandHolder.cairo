@@ -1,3 +1,4 @@
+use core::starknet::ContractAddress;
 #[starknet::interface]
 pub trait ILandHolder <TContractState>{
     fn get_registered_land(

@@ -1,3 +1,4 @@
+use core::starknet::ContractAddress;
 #[starknet::interface]
 pub trait ILandVerifier {
     // Function signature for land verification

@@ -1,7 +1,7 @@
 #[starknet::contract]
 mod LandInspector {
     use super::{ILandInspector, LandDetails, ContractAddress, ArrayTrait};
-    use starknet::get_caller_address;
+    use core::starknet::get_caller_address;
 
     #[storage]
     struct Storage {
