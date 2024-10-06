@@ -1,6 +1,6 @@
 # LandVer - Land Verification System
 
-LandVer is a decentralized protocol for land registration and verification, utilizing blockchain technology to provide a secure, transparent, and immutable system for managing land records. The protocol facilitates land transactions and ownership verification across multiple blockchains, beginning with StarkNet.
+LandVer is a decentralized land registration and verification protocol, utilizing blockchain technology to provide a secure, transparent, and immutable system for managing land records. The protocol facilitates land transactions and ownership verification across multiple blockchains, beginning with StarkNet.
 
 While initially built on StarkNet, LandVer is designed to be cross-chain compatible, allowing land transactions and records to be securely managed across multiple blockchains. LandVer is one of the many products of Noshon Networks, which aims to bring innovation to the world of real estate.
 
@@ -12,10 +12,30 @@ nd locations on a map.
 
 ## Project Structure
 
-The project is divided into three main components:
+The project is divided into the following components:
 
-- `frontend/`: React-based web application
 - `backend/`: Node.js and Express-based API server
-- `contracts/`: Solidity smart contracts for the Ethereum blockchain
+- `docs/`: Documentation for the project, including setup guides and API references
+- `frontend/`: React-based web application
+- `land_registry/`: Land registry contract
+- `public/`: Public assets and resources
+- `scripts/`: JavaScript tools for automation and utility tasks
+- `sdk/`: JavaScript for interacting with the smart contracts and API
 
-## Contributing
+## Contributors
+
+<a href="https://github.com/NoshonNetworks/landver/graphs/contributors"> 
+<img src="https://contrib.rocks/image?repo=NoshonNetworks/landver" alt="contrib.rocks image" />
+</a>
+
+
+## License
+
+This project is licensed under the MIT License. See `LICENSE.txt` for more information.
+
+## Contact
+
+X-profile - [@Landver](https://x.com/landver0) - 
+
+Github: [Landver](https://github.com/NoshonNetworks/landver) 
+
