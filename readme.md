@@ -17,14 +17,12 @@ The project is divided into the following components:
 - `backend/`: Node.js and Express-based API server
 - `docs/`: Documentation for the project, including setup guides and API references
 - `frontend/`: React-based web application
-- `contracts/`: Solidity smart contracts for the Ethereum blockchain
-- `land_registry/`: Module for managing land registry data 
+- `land_registry/`: Land registry contract
 - `public/`: Public assets and resources
 - `scripts/`: JavaScript tools for automation and utility tasks
 - `sdk/`: JavaScript for interacting with the smart contracts and API
-- `README/`: Project overview
 
-## Contributing
+## Contributors
 
 <a href="https://github.com/NoshonNetworks/landver/graphs/contributors"> 
 <img src="https://contrib.rocks/image?repo=NoshonNetworks/landver" alt="contrib.rocks image" />
