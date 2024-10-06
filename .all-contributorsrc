@@ -1,15 +1,26 @@
 {
-  "projectName": "landver",
-  "projectOwner": "NoshonNetworks",
-  "repoType": "github",
-  "repoHost": "https://github.com",
   "files": [
     "README.md"
   ],
   "imageSize": 100,
-  "commit": true,
+  "commit": false,
+  "commitType": "docs",
   "commitConvention": "angular",
-  "contributors": [],
+  "contributors": [
+    {
+      "login": "fishonamos",
+      "name": "Fishon Amos",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43862685?v=4",
+      "profile": "https://fishonsnote.medium.com/",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
   "contributorsPerLine": 7,
-  "linkToUsage": false
+  "skipCi": true,
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "projectName": "landver",
+  "projectOwner": "NoshonNetworks"
 }
