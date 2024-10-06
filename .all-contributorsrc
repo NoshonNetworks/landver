@@ -3,7 +3,7 @@
     "README.md"
   ],
   "imageSize": 100,
-  "commit": false,
+  "commit": true,
   "commitType": "docs",
   "commitConvention": "angular",
   "contributors": [
@@ -12,6 +12,15 @@
       "name": "Fishon Amos",
       "avatar_url": "https://avatars.githubusercontent.com/u/43862685?v=4",
       "profile": "https://fishonsnote.medium.com/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Solomonsolomonsolomon",
+      "name": "Solomonsolomonsolomon",
+      "avatar_url": "https://avatars.githubusercontent.com/u/103282647?v=4",
+      "profile": "https://github.com/Solomonsolomonsolomon",
       "contributions": [
         "code"
       ]
