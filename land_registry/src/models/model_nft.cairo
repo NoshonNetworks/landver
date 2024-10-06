@@ -4,6 +4,7 @@ mod ModelNFT {
     use openzeppelin::utils::contract_address::ContractAddress;
     use openzeppelin::utils::felt252::felt252;
     use openzeppelin::utils::u256::u256;
+    use core::starknet::ContractAddress;
 
     #[storage]
     struct Storage {
@@ -19,20 +20,15 @@ mod ModelNFT {
         area: u256,
         land_use: felt252,
         is_verified: bool,
-        document_hash: felt252, // 32 bytes
+        document_hash: felt252,
     }
 
-    #[event]
-    #[derive(Drop, starknet::Event)]
-    enum Event {
-        LandMinted: LandMinted,
-        LandDetailsUpdated: LandDetailsUpdated,
-    }
+ 
 
     #[derive(Drop, starknet::Event)]
     struct LandMinted {
         token_id: u256,
-        owner: ContractAddress, // 25 bytes
+        owner: ContractAddress,
     }
 
     #[derive(Drop, starknet::Event)]

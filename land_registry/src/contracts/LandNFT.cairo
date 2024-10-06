@@ -1,15 +1,12 @@
-use starknet::ContractAddress;
-use openzeppelin::token::erc721::ERC721;
-use models::ModelNFT;
-use openzeppelin::introspection::src5::SRC5Component;
-use openzeppelin::token::erc721::{ERC721Component, ERC721HooksEmptyImpl};
-use starknet::ContractAddress;
-
 #[starknet::contract]
 mod LandNFT {
     use super::ContractAddress;
     use super::ERC721;
-    use super::ModelNFT::{LandDetails, Event};
+use super::ModelNFT::{LandDetails, Event};
+    use models::ModelNFT;
+    use openzeppelin::introspection::src5::SRC5Component;
+    use openzeppelin::token::erc721::{ERC721Component, ERC721HooksEmptyImpl};
+    use starknet::ContractAddress;
 
     #[constructor]
     fn constructor(
@@ -27,7 +24,6 @@ mod LandNFT {
         location: felt252,
         area: u256,
         land_use: felt252,
-        document_hash: felt252
     ) {
         assert(get_caller_address() == self.land_registry.read(), 'Only LandRegistry can mint');
 
@@ -43,6 +39,11 @@ mod LandNFT {
         self.land_details.write(token_id, land_details);
 
         self.emit(Event::LandMinted(LandMinted { token_id: token_id, owner: to }));
+
+
+
+        let land_details = LandDetails {
+
         self
             .emit(
                 Event::LandDetailsUpdated(

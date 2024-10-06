@@ -1,4 +1,4 @@
-use starknet::ContractAddress;
+use core::starknet::ContractAddress;
 use models::ModelLandRegistry;
 
 #[starknet::contract]

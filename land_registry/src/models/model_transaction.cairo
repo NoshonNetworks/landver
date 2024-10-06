@@ -1,8 +1,8 @@
 mod ModelLandTransaction {
-    use starknet::get_caller_address;
-    use starknet::ContractAddress;
+    use core::starknet::get_caller_address;
+    use core::starknet::ContractAddress;
     use super::LandRegistry;
-
+    
     #[event]
     #[derive(Drop, starknet::Event)]
     enum Event {

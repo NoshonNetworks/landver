@@ -1,7 +1,7 @@
 #[starknet::contract]
 mod LandHolder {
     use super::{ILandHolder, LandRegistered, ContractAddress};
-    use starknet::get_caller_address;
+    use core::starknet::get_caller_address;
 
     #[storage]
     struct Storage {
