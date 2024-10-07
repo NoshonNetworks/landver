@@ -1,6 +1,6 @@
 # LandVer - Land Verification System
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 LandVer is a decentralized land registration and verification protocol, utilizing blockchain technology to provide a secure, transparent, and immutable system for managing land records. The protocol facilitates land transactions and ownership verification across multiple blockchains, beginning with StarkNet.
@@ -19,13 +19,25 @@ The project is divided into the following components:
 
 - `backend/`: Node.js and Express-based API server
 - `docs/`: Documentation for the project, including setup guides and API references
-- `frontend/`: React-based web application
+- `examples/`: React-based web application
 - `land_registry/`: Land registry contract
 - `public/`: Public assets and resources
 - `scripts/`: JavaScript tools for automation and utility tasks
 - `sdk/`: JavaScript for interacting with the smart contracts and API
 
 ## Contributors
+
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+
+
+[![All Contributors](https://img.shields.io/github/all-contributors/NoshonNetworks/landver?color=ee8449&style=flat-square)](#contributors)
 
 <a href="https://github.com/NoshonNetworks/landver/graphs/contributors"> 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
@@ -35,7 +47,6 @@ The project is divided into the following components:
   <tbody>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://fishonsnote.medium.com/"><img src="https://avatars.githubusercontent.com/u/43862685?v=4?s=100" width="100px;" alt="Fishon Amos"/><br /><sub><b>Fishon Amos</b></sub></a><br /><a href="https://github.com/NoshonNetworks/landver/commits?author=fishonamos" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Solomonsolomonsolomon"><img src="https://avatars.githubusercontent.com/u/103282647?v=4?s=100" width="100px;" alt="Solomonsolomonsolomon"/><br /><sub><b>Solomonsolomonsolomon</b></sub></a><br /><a href="https://github.com/NoshonNetworks/landver/commits?author=Solomonsolomonsolomon" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
@@ -44,7 +55,6 @@ The project is divided into the following components:
 <!-- prettier-ignore-end -->
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
-<img src="https://contrib.rocks/image?repo=NoshonNetworks/landver" alt="contrib.rocks image" />
 </a>
 
 
