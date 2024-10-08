@@ -1,174 +1,126 @@
-#[starknet::contract]
-mod LandRegistry {
-    use super::ContractAddress;
-    use super::ModelLandRegistry::{Land, Event};
-    use super::ILandNFT;
+use starknet::ContractAddress;
 
-    #[storage]
-    struct Storage {
-        lands: LegacyMap<u256, Land>,
-        owner_lands: LegacyMap<ContractAddress, Array<u256>>,
-        owner_land_count: LegacyMap<ContractAddress, u256>,
-        land_nft: ContractAddress,
-    }
-
-    #[constructor]
-    fn constructor(ref self: ContractState, land_nft: ContractAddress) {
-        self.land_nft.write(land_nft);
-    }
-
-    #[external(v0)]
+#[starknet::interface]
+trait ILandRegistry<TContractState> {
     fn register_land(
-        ref self: ContractState,
-        land_id: u256,
+        ref self: TContractState,
+        owner: ContractAddress,
         location: felt252,
         area: u256,
         land_use: felt252,
         document_hash: felt252
-    ) -> Land {
-        let caller = get_caller_address();
-        let new_land = Land {
-            owner: caller,
-            location: location,
-            area: area,
-            land_use: land_use,
-            is_registered: true,
-            is_verified: false,
-            last_transaction_timestamp: get_block_timestamp(),
-        };
-        self.lands.write(land_id, new_land);
+    ) -> u256;
+    fn transfer_land(ref self: TContractState, land_id: u256, new_owner: ContractAddress);
+    fn verify_land(ref self: TContractState, land_id: u256, verifier: ContractAddress);
+    fn get_land_details(self: @TContractState, land_id: u256) -> Land;
+    fn get_owner_lands(self: @TContractState, owner: ContractAddress) -> Array<u256>;
+}
 
-        let count = self.owner_land_count.read(caller);
-        self.owner_lands.write((caller, count), land_id);
-        self.owner_land_count.write(caller, count + 1);
+#[derive(Drop, Serde, starknet::Store)]
+struct Land {
+    owner: ContractAddress,
+    location: felt252,
+    area: u256,
+    land_use: felt252,
+    is_verified: bool,
+    last_transaction_timestamp: u64,
+    document_hash: felt252,
+}
 
-        self.emit(Event::LandRegistered(LandRegistered {
-            land_id: land_id,
-            owner: caller,
-            location: location,
-            area: area,
-            land_use: land_use,
-        }));
+#[starknet::contract]
+mod LandRegistry {
+    use super::{ILandRegistry, Land, ContractAddress};
+    use starknet::{get_caller_address, get_block_timestamp};
+    use land_registry::contracts::LandNFT::{ILandNFTDispatcher, ILandNFTDispatcherTrait};
 
-        // Mint NFT
-        ILandNFT::mint_land(
-            self.land_nft.read(),
-            caller,
-            land_id,
-            location,
-            area,
-            land_use,
-            document_hash
-        );
+    #[storage]
+    struct Storage {
+        land_nft: ILandNFTDispatcher,
+        verifiers: LegacyMap<ContractAddress, bool>,
+        next_land_id: u256,
+    }
 
-        new_land
+    #[event]
+    #[derive(Drop, starknet::Event)]
+    enum Event {
+        LandRegistered: LandRegistered,
+        LandTransferred: LandTransferred,
+        LandVerified: LandVerified,
+    }
+
+    #[derive(Drop, starknet::Event)]
+    struct LandRegistered {
+        land_id: u256,
+        owner: ContractAddress,
+        location: felt252,
+        area: u256,
+        land_use: felt252,
+    }
+
+    #[derive(Drop, starknet::Event)]
+    struct LandTransferred {
+        land_id: u256,
+        from_owner: ContractAddress,
+        to_owner: ContractAddress,
+    }
+
+    #[derive(Drop, starknet::Event)]
+    struct LandVerified {
+        land_id: u256,
+        verifier: ContractAddress,
+    }
+
+    #[constructor]
+    fn constructor(ref self: ContractState, initial_verifier: ContractAddress, land_nft_address: ContractAddress) {
+        self.verifiers.write(initial_verifier, true);
+        self.land_nft.write(ILandNFTDispatcher { contract_address: land_nft_address });
+        self.next_land_id.write(1);
     }
 
     #[external(v0)]
-    fn transfer_land(ref self: ContractState, land_id: u256, new_owner: ContractAddress) {
-        let caller = get_caller_address();
-        let mut land = self.lands.read(land_id);
-        assert(land.owner == caller, 'Only the current owner can transfer the land');
-        assert(land.is_registered, 'Land is not registered');
-        land.owner = new_owner;
-        land.last_transaction_timestamp = get_block_timestamp();
-        self.lands.write(land_id, land);
+    impl LandRegistryImpl of ILandRegistry<ContractState> {
+        fn register_land(
+            ref self: ContractState,
+            owner: ContractAddress,
+            location: felt252,
+            area: u256,
+            land_use: felt252,
+            document_hash: felt252
+        ) -> u256 {
+            let land_id = self.next_land_id.read();
+            self.next_land_id.write(land_id + 1);
 
-        // Update owner_lands and owner_land_count
-        let from_count = self.owner_land_count.read(caller);
-        let to_count = self.owner_land_count.read(new_owner);
-        self.owner_lands.write((new_owner, to_count), land_id);
-        self.owner_land_count.write(new_owner, to_count + 1);
-        self.owner_land_count.write(caller, from_count - 1);
+            self.land_nft.read().mint_land(owner, land_id, location, area, land_use, document_hash);
 
-        self.emit(Event::LandTransferred(LandTransferred {
-            land_id: land_id,
-            from_owner: caller,
-            to_owner: new_owner,
-        }));
+            self.emit(LandRegistered { land_id, owner, location, area, land_use });
 
-        // Transfer NFT
-        ILandNFT::transfer_from(self.land_nft.read(), caller, new_owner, land_id);
-    }
-    
-    #[external(v0)]
-    fn get_land_details(self: @ContractState, land_id: u256) -> Land {
-        self.lands.read(land_id)
-    }
-
-    #[external(v0)]
-    fn get_owner_lands(self: @ContractState, owner: ContractAddress) -> Vec<u256> {
-        let mut lands = Vec::new();
-        let count = self.owner_land_count.read(owner);
-        for i in 0..count {
-            let land_id = self.owner_lands.read((owner, i));
-            lands.push(land_id);
+            land_id
         }
-        lands
-    }
 
-    #[external(v0)]
-    fn get_land_count(self: @ContractState) -> u256 {
-        self.owner_land_count.read(get_caller_address())
-    }
+        fn transfer_land(ref self: ContractState, land_id: u256, new_owner: ContractAddress) {
+            let caller = get_caller_address();
+            let current_owner = self.land_nft.read().owner_of(land_id);
+            assert(current_owner == caller, 'Only the current owner can transfer');
 
-    #[external(v0)]
-    fn get_land_count_for_owner(self: @ContractState, owner: ContractAddress) -> u256 {
-        self.owner_land_count.read(owner)
-    }
+            self.land_nft.read().transfer_from(caller, new_owner, land_id);
 
-    #[external(v0)]
-    fn get_land_owner(self: @ContractState, land_id: u256) -> ContractAddress {
-        self.lands.read(land_id).owner
-    }
+            self.emit(LandTransferred { land_id, from_owner: caller, to_owner: new_owner });
+        }
 
-    #[external(v0)]
-    fn get_land_location(self: @ContractState, land_id: u256) -> felt252 {
-        self.lands.read(land_id).location
-    }
+        fn verify_land(ref self: ContractState, land_id: u256, verifier: ContractAddress) {
+            assert(self.verifiers.read(verifier), 'Not an authorized verifier');
+            
+            self.land_nft.read().verify_land(land_id, verifier);
 
-    #[external(v0)]
-    fn get_land_area(self: @ContractState, land_id: u256) -> u256 {
-        self.lands.read(land_id).area
-    }
+            self.emit(LandVerified { land_id, verifier });
+        }
 
-    #[external(v0)]
-    fn get_land_land_use(self: @ContractState, land_id: u256) -> felt252 {
-        self.lands.read(land_id).land_use
-    }
+        fn get_land_details(self: @ContractState, land_id: u256) -> Land {
+            self.land_nft.read().get_land_details(land_id)
+        }
 
-    #[external(v0)]
-    fn get_land_is_registered(self: @ContractState, land_id: u256) -> bool {
-        self.lands.read(land_id).is_registered
-    }
-
-    #[external(v0)]
-    fn get_land_is_verified(self: @ContractState, land_id: u256) -> bool {
-        self.lands.read(land_id).is_verified
-    }
-
-    #[external(v0)]
-    fn get_land_document_hash(self: @ContractState, land_id: u256) -> felt252 {
-        self.lands.read(land_id).document_hash
-    }
-
-    #[external(v0)]
-    fn get_land_last_transaction_timestamp(self: @ContractState, land_id: u256) -> u64 {
-        self.lands.read(land_id).last_transaction_timestamp
+        fn get_owner_lands(self: @ContractState, owner: ContractAddress) -> Array<u256> {
+            self.land_nft.read().get_owner_lands(owner)
+        }
     }
 }
-// #[starknet::interface]
-// trait ILandNFT {
-//     fn mint_land(
-//         ref self: ContractState,
-//         to: ContractAddress,
-//         token_id: u256,
-//         location: felt252,
-//         area: u256,
-//         land_use: felt252,
-//         document_hash: felt252
-//     );
-//     fn transferFrom(ref self: ContractState, from: ContractAddress, to: ContractAddress,
-//     token_id: u256);
-// }
-

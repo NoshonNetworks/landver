@@ -5,12 +5,12 @@ mod LandHolder {
 
     #[storage]
     struct Storage {
-        lands: LegacyMap<u256, LandRegistered>,
-        owner_lands: LegacyMap<ContractAddress, Array<u256>>,
+        lands: Map<u256, LandRegistered>,
+        owner_lands: Map<ContractAddress, Array<u256>>,
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState) {// Initialize any necessary state
+    fn constructor(ref self: ContractState) { // Initialize any necessary state
     }
 
     #[external(v0)]

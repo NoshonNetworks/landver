@@ -2,7 +2,7 @@ mod ModelLandTransaction {
     use core::starknet::get_caller_address;
     use core::starknet::ContractAddress;
     use super::LandRegistry;
-    
+
     #[event]
     #[derive(Drop, starknet::Event)]
     enum Event {
@@ -31,7 +31,7 @@ mod ModelLandTransaction {
 
     #[storage]
     struct Storage {
-        transactions: LegacyMap<u256, Transaction>,
+        transactions: Map<u256, Transaction>,
         transaction_count: u256,
         land_registry: ContractAddress,
     }

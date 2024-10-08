@@ -2,14 +2,18 @@
 mod LandInspector {
     use super::{ILandInspector, LandDetails, ContractAddress, ArrayTrait};
     use core::starknet::get_caller_address;
+    use starknet::storage::{
+        StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map
+    };
+
 
     #[storage]
     struct Storage {
         land_registry: ContractAddress,
-        inspectors: LegacyMap<ContractAddress, bool>,
+        inspectors: Map<ContractAddress, bool>,
         pending_requests: Array<u256>,
-        land_details: LegacyMap<u256, LandDetails>,
-        request_status: LegacyMap<u256, felt252>,
+        land_details: Map<u256, LandDetails>,
+        request_status: Map<u256, felt252>,
     }
 
     #[constructor]

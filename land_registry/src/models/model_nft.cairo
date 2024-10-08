@@ -10,7 +10,7 @@ mod ModelNFT {
     struct Storage {
         #[substorage(v0)]
         erc721: ERC721::Storage,
-        land_details: LegacyMap<u256, LandDetails>,
+        land_details: Map<u256, LandDetails>,
         land_registry: ContractAddress,
     }
 
@@ -23,7 +23,6 @@ mod ModelNFT {
         document_hash: felt252,
     }
 
- 
 
     #[derive(Drop, starknet::Event)]
     struct LandMinted {

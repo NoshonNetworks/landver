@@ -1,4 +1,3 @@
-
 mod ModelVerification {
     #[storage]
     struct Storage {

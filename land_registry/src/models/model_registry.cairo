@@ -46,7 +46,7 @@ mod ModelLandRegistry {
     #[storage]
     struct Storage {
         lands: LegacyMap<u256, Land>,
-        owner_lands: LegacyMap<ContractAddress, Array<u256>>,
+        owner_lands: LMap<ContractAddress, Array<u256>>,
         owner_land_count: LegacyMap<ContractAddress, u256>,
         land_nft: ContractAddress,
     }

@@ -4,6 +4,7 @@ mod LandVerification {
     use core::starknet::ContractAddress;
     use super::LandRegistry;
     use super::ILandRegistry;
+    use super::ILandTransaction;
 
     #[constructor]
     fn constructor(ref self: ContractState, land_registry: ContractAddress) {
