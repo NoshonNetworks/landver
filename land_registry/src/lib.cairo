@@ -1,12 +1,15 @@
 mod contracts {
-    mod LandNFT;
     mod LandRegistry;
-    mod LandTransaction;
-    mod LandVerification;
+    mod LandNFT;
 }
 
-mod models {
-    mod model_nft;
-    mod model_registry;
-    mod model_transaction;
+mod tests {
+    mod test_land_registry;
 }
+
+use contracts::LandRegistry::{LandRegistry, ILandRegistry, ILandRegistryDispatcher, ILandRegistryDispatcherTrait};
+use contracts::LandNFT::{LandNFT, ILandNFT, ILandNFTDispatcher, ILandNFTDispatcherTrait};
+
+use contracts::LandRegistry::Land;
+use contracts::LandNFT::LandDetails;
+

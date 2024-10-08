@@ -32,11 +32,12 @@ mod LandRegistry {
     use super::{ILandRegistry, Land, ContractAddress};
     use starknet::{get_caller_address, get_block_timestamp};
     use land_registry::contracts::LandNFT::{ILandNFTDispatcher, ILandNFTDispatcherTrait};
+    use starknet::storage::Map;
 
     #[storage]
     struct Storage {
         land_nft: ILandNFTDispatcher,
-        verifiers: LegacyMap<ContractAddress, bool>,
+        verifiers: Map<ContractAddress, bool>,
         next_land_id: u256,
     }
 
@@ -78,6 +79,7 @@ mod LandRegistry {
     }
 
     #[external(v0)]
+    #abi_embedV0
     impl LandRegistryImpl of ILandRegistry<ContractState> {
         fn register_land(
             ref self: ContractState,

@@ -1,5 +1,9 @@
+use core::starknet::ContractAddress;
+use super land_registry::LandDetails;
+
 #[starknet::interface]
-trait ILandNFT<TContractState> {
+
+pub trait ILandNFT<TContractState> {
     fn mint_land(
         ref self: TContractState,
         to: ContractAddress,
@@ -15,20 +19,21 @@ trait ILandNFT<TContractState> {
 }
 
 #[starknet::contract]
-mod LandNFT {
+pub mod LandNFT {
     use starknet::ContractAddress;
     use openzeppelin::token::erc721::ERC721;
     use openzeppelin::access::ownable::OwnableComponent;
+    use starknet::storage::Map;
 
     #[storage]
     struct Storage {
         land_registry: ContractAddress,
-        land_details: LegacyMap<u256, LandDetails>,
-        owner_lands: LegacyMap<ContractAddress, Array<u256>>,
+        land_details: Map<u256, LandDetails>,
+        owner_lands: Map<ContractAddress, Array<u256>>,
     }
 
     #[derive(Drop, Serde, starknet::Store)]
-    struct LandDetails {
+    pub struct LandDetails {
         location: felt252,
         area: u256,
         land_use: felt252,
@@ -68,6 +73,7 @@ mod LandNFT {
     }
 
     #[external(v0)]
+
     impl LandNFTImpl of ILandNFT<ContractState> {
         fn mint_land(
             ref self: ContractState,
