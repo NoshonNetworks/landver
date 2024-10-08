@@ -10,7 +10,7 @@
 
 ## Related Issues
 
-Closes #[issue-number]
+Closes #<issue-number>
 
 ---
 
@@ -37,7 +37,6 @@ Closes #[issue-number]
 ---
 
 ## Detailed Description
-
 
 ## How Has This Been Tested (select as many as applicable)?
 
