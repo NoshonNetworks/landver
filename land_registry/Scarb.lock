@@ -2,7 +2,7 @@
 version = 1
 
 [[package]]
-name = "landver"
+name = "land_registry"
 version = "0.1.0"
 dependencies = [
  "openzeppelin",
