@@ -4,11 +4,3 @@ version = 1
 [[package]]
 name = "land_registry"
 version = "0.1.0"
-dependencies = [
- "snforge_std",
-]
-
-[[package]]
-name = "snforge_std"
-version = "0.22.0"
-source = "git+https://github.com/foundry-rs/starknet-foundry?tag=v0.22.0#9b215944c6c5871c738381b4ded61bbf06e7ba35"
