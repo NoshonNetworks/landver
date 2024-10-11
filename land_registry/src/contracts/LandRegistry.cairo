@@ -26,12 +26,15 @@ mod LandRegistry {
         Map, StoragePathEntry, StoragePointerReadAccess, StoragePointerWriteAccess
     };
 
+
+    //stores the lands and owners.
     #[storage]
     struct Storage {
         lands: Map<u256, Land>,
         owners: Map<ContractAddress, Array<u256>>,
     }
 
+    //Land structure
     #[derive(Drop, Serde, starknet::Store)]
     pub struct Land {
         owner: ContractAddress,
@@ -40,6 +43,7 @@ mod LandRegistry {
         land_use: LandUse,
         last_transaction_timestamp: u64,
     }
+
 
     #[derive(Drop, Serde, starknet::Store)]
     enum LandUse {
@@ -50,6 +54,7 @@ mod LandRegistry {
         Agricultural,
     }
 
+    //Events emitted by the contract
     #[event]
     #[derive(Drop, starknet::Event)]
     enum Event {
@@ -74,11 +79,14 @@ mod LandRegistry {
         to_owner: ContractAddress,
     }
 
+    //for deployer
     #[constructor]
     fn constructor(ref self: ContractState, deployer: ContractAddress) {
         let deployer_address = get_caller_address();
         self.emit(ContractDeployed { deployer: deployer_address });
     }
+
+    //Main implementations
 
     #[abi(embed_v0)]
     impl LandRegistryImpl of ILandRegistry<ContractState> {
@@ -109,7 +117,11 @@ mod LandRegistry {
             land_id
         }
 
+        //Transfers land current owner to new owner
+        //We should have a from, to address. ?
+
         fn transfer_land(ref self: ContractState, land_id: u256, new_owner: ContractAddress) {
+            //read owner from landid
             let mut land = self.lands.read(land_id);
             let current_owner = land.owner;
             assert(current_owner == get_caller_address(), 'Not the land owner');
