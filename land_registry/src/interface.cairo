@@ -15,8 +15,7 @@ pub enum LandUse {
     Commercial,
     Industrial,
     Agricultural,
-
-    }
+}
 
 impl LandUseIntoFelt252 of Into<LandUse, felt252> {
     fn into(self: LandUse) -> felt252 {
@@ -37,5 +36,6 @@ trait ILandRegistry<TContractState> {
     //fn transfer_land(ref self: TContractState, land_id: u256, new_owner: ContractAddress);
     fn get_land(self: @TContractState, land_id: u256) -> Land;
     //fn get_owner_lands(self: @TContractState, owner_lands: ContractAddress) -> Array<u256>;
-    //fn get_lands(self: @TContractState, owner: ContractAddress, location: felt252, land_use: felt252) -> Array<u256>;
+//fn get_lands(self: @TContractState, owner: ContractAddress, location: felt252, land_use:
+//felt252) -> Array<u256>;
 }

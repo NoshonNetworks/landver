@@ -4,7 +4,7 @@ mod LandRegistryContract {
     use land_registry::interface::{ILandRegistry, Land, LandUse};
     use core::array::ArrayTrait;
     use core::array::SpanTrait;
-    use starknet::storage::{Map,StorageMapWriteAccess};
+    use starknet::storage::{Map, StorageMapWriteAccess};
 
     #[storage]
     struct Storage {
@@ -45,10 +45,7 @@ mod LandRegistryContract {
     #[abi(embed_v0)]
     impl LandRegistry of ILandRegistry<ContractState> {
         fn register_land(
-            ref self: ContractState,
-            location: felt252,
-            area: u256,
-            land_use: LandUse,
+            ref self: ContractState, location: felt252, area: u256, land_use: LandUse,
         ) -> u256 {
             let caller = get_caller_address();
             let land_id = self.land_count.read() + 1;
@@ -67,23 +64,25 @@ mod LandRegistryContract {
 
             //ToDo: write to owner lands
 
-            self.emit(LandRegistered {
-                land_id: land_id,
-                owner: caller,
-                location: location,
-                area: area,
-                land_use: land_use.into(),
-            });
+            self
+                .emit(
+                    LandRegistered {
+                        land_id: land_id,
+                        owner: caller,
+                        location: location,
+                        area: area,
+                        land_use: land_use.into(),
+                    }
+                );
 
             land_id
         }
 
 
-    fn get_land(self: @ContractState, land_id: u256) -> Land {
-        self.lands.read(land_id)
+        fn get_land(self: @ContractState, land_id: u256) -> Land {
+            self.lands.read(land_id)
         }
     }
-
     //Todo:
 
 }
