@@ -13,6 +13,7 @@ trait ILandRegistry<TContractState> {
     fn verify_land(ref self: TContractState, land_id: u256) -> LandRegistry::Land;
     fn get_owner_lands(self: @TContractState, owner: ContractAddress) -> Array<u256>;
     fn update_land(ref self: TContractState, owner: ContractAddress, land_id: u256) -> Land;
+    // land approvals/rejection
 }
 
 #[starknet::contract]
@@ -167,6 +168,10 @@ mod LandRegistry {
 
             self.lands.write(land_id, land);
             land
+            //Updating land should  not change landid
+
+            //Transaction time helps to get the timestamp of the specific transaction for
+        //references.
         }
     }
 }
