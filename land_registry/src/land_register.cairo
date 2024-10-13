@@ -1,5 +1,5 @@
 #[starknet::contract]
-mod LandRegistryContract {
+pub mod LandRegistryContract {
     use starknet::{get_caller_address, get_block_timestamp, ContractAddress};
     use land_registry::interface::{ILandRegistry, Land, LandUse};
     use core::array::ArrayTrait;
@@ -13,12 +13,18 @@ mod LandRegistryContract {
         land_count: u256,
     }
 
+
+    //What are we storing
+
+    //lands, owners.
+
     #[event]
     #[derive(Drop, starknet::Event)]
     enum Event {
         LandRegistered: LandRegistered,
         LandTransferred: LandTransferred,
         LandVerified: LandVerified,
+        LandUpdated: LandUpdated,
     }
 
     #[derive(Drop, starknet::Event)]
@@ -41,6 +47,12 @@ mod LandRegistryContract {
     struct LandVerified {
         land_id: u256,
     }
+    #[derive(Drop, Copy, starknet::Event)]
+    struct LandUpdated {
+        land_id: u256,
+        land_use: felt252,
+        area: u256
+    }
 
     #[abi(embed_v0)]
     impl LandRegistry of ILandRegistry<ContractState> {
@@ -48,8 +60,8 @@ mod LandRegistryContract {
             ref self: ContractState, location: felt252, area: u256, land_use: LandUse,
         ) -> u256 {
             let caller = get_caller_address();
-            let land_id = self.land_count.read() + 1;
             let timestamp = get_block_timestamp();
+            let land_id = timestamp.into() + 1;
 
             let new_land = Land {
                 owner: caller,
@@ -61,8 +73,6 @@ mod LandRegistryContract {
 
             self.lands.write(land_id, new_land);
             self.land_count.write(land_id);
-
-            //ToDo: write to owner lands
 
             self
                 .emit(
@@ -78,11 +88,14 @@ mod LandRegistryContract {
             land_id
         }
 
-
         fn get_land(self: @ContractState, land_id: u256) -> Land {
             self.lands.read(land_id)
         }
-    }
-    //Todo:
 
+        fn update_land(ref self: ContractState, land_id: u256, area: u256, land_use: LandUse) {
+            self.lands.write(land_id, Land { area, land_use, ..self.lands.read(land_id) });
+
+            self.emit(LandUpdated { land_id: land_id, area: area, land_use: land_use.into(), });
+        }
+    }
 }
