@@ -49,5 +49,7 @@ pub trait ILandRegistry<TContractState> {
 
     fn update_land(ref self: TContractState, land_id: u256, area: u256, land_use: LandUse);
     // fn get_approved_lands
-//fn approve_land
+
+    //fn approve_land
+//fn reject_land
 }
