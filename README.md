@@ -25,6 +25,11 @@ The project is divided into the following components:
 - `scripts/`: JavaScript tools for automation and utility tasks
 - `sdk/`: JavaScript for interacting with the smart contracts and API
 
+## Land Registration Process Flow
+
+![image](https://github.com/user-attachments/assets/a9c34c70-05d3-42aa-9ce3-0c84748f2fae)
+
+
 ## Contributors
 
 
