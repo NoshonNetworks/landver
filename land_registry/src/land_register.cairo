@@ -14,9 +14,11 @@ pub mod LandRegistryContract {
     }
 
 
-    //What are we storing
+    //lands
 
-    //lands, owners.
+    //What are we storing?
+
+    //lands, owners?
 
     #[event]
     #[derive(Drop, starknet::Event)]
@@ -96,6 +98,11 @@ pub mod LandRegistryContract {
             self.lands.write(land_id, Land { area, land_use, ..self.lands.read(land_id) });
 
             self.emit(LandUpdated { land_id: land_id, area: area, land_use: land_use.into(), });
+        }
+
+        fn transfer_land(ref self: ContractState, land_id: u256, new_owner: ContractAddress) {
+            let land = self.lands.read(land_id);
+            self.lands.write(land_id, Land { owner: new_owner, ..land });
         }
     }
 }
