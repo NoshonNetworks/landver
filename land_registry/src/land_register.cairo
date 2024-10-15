@@ -6,17 +6,16 @@ pub mod LandRegistryContract {
     use core::array::SpanTrait;
     use starknet::storage::{Map, StorageMapWriteAccess};
 
+
     #[storage]
     struct Storage {
         lands: Map::<u256, Land>,
-        owner_lands: Map::<ContractAddress, Span<u256>>,
+        owner_lands: Map::<ContractAddress, u256>,
         land_count: u256,
     }
-
-
     //lands
 
-    //What are we storing?
+    //What are we storing?>
 
     //lands, owners?
 
@@ -76,6 +75,10 @@ pub mod LandRegistryContract {
             self.lands.write(land_id, new_land);
             self.land_count.write(land_id);
 
+            self.owner_lands.write(caller, land_id);
+
+            //Write new land to a specific owner..
+
             self
                 .emit(
                     LandRegistered {
@@ -105,4 +108,9 @@ pub mod LandRegistryContract {
             self.lands.write(land_id, Land { owner: new_owner, ..land });
         }
     }
+}
+
+#[cfg(test)]
+mod tests {
+    use starknet::{get_caller_address, get_block_timestamp, ContractAddress};
 }
