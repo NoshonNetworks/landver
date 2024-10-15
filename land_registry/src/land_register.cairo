@@ -104,7 +104,6 @@ pub mod LandRegistryContract {
         }
     }
 }
-
 // #[cfg(test)]
 // mod tests {
 //     use starknet::{get_caller_address, get_block_timestamp, ContractAddress};
@@ -135,5 +134,5 @@ pub mod LandRegistryContract {
 //         ISimpleContractDispatcher { contract_address }
 //     }
 
-    
 // }
+
