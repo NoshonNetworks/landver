@@ -17,7 +17,7 @@ struct LandApprovalDetails {
     timestamp: u64,
 }
 
-#[derive(Drop, Copy, Clone, Serde, starknet::Store, PartialEq)]
+#[derive(Debug, Drop, Copy, Clone, Serde, starknet::Store, PartialEq)]
 pub enum LandUse {
     Residential,
     Commercial,
