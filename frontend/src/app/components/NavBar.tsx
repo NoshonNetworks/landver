@@ -11,7 +11,7 @@ const Header: React.FC = () => {
     useState<boolean>(false);
 
   return (
-    <header className="text-black">
+    <header className="text-black bg-white">
       <nav className="flex items-center justify-between border">
         <div className="flex items-center">
           <div className="md:hidden">
