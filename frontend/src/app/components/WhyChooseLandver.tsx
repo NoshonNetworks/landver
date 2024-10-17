@@ -38,8 +38,8 @@ const WhyChooseLandVer: React.FC = () => {
           <Globe2Icon size={40} className="mx-auto text-yellow-600 mb-4" />
           <h3 className="text-xl font-semibold mb-2">Global Accessibility</h3>
           <p className="text-gray-600">
-            Access your land records from anywhere in the world with LandVer's
-            intuitive and user-friendly platform.
+            Access your land records from anywhere in the world with
+            LandVer &apos;s intuitive and user-friendly platform.
           </p>
         </div>
       </div>
