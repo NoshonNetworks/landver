@@ -30,7 +30,7 @@ const AboutPage = () => {
         height={100}
         className="mx-auto mb-6 rounded-md shadow-md"
       />
-      <h2 className="text-3xl text-gray-800 mb-4 text-center p-3 border-2 border-green-600 border-l-0 border-r-0">
+      <h2 className="text-3xl text-gray-900 mb-4 text-center p-3 border-2 border-green-600 border-l-0 border-r-0">
         How It Works
       </h2>
 
