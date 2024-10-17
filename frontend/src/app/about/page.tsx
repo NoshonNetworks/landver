@@ -24,7 +24,7 @@ const AboutPage = () => {
         <h1 className="text-4xl font-light text-gray-800">About Landver</h1>
       </div>
       <Image
-        src="/images/landver_logo_WHITE.jpg"
+        src="/images/LANDVER_LOGO_WHITE.jpg"
         alt="Landver Logo"
         width={100}
         height={100}

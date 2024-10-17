@@ -122,7 +122,7 @@ const Header: React.FC = () => {
         <div className="flex items-center justify-around border">
           <div className="grid grid-cols-2 items-center justify-evenly p-3 py-0">
             <Image
-              src="/images/LANDVER_LOGO_WHITE-removebg-preview.png"
+              src="/images/LANDVER_LOGO_WHITE.jpg"
               alt="Landver Logo"
               className="w-[3.5em]"
               width={56} 
