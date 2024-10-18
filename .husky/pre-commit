@@ -1,0 +1,2 @@
+cd land_registry && scarb fmt
+git add .
