@@ -16,6 +16,8 @@ pub mod LandNFT {
     use starknet::ContractAddress;
     use openzeppelin::token::erc721::{ERC721Component, ERC721Component::InternalTrait};
     use openzeppelin::introspection::src5::SRC5Component;
+    use openzeppelin::token::erc721::ERC721HooksEmptyImpl;
+
 
     component!(path: ERC721Component, storage: erc721, event: ERC721Event);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);
@@ -46,7 +48,7 @@ pub mod LandNFT {
 
     #[constructor]
     fn constructor(ref self: ContractState, land_registry: ContractAddress) {
-        self.erc721.initializer('Land NFT', 'LAND');
+        self.erc721.initializer("Land NFT", "LAND", format!(""));
         self.land_registry.write(land_registry);
     }
 
@@ -58,7 +60,7 @@ pub mod LandNFT {
                 starknet::get_caller_address() == self.land_registry.read(),
                 'Only land registry can mint'
             );
-            self.erc721._mint(to, token_id);
+            self.erc721.mint(to, token_id);
         }
 
         fn transfer(
@@ -69,7 +71,7 @@ pub mod LandNFT {
                 starknet::get_caller_address() == self.land_registry.read(),
                 'Only land registry can transfer'
             );
-            self.erc721._transfer(from, to, token_id);
+            self.erc721.transfer(from, to, token_id);
         }
     }
 }
