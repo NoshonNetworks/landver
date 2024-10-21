@@ -3,8 +3,9 @@ pub mod LandRegistryContract {
     use starknet::{get_caller_address, get_block_timestamp, ContractAddress};
     use land_registry::interface::{ILandRegistry, Land, LandUse};
     use core::array::ArrayTrait;
-    use core::array::SpanTrait;
-    use starknet::storage::{Map, StorageMapWriteAccess};
+    use starknet::storage::{
+        Map, StoragePointerWriteAccess, StorageMapReadAccess, StorageMapWriteAccess
+    };
 
 
     #[storage]
@@ -135,4 +136,5 @@ pub mod LandRegistryContract {
 //     }
 
 // }
+
 

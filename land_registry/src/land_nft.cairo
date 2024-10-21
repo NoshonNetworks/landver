@@ -1,8 +1,11 @@
+use starknet::ContractAddress;
+
 #[starknet::interface]
 pub trait ILandNFT<ContractState> {
     fn mint(ref self: ContractState, to: ContractAddress, token_id: u256);
-    fn transfer(ref self: ContractState, from: ContractAddress, to: ContractAddress, token_id: u256);
-    use starknet::ContractAddress;
+    fn transfer(
+        ref self: ContractState, from: ContractAddress, to: ContractAddress, token_id: u256
+    );
 }
 
 #[starknet::contract]
@@ -43,14 +46,22 @@ pub mod LandNFT {
     #[external(v0)]
     fn mint(ref self: ContractState, to: ContractAddress, token_id: u256) {
         // Only the land registry contract can mint NFTs
-        assert(starknet::get_caller_address() == self.land_registry.read(), 'Only land registry can mint');
+        assert(
+            starknet::get_caller_address() == self.land_registry.read(),
+            'Only land registry can mint'
+        );
         self.erc20._mint(to, token_id);
     }
 
     #[external(v0)]
-    fn transfer_land_nft(ref self: ContractState, from: ContractAddress, to: ContractAddress, token_id: u256) {
+    fn transfer_land_nft(
+        ref self: ContractState, from: ContractAddress, to: ContractAddress, token_id: u256
+    ) {
         // Only the land registry contract can transfer NFTs
-        assert(starknet::get_caller_address() == self.land_registry.read(), 'Only land registry can transfer');
+        assert(
+            starknet::get_caller_address() == self.land_registry.read(),
+            'Only land registry can transfer'
+        );
         self.erc20._transfer(from, to, token_id);
     }
 }

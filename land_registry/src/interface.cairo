@@ -2,11 +2,11 @@ use starknet::ContractAddress;
 
 #[derive(Drop, Copy, Serde, starknet::Store)]
 pub struct Land {
-    owner: ContractAddress,
-    location: felt252,
-    area: u256,
-    land_use: LandUse,
-    last_transaction_timestamp: u64,
+    pub owner: ContractAddress,
+    pub location: felt252,
+    pub area: u256,
+    pub land_use: LandUse,
+    pub last_transaction_timestamp: u64,
 }
 
 struct LandApprovalDetails {
