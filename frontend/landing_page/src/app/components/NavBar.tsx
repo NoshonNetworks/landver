@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { FaGithub } from "react-icons/fa";
 import Image from "next/image";
-import { SunDim, Search } from "lucide-react";
+import { SunDim, Search ,Home} from "lucide-react";
 import { FaX } from "react-icons/fa6";
 
 const Header: React.FC = () => {
@@ -47,11 +47,11 @@ const Header: React.FC = () => {
             src="/images/LANDVER-NO-BG.png"
             alt="Landver Logo"
             className="w-[3.5em] ml-3"
-            width={56} 
-            height={56} 
+            width={56}
+            height={56}
           />
           {isSearchIconClicked ? (
-            <h1>Home</h1> // Changed from Home icon to text for simplicity
+            <Home size={40scaf} />
           ) : (
             <ul>
               <li className="hover:text-gray-400 font-bold">Home</li>
@@ -125,8 +125,8 @@ const Header: React.FC = () => {
               src="/images/LANDVER_LOGO_WHITE.jpg"
               alt="Landver Logo"
               className="w-[3.5em]"
-              width={56} 
-              height={56} 
+              width={56}
+              height={56}
             />
             <ul>
               <li className="hover:text-gray-400 font-bold">Home</li>
