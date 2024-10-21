@@ -105,7 +105,7 @@ pub mod LandRegistryContract {
         }
 
         fn update_land(ref self: ContractState, land_id: u256, area: u256, land_use: LandUse) {
-            assert(self.only_owner(@self, land_id), "Only the owner can update land");
+            assert(InternalFunctions::only_owner(@self, land_id), 'Only owner can update land');
             let mut land = self.lands.read(land_id);
             land.area = area;
             land.land_use = land_use;
@@ -115,8 +115,8 @@ pub mod LandRegistryContract {
         }
 
         fn transfer_land(ref self: ContractState, land_id: u256, new_owner: ContractAddress) {
-            assert(self.only_owner(@self, land_id), "Only the owner can transfer land");
-            assert(self.approved_lands.read(land_id), "Land must be approved before transfer");
+            assert(InternalFunctions::only_owner(@self, land_id), 'Only owner can transfer');
+            assert(self.approved_lands.read(land_id), 'Land must be approved');
 
             let mut land = self.lands.read(land_id);
             let old_owner = land.owner;
@@ -138,7 +138,7 @@ pub mod LandRegistryContract {
                 i += 1;
             };
 
-            assert(index_to_remove < old_owner_land_count, "Land not found in owner's lands");
+            assert(index_to_remove < old_owner_land_count, 'Land not found');
 
             if index_to_remove < old_owner_land_count - 1 {
                 let last_land = self.owner_lands.read((old_owner, old_owner_land_count - 1));
@@ -165,7 +165,7 @@ pub mod LandRegistryContract {
         }
 
         fn approve_land(ref self: ContractState, land_id: u256) {
-            assert(self.only_inspector(@self), "Only an inspector can approve land");
+            assert(InternalFunctions::only_inspector(@self), 'Only inspector can approve');
             self.approved_lands.write(land_id, true);
 
             // Mint NFT
@@ -178,7 +178,7 @@ pub mod LandRegistryContract {
         }
 
         fn reject_land(ref self: ContractState, land_id: u256) {
-            assert(self.only_inspector(@self), "Only an inspector can reject land");
+            assert(InternalFunctions::only_inspector(@self), 'Only inspector can reject');
             let mut land = self.lands.read(land_id);
             land.is_approved = false;
             self.lands.write(land_id, land);
