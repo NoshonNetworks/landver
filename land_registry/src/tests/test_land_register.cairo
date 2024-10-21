@@ -8,14 +8,14 @@ use land_registry::interface::{
 use land_registry::land_register::LandRegistryContract;
 use land_registry::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait};
 
-// Mock function to simulate contract deployment
+// Mock function contract deployment
 fn deploy_land_registry() -> ILandRegistryDispatcher {
     let contract_address: ContractAddress = contract_address_const::<0x123>();
     let nft_address: ContractAddress = contract_address_const::<0x456>();
     ILandRegistryDispatcher { contract_address }
 }
 
-// Mock function to simulate NFT contract deployment
+// Mock function NFT contract deployment
 fn deploy_land_nft(land_registry: ContractAddress) -> ILandNFTDispatcher {
     let nft_address: ContractAddress = contract_address_const::<0x456>();
     ILandNFTDispatcher { contract_address: nft_address }
