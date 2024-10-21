@@ -5,7 +5,9 @@ use openzeppelin::introspection::src5::SRC5Component;
 #[starknet::interface]
 pub trait ILandNFT<TContractState> {
     fn mint(ref self: TContractState, to: ContractAddress, token_id: u256);
-    fn transfer(ref self: TContractState, from: ContractAddress, to: ContractAddress, token_id: u256);
+    fn transfer(
+        ref self: TContractState, from: ContractAddress, to: ContractAddress, token_id: u256
+    );
 }
 
 #[starknet::contract]
@@ -52,13 +54,21 @@ pub mod LandNFT {
     impl LandNFTImpl of ILandNFT<ContractState> {
         fn mint(ref self: ContractState, to: ContractAddress, token_id: u256) {
             // Only the land registry contract can mint NFTs
-            assert(starknet::get_caller_address() == self.land_registry.read(), 'Only land registry can mint');
+            assert(
+                starknet::get_caller_address() == self.land_registry.read(),
+                'Only land registry can mint'
+            );
             self.erc721._mint(to, token_id);
         }
 
-        fn transfer(ref self: ContractState, from: ContractAddress, to: ContractAddress, token_id: u256) {
+        fn transfer(
+            ref self: ContractState, from: ContractAddress, to: ContractAddress, token_id: u256
+        ) {
             // Only the land registry contract can transfer NFTs
-            assert(starknet::get_caller_address() == self.land_registry.read(), 'Only land registry can transfer');
+            assert(
+                starknet::get_caller_address() == self.land_registry.read(),
+                'Only land registry can transfer'
+            );
             self.erc721._transfer(from, to, token_id);
         }
     }

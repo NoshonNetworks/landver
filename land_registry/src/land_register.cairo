@@ -86,13 +86,16 @@ pub mod LandRegistryContract {
             self.owner_lands.write((caller, owner_land_count), land_id);
             self.owner_land_count.write(caller, owner_land_count + 1);
 
-            self.emit(LandRegistered {
-                land_id: land_id,
-                owner: caller,
-                location: location,
-                area: area,
-                land_use: land_use.into(),
-            });
+            self
+                .emit(
+                    LandRegistered {
+                        land_id: land_id,
+                        owner: caller,
+                        location: location,
+                        area: area,
+                        land_use: land_use.into(),
+                    }
+                );
 
             land_id
         }
@@ -114,12 +117,12 @@ pub mod LandRegistryContract {
         fn transfer_land(ref self: ContractState, land_id: u256, new_owner: ContractAddress) {
             assert(self.only_owner(@self, land_id), "Only the owner can transfer land");
             assert(self.approved_lands.read(land_id), "Land must be approved before transfer");
-        
+
             let mut land = self.lands.read(land_id);
             let old_owner = land.owner;
             land.owner = new_owner;
             self.lands.write(land_id, land);
-        
+
             // Update owner_lands for old owner
             let mut old_owner_land_count = self.owner_land_count.read(old_owner);
             let mut index_to_remove = old_owner_land_count;
@@ -134,36 +137,37 @@ pub mod LandRegistryContract {
                 }
                 i += 1;
             };
-        
+
             assert(index_to_remove < old_owner_land_count, "Land not found in owner's lands");
-        
+
             if index_to_remove < old_owner_land_count - 1 {
                 let last_land = self.owner_lands.read((old_owner, old_owner_land_count - 1));
                 self.owner_lands.write((old_owner, index_to_remove), last_land);
             }
             self.owner_land_count.write(old_owner, old_owner_land_count - 1);
-        
+
             // Update owner_lands for new owner
             let new_owner_land_count = self.owner_land_count.read(new_owner);
             self.owner_lands.write((new_owner, new_owner_land_count), land_id);
             self.owner_land_count.write(new_owner, new_owner_land_count + 1);
-        
+
             // Transfer NFT
             let nft_contract = self.nft_contract.read();
             let nft_dispatcher = ILandNFTDispatcher { contract_address: nft_contract };
             nft_dispatcher.transfer(old_owner, new_owner, land_id);
-        
-            self.emit(LandTransferred {
-                land_id: land_id,
-                from_owner: old_owner,
-                to_owner: new_owner,
-            });
+
+            self
+                .emit(
+                    LandTransferred {
+                        land_id: land_id, from_owner: old_owner, to_owner: new_owner,
+                    }
+                );
         }
 
         fn approve_land(ref self: ContractState, land_id: u256) {
             assert(self.only_inspector(@self), "Only an inspector can approve land");
             self.approved_lands.write(land_id, true);
-            
+
             // Mint NFT
             let land = self.lands.read(land_id);
             let nft_contract = self.nft_contract.read();
