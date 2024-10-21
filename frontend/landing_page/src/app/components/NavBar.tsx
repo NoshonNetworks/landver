@@ -51,7 +51,7 @@ const Header: React.FC = () => {
             height={56}
           />
           {isSearchIconClicked ? (
-            <Home size={40scaf} />
+            <Home size={40} />
           ) : (
             <ul>
               <li className="hover:text-gray-400 font-bold">Home</li>
