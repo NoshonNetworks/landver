@@ -3,3 +3,6 @@
 /backend/env
 /backend/.env
 .DS_Store
+
+.snfoundry_cache/
+target/
