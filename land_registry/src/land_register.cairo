@@ -167,7 +167,8 @@ pub mod LandRegistryContract {
             // Mint NFT
             let land = self.lands.read(land_id);
             let nft_contract = self.nft_contract.read();
-            LandNFT::mint(nft_contract, land.owner, land_id);
+            let nft_dispatcher = ILandNFTDispatcher { contract_address: nft_contract };
+            nft_dispatcher.mint(land.owner, land_id);
 
             self.emit(LandVerified { land_id: land_id });
         }
