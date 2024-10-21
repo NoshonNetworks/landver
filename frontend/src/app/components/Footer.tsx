@@ -1,5 +1,5 @@
 import React from "react";
-
+import Link from "next/link";
 const Footer: React.FC = () => {
   return (
     <footer className="bg-gradient-to-b from-gray-500 to-gray-950 text-white py-8">
@@ -9,11 +9,7 @@ const Footer: React.FC = () => {
           <div className="flex flex-col">
             <h4 className="text-lg font-semibold mb-4">Resources</h4>
             <ul className="space-y-2">
-              <li>
-                <a href="/" className="hover:underline">
-                  Docs
-                </a>
-              </li>
+              <Link href="/about">Docs</Link>
               <li>
                 <a href="/" className="hover:underline">
                   API
@@ -22,11 +18,6 @@ const Footer: React.FC = () => {
               <li>
                 <a href="/" className="hover:underline">
                   Guides
-                </a>
-              </li>
-              <li>
-                <a href="/" className="hover:underline">
-                  Migrate from v5
                 </a>
               </li>
             </ul>
@@ -42,7 +33,7 @@ const Footer: React.FC = () => {
                 </a>
               </li>
               <li>
-                <a href="https://twitter.com" className="hover:underline">
+                <a href="https://x.com/landver0" className="hover:underline">
                   Twitter
                 </a>
               </li>
@@ -52,7 +43,10 @@ const Footer: React.FC = () => {
                 </a>
               </li>
               <li>
-                <a href="https://github.com" className="hover:underline">
+                <a
+                  href="https://github.com/NoshonNetworks/landver/"
+                  className="hover:underline"
+                >
                   GitHub
                 </a>
               </li>

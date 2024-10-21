@@ -1,0 +1,33 @@
+name: Build
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cache Scarb dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.scarb
+          key: ${{ runner.os }}-scarb-${{ hashFiles('**/Cargo.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-scarb-
+
+      - name: Install Scarb
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://docs.swmansion.com/scarb/install.sh | sh
+
+      - name: Run Scarb commands
+        working-directory: ./land_registry
+        run: |
+          scarb fmt --check
+          scarb build
+          scarb test
