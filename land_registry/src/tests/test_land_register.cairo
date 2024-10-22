@@ -11,7 +11,7 @@ use land_registry::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait};
 // function contract deployment
 fn deploy_land_registry() -> ILandRegistryDispatcher {
     let contract_address: ContractAddress = contract_address_const::<0x123>();
-    let nft_address: ContractAddress = contract_address_const::<0x456>();
+    let _nft_address: ContractAddress = contract_address_const::<0x456>();
     ILandRegistryDispatcher { contract_address }
 }
 
