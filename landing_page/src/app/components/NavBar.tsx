@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { FaGithub } from "react-icons/fa";
 import Image from "next/image";
-import { SunDim, Search ,Home} from "lucide-react";
+import { SunDim, Search, Home } from "lucide-react";
 import { FaX } from "react-icons/fa6";
 
 const Header: React.FC = () => {
@@ -51,7 +51,7 @@ const Header: React.FC = () => {
             height={56}
           />
           {isSearchIconClicked ? (
-            <Home size={40scaf} />
+            <Home size={40} />
           ) : (
             <ul>
               <li className="hover:text-gray-400 font-bold">Home</li>
