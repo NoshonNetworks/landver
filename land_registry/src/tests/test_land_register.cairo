@@ -22,5 +22,8 @@ mod tests {
         let nft_address: ContractAddress = contract_address_const::<0x456>();
         ILandNFTDispatcher { contract_address: nft_address }
     }
-}
 
+    #[test]
+    fn test_register_land() { // Test register land
+    }
+}
