@@ -27,3 +27,9 @@ mod tests {
     fn test_register_land() { // Test register land
     }
 }
+
+// dummy test
+#[test]
+fn dummy_test() {
+    assert(2 + 2 == 4, 'wrong answer');
+}
