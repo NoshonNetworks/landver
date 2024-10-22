@@ -20,3 +20,9 @@ fn deploy_land_nft(land_registry: ContractAddress) -> ILandNFTDispatcher {
     let nft_address: ContractAddress = contract_address_const::<0x456>();
     ILandNFTDispatcher { contract_address: nft_address }
 }
+
+// dummy test
+#[test]
+fn dummy_test() {
+    assert(2 + 2 == 4, 'wrong answer');
+}
