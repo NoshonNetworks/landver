@@ -16,7 +16,9 @@ const WhyChooseLandVer: React.FC = () => {
       <div className="grid md:grid-cols-3 gap-8 text-center">
         <div className="p-6">
           <LockIcon size={40} className="mx-auto text-blue-600 mb-4" />
-          <h3 className="text-xl font-semibold mb-2 text-gray-900">Decentralized & Secure</h3>
+          <h3 className="text-xl font-semibold mb-2 text-gray-900">
+            Decentralized & Secure
+          </h3>
           <p className="text-gray-600">
             LandVer utilizes blockchain technology to ensure that your land
             records are tamper-proof and secure, offering peace of mind.
@@ -36,15 +38,19 @@ const WhyChooseLandVer: React.FC = () => {
 
         <div className="p-6">
           <Globe2Icon size={40} className="mx-auto text-yellow-600 mb-4" />
-          <h3 className="text-xl font-semibold mb-2 text-gray-900">Global Accessibility</h3>
+          <h3 className="text-xl font-semibold mb-2 text-gray-900">
+            Global Accessibility
+          </h3>
           <p className="text-gray-600">
-            Access your land records from anywhere in the world with
-            LandVer &apos;s intuitive and user-friendly platform.
+            Access your land records from anywhere in the world with LandVer
+            &apos;s intuitive and user-friendly platform.
           </p>
         </div>
       </div>
 
-      <h2 className="text-2xl font-bold text-center p-3 mb-3">How It Works</h2>
+      <h2 className="text-2xl font-bold text-center p-3 mb-3 text-gray-900">
+        How It Works
+      </h2>
       <div className="grid md:grid-cols-4 gap-8 text-center">
         <div className="p-6">
           <User size={40} className="mx-auto text-purple-600 mb-4" />
@@ -54,7 +60,9 @@ const WhyChooseLandVer: React.FC = () => {
 
         <div className="p-6">
           <CheckCircle2Icon size={40} className="mx-auto text-red-600 mb-4" />
-          <h3 className="text-xl font-semibold mb-2 text-gray-900">Verification</h3>
+          <h3 className="text-xl font-semibold mb-2 text-gray-900">
+            Verification
+          </h3>
           <p className="text-gray-600">
             Our system verifies and secures your land data on the blockchain.
           </p>
@@ -62,7 +70,9 @@ const WhyChooseLandVer: React.FC = () => {
 
         <div className="p-6">
           <AwardIcon size={40} className="mx-auto text-orange-600 mb-4" />
-          <h3 className="text-xl font-semibold mb-2 text-gray-900">NFT Minting</h3>
+          <h3 className="text-xl font-semibold mb-2 text-gray-900">
+            NFT Minting
+          </h3>
           <p className="text-gray-600">
             LandVer mints NFTs for landowners, providing indisputable proof of
             ownership.
@@ -71,7 +81,9 @@ const WhyChooseLandVer: React.FC = () => {
 
         <div className="p-6">
           <ListCheckIcon size={40} className="mx-auto text-teal-600 mb-4" />
-          <h3 className="text-xl font-semibold mb-2 text-gray-900">Management</h3>
+          <h3 className="text-xl font-semibold mb-2 text-gray-900">
+            Management
+          </h3>
           <p className="text-gray-600">
             Manage, transfer, or sell your land with ease and security.
           </p>
