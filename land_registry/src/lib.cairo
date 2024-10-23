@@ -3,5 +3,3 @@ pub mod land_register;
 pub mod utils;
 pub mod land_nft;
 
-#[cfg(test)]
-pub mod tests;
