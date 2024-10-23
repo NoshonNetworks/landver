@@ -1,5 +1,3 @@
-
-
 // *************************************************************************
 //                              Setup
 // *************************************************************************
@@ -11,7 +9,6 @@
 //     };
 //     use land_registry::land_register::LandRegistryContract;
 //     use land_registry::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait};
-
 
 //     // Function NFT contract deployment
 //     fn deploy_land_nft(land_registry: ContractAddress) -> ILandNFTDispatcher {

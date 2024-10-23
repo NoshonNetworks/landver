@@ -30,9 +30,7 @@ fn deploy(name: ByteArray) -> ContractAddress {
 
     // Deploy Aggregator contract
     let land_registry_contract = declare(name).unwrap().contract_class();
-    let constructor_args = array![
-        nft_address.into(),
-    ];
+    let constructor_args = array![nft_address.into(),];
     let (contract_address, _) = land_registry_contract.deploy(@constructor_args).unwrap();
     contract_address
 }
@@ -49,16 +47,16 @@ fn test_can_register_land() {
     let location: felt252 = 'Test Location';
     let area: u256 = 1000;
     let land_use = LandUse::Residential;
-    
+
     // Start cheating the caller address
     start_cheat_caller_address(contract_address, caller_address);
-    
+
     // Register the land
     let land_id = land_register_dispatcher.register_land(location, area, land_use);
-    
+
     // Get the registered land
     let registered_land = land_register_dispatcher.get_land(land_id);
-    
+
     // Assert land details are correct
     assert(registered_land.owner == caller_address, 'Wrong owner');
     assert(registered_land.location == location, 'Wrong location');
