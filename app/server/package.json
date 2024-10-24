@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^1.6.7",
+    "backend": "file:",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
