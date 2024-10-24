@@ -4,35 +4,35 @@ import HowItWorksSVG from "../assets/how_landver_works.svg";
 const FAQ = () => {
   return (
     <>
-      <section className="bg-white text-gray-800 py-12 px-4 md:py-16 md:px-6">
+      <section className="bg-white  text-gray-800 py-12 px-4 md:py-16 md:px-6">
         <div className="max-w-6xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-6 md:mb-8 transition transform hover:scale-105">
+          <h2 className="text-xl md:text-2xl font-bold text-center mb-6 md:mb-8 transition transform hover:scale-105">
             Why Choose LandVer?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-            <div className="text-center p-4 md:p-6 shadow-lg rounded-lg transition transform hover:scale-105">
-              <h3 className="text-xl md:text-2xl font-semibold mb-4">
+            <div className="text-center p-4 md:p-6 shadow-lg rounded-lg bg-white border-[1px] transition transform hover:scale-105">
+              <h3 className="text-xl md:text-xl font-semibold mb-4">
                 Decentralized & Secure
               </h3>
-              <p className="text-sm md:text-base">
+              <p className="">
                 LandVer utilizes blockchain technology to ensure that your land
                 records are tamper-proof and secure, offering peace of mind.
               </p>
             </div>
-            <div className="text-center p-4 md:p-6 shadow-lg rounded-lg transition transform hover:scale-105">
-              <h3 className="text-xl md:text-2xl font-semibold mb-4">
+            <div className="text-center p-4 md:p-6 shadow-lg rounded-lg bg-white border-[1px] transition transform hover:scale-105">
+              <h3 className="text-xl md:text-xl font-semibold mb-4">
                 Transparent Transactions
               </h3>
-              <p className="text-sm md:text-base">
+              <p className="">
                 All transactions are recorded on the blockchain, providing
                 transparency and eliminating the need for intermediaries.
               </p>
             </div>
-            <div className="text-center p-4 md:p-6 shadow-lg rounded-lg transition transform hover:scale-105">
-              <h3 className="text-xl md:text-2xl font-semibold mb-4">
+            <div className="text-center p-4 md:p-6 shadow-lg rounded-lg bg-white border-[1px] transition transform hover:scale-105">
+              <h3 className="text-xl md:text-xl font-semibold mb-4">
                 Global Accessibility
               </h3>
-              <p className="text-sm md:text-base">
+              <p className="">
                 Access your land records from anywhere in the world with
                 LandVer's intuitive and user-friendly platform.
               </p>
@@ -47,7 +47,7 @@ const FAQ = () => {
       >
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center">
           <div className="w-full md:w-1/2 mb-6 md:mb-0 md:pr-8">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 transition transform hover:scale-105">
+            <h2 className="text-xl md:text-2xl  font-bold mb-4 transition transform hover:scale-105">
               How It Works
             </h2>
             <p className="text-sm md:text-base mb-4">

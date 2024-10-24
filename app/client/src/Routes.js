@@ -8,7 +8,7 @@ import LandVerification from './components/Land/LandVerification';
 function AppRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<h1>Welcome to Land Registry</h1>} />
+      <Route path="/" element={<h1 className=' text-center'>Welcome to Land Registry</h1>} />
       <Route path="/register" element={<LandRegistrationForm />} />
       <Route path="/lands" element={<LandList />} />
       <Route path="/lands/:id" element={<LandDetails />} />

@@ -22,7 +22,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-gradient-to-r from-blue-400 to-blue-700 text-white">
+    <header className="bg-gradient-to-b from-green-100 to-white  text-dark">
       <nav className="flex justify-between items-center p-4 md:p-6 flex-wrap">
         <div
           className="text-xl md:text-2xl font-bold cursor-pointer"
@@ -61,7 +61,7 @@ const Header = () => {
           <li className="md:inline-block">
             <button
               onClick={() => scrollToSection("/", "home")}
-              className="block hover:text-gray-200 focus:outline-none py-2 md:py-0"
+              className="block hover:text-gray-800 hover:font-bold hover:scale-105 transition-transform ease-in-out duration-300 focus:outline-none py-2 md:py-0"
             >
               Home
             </button>
@@ -69,7 +69,7 @@ const Header = () => {
           <li className="md:inline-block">
             <button
               onClick={() => scrollToSection("/register", "register")}
-              className="block hover:text-gray-200 focus:outline-none py-2 md:py-0"
+              className="block hover:text-gray-800 hover:font-bold hover:scale-105 transition-transform ease-in-out duration-300 focus:outline-none py-2 md:py-0"
             >
               Register Land
             </button>
@@ -77,7 +77,7 @@ const Header = () => {
           <li className="md:inline-block">
             <button
               onClick={() => scrollToSection("/verify", "register")}
-              className="block hover:text-gray-200 focus:outline-none py-2 md:py-0"
+              className="block hover:text-gray-800 hover:font-bold hover:scale-105 transition-transform ease-in-out duration-300 focus:outline-none py-2 md:py-0"
             >
               Verify Land
             </button>
@@ -85,7 +85,7 @@ const Header = () => {
           <li className="md:inline-block">
             <button
               onClick={() => scrollToSection("/lands", "lands")}
-              className="block hover:text-gray-200 focus:outline-none py-2 md:py-0"
+              className="block hover:text-gray-800 hover:font-bold hover:scale-105 transition-transform ease-in-out duration-300 focus:outline-none py-2 md:py-0"
             >
               How it works
             </button>
@@ -93,7 +93,7 @@ const Header = () => {
           <li className="md:inline-block">
             <button
               onClick={() => scrollToSection("/about", "about")}
-              className="block hover:text-gray-200 focus:outline-none py-2 md:py-0"
+              className="block hover:text-gray-800 hover:font-bold hover:scale-105 transition-transform ease-in-out duration-300 focus:outline-none py-2 md:py-0"
             >
               About Us
             </button>
@@ -110,7 +110,7 @@ const Header = () => {
         id="home"
         className="flex flex-col items-center text-center py-12 px-4 md:py-16 md:px-6"
       >
-        <h1 className="text-3xl md:text-5xl font-extrabold mb-4 transition transform hover:scale-105">
+        <h1 className="text-3xl md:text-3xl font-extrabold mb-4 transition transform hover:scale-105">
           Secure Your Land, Secure Your Future with LandVer
         </h1>
         <p className="text-base md:text-lg mb-6 md:mb-8">
@@ -120,21 +120,21 @@ const Header = () => {
         <div className="flex flex-col md:flex-row justify-center space-y-3 md:space-y-0 md:space-x-4 mb-8">
           <button
             onClick={() => scrollToSection("/register", "register")}
-            className="bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 md:py-3 md:px-6 rounded-full text-sm md:text-lg font-semibold transition transform hover:scale-105 hover:shadow-lg"
+            className="bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 md:py-3 md:px-6 rounded-md text-sm md:text-lg font-semibold transition transform hover:scale-105 hover:shadow-lg"
           >
             Register Your Land
           </button>
           <button
             onClick={() => scrollToSection("/lands", "register")}
-            className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 md:py-3 md:px-6 rounded-full text-sm md:text-lg font-semibold transition transform hover:scale-105 hover:shadow-lg"
+            className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 md:py-3 md:px-6 rounded-md text-sm md:text-lg font-semibold transition transform hover:scale-105 hover:shadow-lg"
           >
-           View Lands
+            View Lands
           </button>
         </div>
         <img
           src={LandVerSVG}
           alt="LandVer Map"
-          className="w-3/4 md:w-1/2 transition transform hover:scale-105"
+          className="w-3/4 md:w-1/2 bg transition transform hover:scale-105"
         />
       </div>
     </header>

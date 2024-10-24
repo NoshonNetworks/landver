@@ -7,7 +7,7 @@ const AboutUs = () => {
       className="bg-gray-100 text-gray-800 py-12 px-4 md:py-16 md:px-6"
     >
       <div className="max-w-6xl mx-auto">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-6 md:mb-8 transition transform hover:scale-105">
+        <h2 className="text-xl md:text-2xl font-bold text-center mb-6 md:mb-8 transition transform hover:scale-105">
           About Us
         </h2>
         <p className="text-sm md:text-base mb-4">
