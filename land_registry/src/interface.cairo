@@ -9,8 +9,6 @@ pub struct Land {
     is_approved: bool,
     inspector: Option<ContractAddress>,
     last_transaction_timestamp: u64,
-    sub_category: felt252,
-    zoning_restrictions: felt252,
 }
 
 #[derive(Debug, Drop, Copy, Clone, Serde, starknet::Store, PartialEq)]
