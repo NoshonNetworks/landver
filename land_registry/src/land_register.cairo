@@ -1,10 +1,12 @@
 #[starknet::contract]
 pub mod LandRegistryContract {
     use starknet::{get_caller_address, get_block_timestamp, ContractAddress};
-    use land_registry::interface::{ILandRegistry, Land, LandUse};
+    use land_registry::interface::{ILandRegistry, Land, LandUse, Location};
     use land_registry::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait, LandNFT};
     use core::array::ArrayTrait;
     use starknet::storage::{Map, StorageMapWriteAccess, StorageMapReadAccess};
+    use core::poseidon::PoseidonTrait;
+    use core::hash::{HashStateTrait, HashStateExTrait};
 
 
     #[storage]
@@ -31,7 +33,7 @@ pub mod LandRegistryContract {
     struct LandRegistered {
         land_id: u256,
         owner: ContractAddress,
-        location: felt252,
+        location: Location,
         area: u256,
         land_use: felt252,
     }
@@ -63,11 +65,11 @@ pub mod LandRegistryContract {
     #[abi(embed_v0)]
     impl LandRegistry of ILandRegistry<ContractState> {
         fn register_land(
-            ref self: ContractState, location: felt252, area: u256, land_use: LandUse,
+            ref self: ContractState, location: Location, area: u256, land_use: LandUse,
         ) -> u256 {
             let caller = get_caller_address();
             let timestamp = get_block_timestamp();
-            let land_id = self.land_count.read() + 1;
+            let land_id = InternalFunctions::create_land_id(@self, location);
 
             let new_land = Land {
                 owner: caller,
@@ -80,7 +82,7 @@ pub mod LandRegistryContract {
             };
 
             self.lands.write(land_id, new_land);
-            self.land_count.write(land_id);
+            self.land_count.write(self.land_count.read() + 1);
 
             let owner_land_count = self.owner_land_count.read(caller);
             self.owner_lands.write((caller, owner_land_count), land_id);
@@ -210,6 +212,21 @@ pub mod LandRegistryContract {
         fn only_inspector(self: @ContractState) -> bool {
             let caller = get_caller_address();
             self.land_inspectors.read(caller)
+        }
+
+        fn create_land_id(self: @ContractState, location: Location) -> u256 {
+            let caller = get_caller_address();
+            let timestamp = get_block_timestamp();
+
+            let caller_hash = PoseidonTrait::new().update_with(caller).finalize();
+            let timestamp_hash = PoseidonTrait::new().update_with(timestamp).finalize();
+            let location_hash = PoseidonTrait::new()
+                .update_with(location.latitude + location.longitude)
+                .finalize();
+
+            let felt_land_id = caller_hash + timestamp_hash + location_hash;
+            let land_id: u256 = felt_land_id.into();
+            land_id
         }
     }
 }

@@ -3,7 +3,7 @@ use starknet::ContractAddress;
 #[derive(Drop, Copy, Serde, starknet::Store)]
 pub struct Land {
     owner: ContractAddress,
-    location: felt252,
+    location: Location,
     area: u256,
     land_use: LandUse,
     is_approved: bool,
@@ -11,7 +11,13 @@ pub struct Land {
     last_transaction_timestamp: u64,
 }
 
-#[derive(Debug, Drop, Copy, Clone, Serde, starknet::Store, PartialEq)]
+#[derive(Drop, Copy, Serde, starknet::Store, PartialEq)]
+pub struct Location {
+    latitude: felt252,
+    longitude: felt252,
+}
+
+#[derive(Debug, Drop, Copy, Serde, Clone, starknet::Store, PartialEq)]
 pub enum LandUse {
     Residential,
     Commercial,
@@ -33,7 +39,7 @@ impl LandUseIntoFelt252 of Into<LandUse, felt252> {
 #[starknet::interface]
 pub trait ILandRegistry<TContractState> {
     fn register_land(
-        ref self: TContractState, location: felt252, area: u256, land_use: LandUse,
+        ref self: TContractState, location: Location, area: u256, land_use: LandUse,
     ) -> u256;
     fn transfer_land(ref self: TContractState, land_id: u256, new_owner: ContractAddress);
     fn get_land(self: @TContractState, land_id: u256) -> Land;
