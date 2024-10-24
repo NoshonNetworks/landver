@@ -1,4 +1,4 @@
-use snforge_std::{declare, ContractClassTrait, DeclareResultTrait, start_cheat_caller_address};
+use snforge_std::{declare, ContractClassTrait, DeclareResultTrait, start_cheat_caller_address, stop_cheat_caller_address, start_cheat_block_timestamp, stop_cheat_block_timestamp};
 use starknet::ContractAddress;
 
 use land_registry::interface::{ILandRegistryDispatcher, ILandRegistryDispatcherTrait};
@@ -48,7 +48,8 @@ fn test_can_register_land() {
     let area: u256 = 1000;
     let land_use = LandUse::Residential;
 
-    // Start cheating the caller address
+
+        // Start cheating the caller address
     start_cheat_caller_address(contract_address, caller_address);
 
     // Register the land
@@ -66,3 +67,45 @@ fn test_can_register_land() {
     assert(registered_land.inspector.is_none(), 'Should have no inspector');
 }
 
+#[test]
+fn test_can_create_land_id() {
+    let contract_address = deploy("LandRegistryContract");
+
+    // Get an instance of the deployed Counter contract
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    // Set up test data
+    let area: u256 = 1000;
+    let land_use = LandUse::Residential;
+
+    //Testcase 1
+    start_cheat_caller_address(contract_address, 123.try_into().unwrap());
+    start_cheat_block_timestamp(contract_address, 10);
+
+    let id_1 = land_register_dispatcher.register_land('ABC', area, land_use);
+    assert(id_1 == 1834956290592547505146755301616865612884178131756197740284375722154676772061, 'land_id is not as expected (1)');
+
+    stop_cheat_caller_address(contract_address);
+    stop_cheat_block_timestamp(contract_address);
+
+
+    //Testcase 2
+    start_cheat_caller_address(contract_address, 456.try_into().unwrap());
+    start_cheat_block_timestamp(contract_address, 20);
+
+    let id_2 = land_register_dispatcher.register_land('JKL', area, land_use);
+    assert(id_2 == 1787167357877672313141019654757764563488770727666136878743809661333652189710, 'land_id is not as expected (2)');
+
+    stop_cheat_caller_address(contract_address);
+    stop_cheat_block_timestamp(contract_address);
+
+    //Testcase 3
+    start_cheat_caller_address(contract_address, 789.try_into().unwrap());
+    start_cheat_block_timestamp(contract_address, 30);
+
+    let id_3 = land_register_dispatcher.register_land('XYZ', area, land_use);
+    assert(id_3 == 3320737153900052178546737093552069553460562050721261109286934583944424896980, 'land_id is not as expected (3)');
+
+    stop_cheat_caller_address(contract_address);
+    stop_cheat_block_timestamp(contract_address);
+}
