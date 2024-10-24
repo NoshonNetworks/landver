@@ -8,6 +8,8 @@ pub trait ILandNFT<TContractState> {
     fn transfer(
         ref self: TContractState, from: ContractAddress, to: ContractAddress, token_id: u256
     );
+    fn update_metadata_uri(ref self: TContractState, new_metadata_uri: ByteArray);
+    fn metadata_uri(self: @TContractState) -> ByteArray;
 }
 
 #[starknet::contract]
@@ -35,6 +37,7 @@ pub mod LandNFT {
         #[substorage(v0)]
         src5: SRC5Component::Storage,
         land_registry: ContractAddress,
+        metadata_uri: ByteArray,
     }
 
     #[event]
@@ -47,9 +50,12 @@ pub mod LandNFT {
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState, land_registry: ContractAddress) {
+    fn constructor(
+        ref self: ContractState, land_registry: ContractAddress, metadata_uri: ByteArray
+    ) {
         self.erc721.initializer("Land NFT", "LAND", format!(""));
         self.land_registry.write(land_registry);
+        self.metadata_uri.write(metadata_uri);
     }
 
     #[abi(embed_v0)]
@@ -72,6 +78,19 @@ pub mod LandNFT {
                 'Only land registry can transfer'
             );
             self.erc721.transfer(from, to, token_id);
+        }
+
+        fn update_metadata_uri(ref self: ContractState, new_metadata_uri: ByteArray) {
+            // Only the land registry contract can update the metadata URI
+            assert(
+                starknet::get_caller_address() == self.land_registry.read(),
+                'Only land registry can update'
+            );
+            self.metadata_uri.write(new_metadata_uri);
+        }
+
+        fn metadata_uri(self: @ContractState) -> ByteArray {
+            self.metadata_uri.read()
         }
     }
 }
