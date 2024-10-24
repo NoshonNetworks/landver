@@ -1,9 +1,30 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 const Footer: React.FC = () => {
   return (
     <footer className="bg-gradient-to-b from-gray-500 to-gray-950 text-white py-8">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto flex flex-col gap-4 px-4">
+        <div className=" flex justify-start items-center">
+          <div className="bg-white p-4 rounded-lg shadow-md flex items-center space-x-4 w-[400px]">
+            <Image
+              src="/images/SN-Symbol-Flat colour-On dark bg.png"
+              alt="StarkNet Logo"
+              width={400}
+              height={400}
+              className="w-10 h-10 rounded-md"
+            />
+            <div className="text-left h-auto md:p-2 lg:p-2">
+              <h2 className="text-xl font-semibold text-gray-800">
+                Powered by StarkNet
+              </h2>
+              <p className="text-sm text-gray-600">
+                Unparalleled security and scalability
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Left Column: Resources */}
           <div className="flex flex-col">
@@ -16,7 +37,7 @@ const Footer: React.FC = () => {
                 </a>
               </li>
               <li>
-                <a href="/" className="hover:underline">
+                <a href="/Guides" className="hover:underline">
                   Guides
                 </a>
               </li>
@@ -27,11 +48,6 @@ const Footer: React.FC = () => {
           <div className="flex flex-col">
             <h4 className="text-lg font-semibold mb-4">Community</h4>
             <ul className="space-y-2">
-              <li>
-                <a href="/community" className="hover:underline">
-                  Community
-                </a>
-              </li>
               <li>
                 <a href="https://x.com/landver0" className="hover:underline">
                   Twitter
@@ -48,6 +64,14 @@ const Footer: React.FC = () => {
                   className="hover:underline"
                 >
                   GitHub
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://t.me/+e3pDyYQQerk3NjFk"
+                  className="hover:underline"
+                >
+                  Telegram
                 </a>
               </li>
             </ul>

@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 const HeroSection: React.FC = () => {
   return (
-    <section className="w-full py-12 md:py-4 lg:py-8 xl:py-8 bg-gradient-to-b from-green-100 to-white">
+    <section className="w-full py-12 md:py-4 lg:py-8 xl:py-8 bg-gradient-to-b from-green-100 to-white dark:from-gray-800 dark:to-black dark:bg-[#060304]">
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex flex-col items-center space-y-8 text-center">
           <div className="flex items-center space-x-4">
@@ -20,7 +20,7 @@ const HeroSection: React.FC = () => {
             </h1>
           </div>
 
-          <p className="mx-auto max-w-[700px] text-gray-900 md:text-xl">
+          <p className="mx-auto max-w-[700px] text-gray-900 dark:text-white md:text-xl">
             Revolutionize land management with blockchain technology. Secure,
             transparent, and efficient property management at your fingertips.
           </p>
@@ -36,10 +36,10 @@ const HeroSection: React.FC = () => {
               />
               <div className="text-left h-auto md:p-2 lg:p-2">
                 <h2 className="text-xl font-semibold text-gray-800">
-                  Powered by StarkNet
+                  Onchain land
                 </h2>
                 <p className="text-sm text-gray-600">
-                  Unparalleled security and scalability
+                  decentralized and secured.
                 </p>
               </div>
             </div>
@@ -75,7 +75,7 @@ const HeroSection: React.FC = () => {
 
           <div className="flex items-center justify-center space-x-2 pt-4">
             <Globe className="h-5 w-5 text-green-500" />
-            <p className="text-sm text-gray-900">
+            <p className="text-sm text-gray-900 dark:text-white">
               First Onchain Land Management Platform
             </p>
           </div>
