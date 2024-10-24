@@ -4,15 +4,19 @@ import { FaGithub } from "react-icons/fa";
 import Image from "next/image";
 import { SunDim, Search, Home } from "lucide-react";
 import { FaX } from "react-icons/fa6";
+import { useTheme } from "next-themes";
 
+import ThemeSwitch from "./ThemeSwitcher";
 const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchIconClicked, setIsSearchIconClicked] =
     useState<boolean>(false);
+  const {  resolvedTheme } = useTheme();
+  console.log(resolvedTheme);
 
   return (
-    <header className="text-black bg-white">
-      <nav className="flex items-center justify-between border">
+    <header className="text-black dark:text-white dark:bg-[#060304] bg-[#FEFAFA]">
+      <nav className="flex items-center justify-between border dark:border-none">
         <div className="flex items-center">
           <div className="md:hidden">
             <button
@@ -44,7 +48,11 @@ const Header: React.FC = () => {
             </button>
           </div>
           <Image
-            src="/images/LANDVER-NO-BG.png"
+            src={
+              resolvedTheme === "light"
+                ? "/images/LANDVER-NO-BG.png"
+                : "/images/LANDVER_BLACK.jpg"
+            }
             alt="Landver Logo"
             className="w-[3.5em] ml-3"
             width={56}
@@ -62,7 +70,7 @@ const Header: React.FC = () => {
             <li className="hover:text-gray-400">GUIDES</li>
           </ul>
         </div>
-        <div className="flex items-center p-2">
+        <div className="flex items-center gap-4 p-2">
           <div className="flex items-center space-x-6">
             <a
               href="https://github.com/NoshonNetworks/landver/"
@@ -75,9 +83,7 @@ const Header: React.FC = () => {
             </a>
           </div>
           <div>
-            <button>
-              <SunDim className="p-3 h-[55px] hidden md:block" size={60} />
-            </button>
+            <ThemeSwitch />
           </div>
           <div>
             <input
