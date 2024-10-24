@@ -4,15 +4,18 @@ import { FaGithub } from "react-icons/fa";
 import Image from "next/image";
 import { SunDim, Search, Home } from "lucide-react";
 import { FaX } from "react-icons/fa6";
+import { useTheme } from "next-themes";
 
+import ThemeSwitch from "./ThemeSwitcher";
 const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchIconClicked, setIsSearchIconClicked] =
     useState<boolean>(false);
+  const { resolvedTheme } = useTheme();
 
   return (
-    <header className="text-black bg-white">
-      <nav className="flex items-center justify-between border">
+    <header className="text-black dark:text-white bg-white dark:bg-[#0D0D0D]">
+      <nav className="flex items-center justify-between border dark:border-none">
         <div className="flex items-center">
           <div className="md:hidden">
             <button
@@ -44,7 +47,11 @@ const Header: React.FC = () => {
             </button>
           </div>
           <Image
-            src="/images/LANDVER-NO-BG.png"
+            src={
+              resolvedTheme === "light"
+                ? "/images/LANDVER-NO-BG.png"
+                : "/images/LANDVER_BLACK.jpg"
+            }
             alt="Landver Logo"
             className="w-[3.5em] ml-3"
             width={56}
@@ -62,7 +69,7 @@ const Header: React.FC = () => {
             <li className="hover:text-gray-400">GUIDES</li>
           </ul>
         </div>
-        <div className="flex items-center p-2">
+        <div className="flex gap-4 items-center p-2">
           <div className="flex items-center space-x-6">
             <a
               href="https://github.com/NoshonNetworks/landver/"
@@ -74,10 +81,8 @@ const Header: React.FC = () => {
               <span>Github</span>
             </a>
           </div>
-          <div>
-            <button>
-              <SunDim className="p-3 h-[55px] hidden md:block" size={60} />
-            </button>
+          <div className=" md:block hidden">
+            <ThemeSwitch />
           </div>
           <div>
             <input
@@ -115,14 +120,18 @@ const Header: React.FC = () => {
 
       {/* Mobile Menu */}
       <div
-        className={`md:hidden fixed top-0 left-0 w-[80%] h-full bg-white transition-transform duration-300 ease-in-out ${
+        className={`md:hidden fixed top-0 left-0 w-[80%] h-full bg-white dark:bg-[#0D0D0D] transition-transform duration-300 ease-in-out ${
           isOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
         <div className="flex items-center justify-around border">
           <div className="grid grid-cols-2 items-center justify-evenly p-3 py-0">
             <Image
-              src="/images/LANDVER_LOGO_WHITE.jpg"
+              src={
+                resolvedTheme === "light"
+                  ? "/images/LANDVER-NO-BG.png"
+                  : "/images/LANDVER_BLACK.jpg"
+              }
               alt="Landver Logo"
               className="w-[3.5em]"
               width={56}
@@ -134,7 +143,7 @@ const Header: React.FC = () => {
           </div>
           <div>
             <button>
-              <SunDim className="h-[77px]" size={40} />
+              <ThemeSwitch />
             </button>
           </div>
           <FaX onClick={() => setIsOpen(false)} className="h-[75px]" />
