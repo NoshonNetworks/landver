@@ -18,6 +18,6 @@ Closes #<issue-number>
 
 ## Checklist (select as many as applicable)
 
-- [ ] The code follows the style guidelines of this project.
-- [ ] All new and existing tests pass.
-- [ ] This pull request is ready to be merged and reviewed.
+- [X] The code follows the style guidelines of this project.
+- [X] All new and existing tests pass.
+- [X] This pull request is ready to be merged and reviewed.
