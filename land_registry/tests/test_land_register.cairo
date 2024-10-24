@@ -49,7 +49,7 @@ fn test_can_register_land() {
     let land_use = LandUse::Residential;
 
 
-        // Start cheating the caller address
+    // Start cheating the caller address
     start_cheat_caller_address(contract_address, caller_address);
 
     // Register the land
