@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowRight, Globe, File } from "lucide-react";
+import { ArrowRight,ShieldCheck , Globe, File } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 const HeroSection: React.FC = () => {
@@ -27,13 +27,8 @@ const HeroSection: React.FC = () => {
 
           <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
             <div className="bg-white p-4 rounded-lg shadow-md flex items-center space-x-4 w-full">
-              <Image
-                src="/images/SN-Symbol-Flat colour-On dark bg.png"
-                alt="StarkNet Logo"
-                width={400}
-                height={400}
-                className="w-10 h-10 rounded-md"
-              />
+              <ShieldCheck className="h-10 w-10 text-gray-800" />
+
               <div className="text-left h-auto md:p-2 lg:p-2">
                 <h2 className="text-xl font-semibold text-gray-800">
                   Onchain land
