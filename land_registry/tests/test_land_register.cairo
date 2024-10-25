@@ -65,7 +65,8 @@ fn test_can_register_land() {
     match registered_land.status {
         LandStatus::Pending => {},
         _ => panic!("Must be Pending"),
-    }    assert(registered_land.inspector.is_none(), 'Should have no inspector');
+    }
+    assert(registered_land.inspector.is_none(), 'Should have no inspector');
 }
 
 #[test]
