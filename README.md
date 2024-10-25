@@ -33,6 +33,40 @@ The project is divided into the following components:
 
 ![image](https://github.com/user-attachments/assets/a9c34c70-05d3-42aa-9ce3-0c84748f2fae)
 
+# How to Run the Code
+
+## Running the Client and Server
+
+ Navigate to the client directory, install the packages, and start the client
+```bash 
+cd app/client
+ npm install 
+ npm start
+```
+ In a separate terminal, navigate to the server directory, install the packages, and start the server
+
+```bash
+cd app/server
+npm install
+npm run dev
+```
+
+
+ Running the Land Registry Contracts
+
+ Navigate to the land_registry directory, build the contracts
+
+```bash
+cd land_registry
+scarb build
+```
+ To run tests on the contract
+
+```bash
+cd land_registry
+scarb test
+```
+
 ## Contributors
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
