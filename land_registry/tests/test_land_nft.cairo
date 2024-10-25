@@ -5,14 +5,52 @@ use land_registry::interface::{
 };
 use land_registry::land_register::LandRegistryContract;
 use land_registry::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait};
-// fn deploy(name: ByteArray) -> ContractAddress {
-// let nft_contract = declare("LandNFT").unwrap().contract_class();
-// let (nft_address, _) = nft_contract.deploy(@array![Accounts::nft().into()]).unwrap();
 
-// let land_registry_contract = declare(name).unwrap().contract_class();
-// let constructor_args = array![nft_address.into(),];
-// let (contract_address, _) = land_registry_contract.deploy(@constructor_args).unwrap();
-// contract_address
-// }
+pub mod Accounts {
+    use starknet::{ContractAddress, contract_address_const};
 
+    pub fn land_registry() -> ContractAddress {
+        contract_address_const::<'land_registry'>()
+    }
+}
+
+fn deploy(metadata_uri: ByteArray) -> ILandNFTDispatcher {
+    let mut constructor_args: Array<felt252> = array![];
+    (Accounts::land_registry(), metadata_uri).serialize(ref constructor_args);
+
+    let contract = declare("LandNFT").unwrap().contract_class();
+    let (contract_address, _) = contract.deploy(@constructor_args).unwrap();
+
+    ILandNFTDispatcher { contract_address }
+}
+
+#[test]
+fn test_metadata_uri() {
+    let metadata_uri = "https://some.metadata.uri/nft_id";
+    let dispatcher = deploy(metadata_uri);
+
+    assert_eq!(metadata_uri, dispatcher.metadata_uri());
+}
+
+#[test]
+fn test_update_metadata_uri() {
+    let original_metadata_uri = "https://original.metadata.uri/nft_id";
+    let dispatcher = deploy(metadata_uri);
+    start_cheat_caller_address(dispatcher.contract_address, Accounts::land_registry());
+
+    let new_metadata_uri = "https://new.metadata.uri/nft_id";
+    dispatcher.update_metadata_uri(new_metadata_uri);
+
+    assert_eq!(new_metadata_uri, dispatcher.metadata_uri());
+}
+
+#[test]
+#[should_panic(expected: ('Only land registry can update',))]
+fn test_update_metadata_uri_from_non_land_registry() {
+    let original_metadata_uri = "https://original.metadata.uri/nft_id";
+    let dispatcher = deploy(metadata_uri);
+
+    let new_metadata_uri = "https://new.metadata.uri/nft_id";
+    dispatcher.update_metadata_uri(new_metadata_uri);
+}
 
