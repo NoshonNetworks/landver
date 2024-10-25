@@ -17,7 +17,6 @@ const GuidesPage = () => {
           </h1>
         </div>
         <div className=" text-black">
-          {" "}
           <ThemeSwitch />
         </div>
       </div>
