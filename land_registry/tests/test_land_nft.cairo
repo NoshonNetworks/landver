@@ -1,10 +1,9 @@
 use starknet::{ContractAddress, contract_address_const};
-use snforge_std::{declare, ContractClassTrait, DeclareResultTrait, start_cheat_caller_address};
-use land_registry::interface::{
-    ILandRegistryDispatcher, ILandRegistryDispatcherTrait, Land, LandUse
+use snforge_std::{
+    declare, ContractClassTrait, DeclareResultTrait, EventSpyAssertionsTrait, spy_events,
+    start_cheat_caller_address
 };
-use land_registry::land_register::LandRegistryContract;
-use land_registry::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait};
+use land_registry::land_nft::{LandNFT, ILandNFTDispatcher, ILandNFTDispatcherTrait};
 
 pub mod Accounts {
     use starknet::{ContractAddress, contract_address_const};
@@ -27,7 +26,7 @@ fn deploy(metadata_uri: ByteArray) -> ILandNFTDispatcher {
 #[test]
 fn test_metadata_uri() {
     let metadata_uri = "https://some.metadata.uri/nft_id";
-    let dispatcher = deploy(metadata_uri);
+    let dispatcher = deploy(metadata_uri.clone());
 
     assert_eq!(metadata_uri, dispatcher.metadata_uri());
 }
@@ -35,20 +34,33 @@ fn test_metadata_uri() {
 #[test]
 fn test_update_metadata_uri() {
     let original_metadata_uri = "https://original.metadata.uri/nft_id";
-    let dispatcher = deploy(metadata_uri);
+    let dispatcher = deploy(original_metadata_uri.clone());
+    let mut spy = spy_events();
     start_cheat_caller_address(dispatcher.contract_address, Accounts::land_registry());
 
     let new_metadata_uri = "https://new.metadata.uri/nft_id";
-    dispatcher.update_metadata_uri(new_metadata_uri);
+    dispatcher.update_metadata_uri(new_metadata_uri.clone());
 
     assert_eq!(new_metadata_uri, dispatcher.metadata_uri());
+
+    spy
+        .assert_emitted(
+            @array![
+                (
+                    dispatcher.contract_address,
+                    LandNFT::Event::MetadataURIUpdated(
+                        LandNFT::MetadataURIUpdated { new_metadata_uri }
+                    )
+                )
+            ]
+        );
 }
 
 #[test]
 #[should_panic(expected: ('Only land registry can update',))]
 fn test_update_metadata_uri_from_non_land_registry() {
     let original_metadata_uri = "https://original.metadata.uri/nft_id";
-    let dispatcher = deploy(metadata_uri);
+    let dispatcher = deploy(original_metadata_uri);
 
     let new_metadata_uri = "https://new.metadata.uri/nft_id";
     dispatcher.update_metadata_uri(new_metadata_uri);
