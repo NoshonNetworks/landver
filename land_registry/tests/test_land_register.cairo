@@ -46,7 +46,7 @@ fn test_can_register_land() {
     let caller_address = starknet::contract_address_const::<0x123>();
     let location: Location = Location { latitude: 1, longitude: 2 };
     let area: u256 = 1000;
-    let land_use = LandUse::ResidentialSingleFamily;
+    let land_use = LandUse::Residential;
 
     // Start cheating the caller address
     start_cheat_caller_address(contract_address, caller_address);
