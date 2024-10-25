@@ -10,13 +10,15 @@ pub trait ILandNFT<TContractState> {
     );
     fn update_metadata_uri(ref self: TContractState, new_metadata_uri: ByteArray);
     fn metadata_uri(self: @TContractState) -> ByteArray;
+    fn lock(ref self: TContractState);
+    fn unlock(ref self: TContractState);
 }
 
 #[starknet::contract]
 pub mod LandNFT {
     use super::ILandNFT;
     use starknet::ContractAddress;
-    use openzeppelin::token::erc721::{ERC721Component, ERC721Component::InternalTrait};
+    use openzeppelin::token::erc721::ERC721Component;
     use openzeppelin::introspection::src5::SRC5Component;
     use openzeppelin::token::erc721::ERC721HooksEmptyImpl;
 
@@ -38,6 +40,7 @@ pub mod LandNFT {
         src5: SRC5Component::Storage,
         land_registry: ContractAddress,
         metadata_uri: ByteArray,
+        locked: bool,
     }
 
     #[event]
@@ -47,12 +50,25 @@ pub mod LandNFT {
         ERC721Event: ERC721Component::Event,
         #[flat]
         SRC5Event: SRC5Component::Event,
-        MetadataURIUpdated: MetadataURIUpdated
+        MetadataURIUpdated: MetadataURIUpdated,
+        Locked: Locked,
+        Unlocked: Unlocked,
     }
 
     #[derive(Drop, starknet::Event)]
     struct MetadataURIUpdated {
         new_metadata_uri: ByteArray
+    }
+
+    #[derive(Drop, starknet::Event)]
+    pub struct Locked {}
+
+    #[derive(Drop, starknet::Event)]
+    pub struct Unlocked {}
+
+    pub mod Errors {
+        pub const LOCKED: felt252 = 'Locked';
+        pub const NOT_LOCKED: felt252 = 'Not locked';
     }
 
     #[constructor]
@@ -98,6 +114,31 @@ pub mod LandNFT {
 
         fn metadata_uri(self: @ContractState) -> ByteArray {
             self.metadata_uri.read()
+        }
+
+        fn lock(ref self: ContractState) {
+            self.assert_not_locked();
+            self.locked.write(true);
+            self.emit(Locked {});
+        }
+
+        fn unlock(ref self: ContractState) {
+            self.assert_locked();
+            self.locked.write(false);
+            self.emit(Unlocked {});
+        }
+    }
+
+    #[generate_trait]
+    impl Internal of InternalTrait {
+        /// Makes a function only callable when the contract is not locked.
+        fn assert_not_locked(self: @ContractState) {
+            assert(!self.locked.read(), Errors::LOCKED);
+        }
+
+        /// Makes a function only callable when the contract is locked.
+        fn assert_locked(self: @ContractState) {
+            assert(self.locked.read(), Errors::NOT_LOCKED);
         }
     }
 }
