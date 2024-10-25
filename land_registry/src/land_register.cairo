@@ -105,6 +105,22 @@ pub mod LandRegistryContract {
             self.lands.read(land_id)
         }
 
+        fn get_land_count(self: @ContractState) -> u256 {
+            self.land_count.read()
+        }
+
+        fn get_lands_by_owner(self: @ContractState, owner: ContractAddress) -> Span<u256> {
+            let mut result = array![];
+            let owner_land_count = self.owner_land_count.read(owner);
+            let mut i = 0;
+            while i < owner_land_count {
+                let land_id = self.owner_lands.read((owner, i));
+                result.append(land_id);
+                i += 1;
+            };
+            result.span()
+        }
+
         fn update_land(ref self: ContractState, land_id: u256, area: u256, land_use: LandUse) {
             assert(InternalFunctions::only_owner(@self, land_id), 'Only owner can update land');
             let mut land = self.lands.read(land_id);

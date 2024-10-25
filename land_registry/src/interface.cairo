@@ -38,6 +38,8 @@ pub trait ILandRegistry<TContractState> {
     ) -> u256;
     fn transfer_land(ref self: TContractState, land_id: u256, new_owner: ContractAddress);
     fn get_land(self: @TContractState, land_id: u256) -> Land;
+    fn get_land_count(self: @TContractState) -> u256;
+    fn get_lands_by_owner(self: @TContractState, owner: ContractAddress) -> Span<u256>;
     fn update_land(ref self: TContractState, land_id: u256, area: u256, land_use: LandUse);
     fn approve_land(ref self: TContractState, land_id: u256);
     fn reject_land(ref self: TContractState, land_id: u256);
