@@ -8,7 +8,6 @@ pub mod LandRegistryContract {
     use starknet::storage::{Map, StorageMapWriteAccess, StorageMapReadAccess};
 
 
-
     #[storage]
     struct Storage {
         lands: Map::<u256, Land>,

@@ -1,8 +1,8 @@
-pub mod utils{
+pub mod utils {
     use starknet::{get_caller_address, get_block_timestamp, ContractAddress};
-use core::poseidon::PoseidonTrait;
-use core::hash::{HashStateTrait, HashStateExTrait};
-use land_registry::interface::{Location, LandUse};
+    use core::poseidon::PoseidonTrait;
+    use core::hash::{HashStateTrait, HashStateExTrait};
+    use land_registry::interface::{Location, LandUse};
 
 
     pub fn create_land_id(caller: ContractAddress, timestamp: u64, location: Location) -> u256 {
@@ -11,12 +11,12 @@ use land_registry::interface::{Location, LandUse};
         let location_hash = PoseidonTrait::new()
             .update_with(location.latitude + location.longitude)
             .finalize();
-    
+
         let felt_land_id = caller_hash + timestamp_hash + location_hash;
         let land_id: u256 = felt_land_id.into();
         land_id
     }
-    
+
     pub impl LandUseIntoOptionFelt252 of Into<LandUse, Option<felt252>> {
         fn into(self: LandUse) -> Option<felt252> {
             match self {
@@ -31,6 +31,4 @@ use land_registry::interface::{Location, LandUse};
             }
         }
     }
-    
-
 }
