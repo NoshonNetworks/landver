@@ -47,6 +47,12 @@ pub mod LandNFT {
         ERC721Event: ERC721Component::Event,
         #[flat]
         SRC5Event: SRC5Component::Event,
+        MetadataURIUpdated: MetadataURIUpdated
+    }
+
+    #[derive(Drop, starknet::Event)]
+    struct MetadataURIUpdated {
+        new_metadata_uri: ByteArray
     }
 
     #[constructor]
@@ -86,7 +92,8 @@ pub mod LandNFT {
                 starknet::get_caller_address() == self.land_registry.read(),
                 'Only land registry can update'
             );
-            self.metadata_uri.write(new_metadata_uri);
+            self.metadata_uri.write(new_metadata_uri.clone());
+            self.emit(MetadataURIUpdated { new_metadata_uri });
         }
 
         fn metadata_uri(self: @ContractState) -> ByteArray {
