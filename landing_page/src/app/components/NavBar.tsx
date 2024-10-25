@@ -7,6 +7,7 @@ import { FaX } from "react-icons/fa6";
 import { useTheme } from "next-themes";
 
 import ThemeSwitch from "./ThemeSwitcher";
+import Link from "next/link";
 const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchIconClicked, setIsSearchIconClicked] =
@@ -48,9 +49,9 @@ const Header: React.FC = () => {
           </div>
           <Image
             src={
-              resolvedTheme === "light"
-                ? "/images/LANDVER-NO-BG.png"
-                : "/images/LANDVER_BLACK.jpg"
+              resolvedTheme === "dark"
+                ? "/images/LANDVER_BLACK.jpg"
+                : "/images/LANDVER-NO-BG.png"
             }
             alt="Landver Logo"
             className="w-[3.5em] ml-3"
@@ -66,7 +67,9 @@ const Header: React.FC = () => {
           )}
           <ul className="hidden md:flex space-x-6 items-center ml-2">
             <li className="hover:text-gray-400">API</li>
-            <li className="hover:text-gray-400">GUIDES</li>
+            <Link href="/guides" className="hover:text-gray-400">
+              GUIDES
+            </Link>
           </ul>
         </div>
         <div className="flex gap-4 items-center p-2">

@@ -15,7 +15,7 @@ const HeroSection: React.FC = () => {
               height={400}
               className="w-20 h-20 rounded-md"
             />
-            <h1 className="text-3xl font-thin tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
+            <h1 className="text-3xl font-thin dark:text-white tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none">
               Landver
             </h1>
           </div>
