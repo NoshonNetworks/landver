@@ -41,10 +41,10 @@ const GuidesPage = () => {
       </header>
 
       <section className="mb-8">
-        <h2 className="text-xl text-gray-700 font-semibold">
+        <h2 className="text-xl text-gray-700 dark:text-white font-semibold">
           Understanding Land Management in a Digital World
         </h2>
-        <h3 className="text-lg text-gray-700 font-medium mt-4">
+        <h3 className="text-lg text-gray-700 dark:text-white font-medium mt-4">
           The Challenges of Land Ownership
         </h3>
         <ul className="list-disc list-inside mt-2 space-y-2 text-gray-700 dark:text-white">
@@ -62,7 +62,9 @@ const GuidesPage = () => {
       </section>
 
       <section className="mb-8">
-        <h2 className="text-xl font-semibold text-gray-700">Our Mission</h2>
+        <h2 className="text-xl font-semibold text-gray-700 dark:text-white">
+          Our Mission
+        </h2>
         <p className="text-gray-700 mt-2 dark:text-white">
           At Landver, we aim to:
         </p>
@@ -83,10 +85,10 @@ const GuidesPage = () => {
       </section>
 
       <section className="mb-8">
-        <h2 className="text-xl font-semibold text-gray-700">
+        <h2 className="text-xl font-semibold text-gray-700 dark:text-white">
           How Landver Works
         </h2>
-        <h3 className="text-lg font-medium text-gray-700 mt-4">
+        <h3 className="text-lg font-medium text-gray-700 dark:text-white mt-4">
           Leveraging Onchain Technology
         </h3>
         <ul className="list-disc list-inside mt-2 space-y-2 dark:text-white text-gray-700">
@@ -100,7 +102,7 @@ const GuidesPage = () => {
           </li>
         </ul>
 
-        <h3 className="text-lg font-medium mt-4 text-gray-700">
+        <h3 className="text-lg font-medium mt-4 text-gray-700 dark:text-white">
           User-Friendly Platform
         </h3>
         <ul className="list-disc list-inside mt-2 dark:text-white space-y-2 text-gray-700">
@@ -116,7 +118,9 @@ const GuidesPage = () => {
       </section>
 
       <section className="mb-8">
-        <h2 className="text-xl font-semibold text-gray-700">Getting Started</h2>
+        <h2 className="text-xl font-semibold text-gray-700 dark:text-white">
+          Getting Started
+        </h2>
         <ol className="list-decimal list-inside mt-2 space-y-2 dark:text-white text-gray-700">
           <li>
             <strong>Create an Account:</strong> Sign up on the Landver platform
@@ -134,7 +138,9 @@ const GuidesPage = () => {
       </section>
 
       <section className="mb-8">
-        <h2 className="text-xl font-semibold text-gray-700">FAQs</h2>
+        <h2 className="text-xl font-semibold text-gray-700 dark:text-white">
+          FAQs
+        </h2>
         <dl className="mt-2 text-gray-700 dark:text-white">
           <dt className="font-medium mt-4">What is Landver?</dt>
           <dd>
@@ -161,7 +167,9 @@ const GuidesPage = () => {
       </section>
 
       <footer className="mt-10 border-t pt-4">
-        <h2 className="text-xl font-semibold text-gray-700">Conclusion</h2>
+        <h2 className="text-xl font-semibold text-gray-700 dark:text-white">
+          Conclusion
+        </h2>
         <p className="text-gray-700 mt-2 dark:text-white">
           At Landver, we are committed to transforming the landscape of land
           management. With our innovative use of technology, we provide a secure
