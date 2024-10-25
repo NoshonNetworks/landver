@@ -12,6 +12,7 @@ pub trait ILandNFT<TContractState> {
     fn metadata_uri(self: @TContractState) -> ByteArray;
     fn lock(ref self: TContractState);
     fn unlock(ref self: TContractState);
+    fn is_locked(self: @TContractState) -> bool;
 }
 
 #[starknet::contract]
@@ -99,6 +100,8 @@ pub mod LandNFT {
                 starknet::get_caller_address() == self.land_registry.read(),
                 'Only land registry can transfer'
             );
+            self.assert_not_locked();
+
             self.erc721.transfer(from, to, token_id);
         }
 
@@ -117,15 +120,29 @@ pub mod LandNFT {
         }
 
         fn lock(ref self: ContractState) {
+            // Only land registry can lock
+            assert(
+                starknet::get_caller_address() == self.land_registry.read(),
+                'Only land registry can lock'
+            );
             self.assert_not_locked();
             self.locked.write(true);
             self.emit(Locked {});
         }
 
         fn unlock(ref self: ContractState) {
+            // Only land registry can unlock
+            assert(
+                starknet::get_caller_address() == self.land_registry.read(),
+                'Only land registry can unlock'
+            );
             self.assert_locked();
             self.locked.write(false);
             self.emit(Unlocked {});
+        }
+
+        fn is_locked(self: @ContractState) -> bool {
+            self.locked.read()
         }
     }
 
