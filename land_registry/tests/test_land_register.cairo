@@ -120,3 +120,41 @@ fn test_can_create_land_id() {
     stop_cheat_caller_address(contract_address);
     stop_cheat_block_timestamp(contract_address);
 }
+
+#[test]
+fn test_can_get_land_count() {
+    let contract_address = deploy("LandRegistryContract");
+    // Get an instance of the deployed Counter contract
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+    // Start cheating the caller address
+    start_cheat_caller_address(contract_address, starknet::contract_address_const::<0x123>());
+    // Assert land_count is equal to zero before registration
+    assert(land_register_dispatcher.get_land_count() == 0, 'Should be equal to zero');
+    // Register the land
+    land_register_dispatcher
+        .register_land(Location { latitude: 1, longitude: 2 }, 1000, LandUse::Residential);
+    // Assert land_count is equal to one after registration
+    assert(land_register_dispatcher.get_land_count() == 1, 'Should be equal to one');
+}
+
+#[test]
+fn test_can_get_lands_by_owner() {
+    let contract_address = deploy("LandRegistryContract");
+    // Get an instance of the deployed Counter contract
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+    // Set up test data
+    let owner_address = starknet::contract_address_const::<0x123>();
+    // Start cheating the caller address
+    start_cheat_caller_address(contract_address, owner_address);
+    // Register lands
+    let land_id1 = land_register_dispatcher
+        .register_land(Location { latitude: 1, longitude: 2 }, 1000, LandUse::Residential);
+    let land_id2 = land_register_dispatcher
+        .register_land(Location { latitude: 3, longitude: 4 }, 1000, LandUse::Residential);
+    let land_id3 = land_register_dispatcher
+        .register_land(Location { latitude: 5, longitude: 6 }, 1000, LandUse::Residential);
+    assert_eq!(
+        land_register_dispatcher.get_lands_by_owner(owner_address),
+        array![land_id1, land_id2, land_id3].span(),
+    );
+}
