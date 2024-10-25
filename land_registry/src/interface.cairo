@@ -1,4 +1,5 @@
 use starknet::ContractAddress;
+use land_registry::utils::utils::{create_land_id};
 
 #[derive(Drop, Copy, Serde, starknet::Store)]
 pub struct Land {
@@ -23,18 +24,12 @@ pub enum LandUse {
     Commercial,
     Industrial,
     Agricultural,
+    Recreational,
+    Institutional,
+    MixedUse,
+    Unclassified,
 }
 
-impl LandUseIntoFelt252 of Into<LandUse, felt252> {
-    fn into(self: LandUse) -> felt252 {
-        match self {
-            LandUse::Residential => 1,
-            LandUse::Commercial => 2,
-            LandUse::Industrial => 3,
-            LandUse::Agricultural => 4,
-        }
-    }
-}
 
 #[starknet::interface]
 pub trait ILandRegistry<TContractState> {

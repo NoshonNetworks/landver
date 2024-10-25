@@ -3,7 +3,7 @@ pub mod LandRegistryContract {
     use starknet::{get_caller_address, get_block_timestamp, ContractAddress};
     use land_registry::interface::{ILandRegistry, Land, LandUse, Location};
     use land_registry::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait, LandNFT};
-    use land_registry::utils::{create_land_id};
+    use land_registry::utils::utils::{create_land_id, LandUseIntoOptionFelt252};
     use core::array::ArrayTrait;
     use starknet::storage::{Map, StorageMapWriteAccess, StorageMapReadAccess};
 
@@ -34,7 +34,7 @@ pub mod LandRegistryContract {
         owner: ContractAddress,
         location: Location,
         area: u256,
-        land_use: felt252,
+        land_use: Option<felt252>,
     }
 
     #[derive(Drop, starknet::Event)]
@@ -52,7 +52,7 @@ pub mod LandRegistryContract {
     #[derive(Drop, Copy, starknet::Event)]
     struct LandUpdated {
         land_id: u256,
-        land_use: felt252,
+        land_use: Option<felt252>,
         area: u256
     }
 
@@ -94,7 +94,7 @@ pub mod LandRegistryContract {
                         owner: caller,
                         location: location,
                         area: area,
-                        land_use: land_use.into(),
+                        land_use: land_use.into()
                     }
                 );
 
@@ -112,7 +112,7 @@ pub mod LandRegistryContract {
             land.land_use = land_use;
             self.lands.write(land_id, land);
 
-            self.emit(LandUpdated { land_id: land_id, area: area, land_use: land_use.into(), });
+            self.emit(LandUpdated { land_id: land_id, area: area, land_use: land_use.into() });
         }
 
         fn transfer_land(ref self: ContractState, land_id: u256, new_owner: ContractAddress) {
