@@ -67,7 +67,7 @@ const Header: React.FC = () => {
           )}
           <ul className="hidden md:flex space-x-6 items-center ml-2">
             <li className="hover:text-gray-400">API</li>
-            <Link href="/guides" className="hover:text-gray-400">
+            <Link href="/Guides" className="hover:text-gray-400">
               GUIDES
             </Link>
           </ul>
