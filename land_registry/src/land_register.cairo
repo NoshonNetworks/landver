@@ -1,7 +1,7 @@
 #[starknet::contract]
 pub mod LandRegistryContract {
     use starknet::{get_caller_address, get_block_timestamp, ContractAddress};
-    use land_registry::interface::{ILandRegistry, Land, LandUse, Location};
+    use land_registry::interface::{ILandRegistry, Land, LandUse, Location, LandStatus};
     use land_registry::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait, LandNFT};
     use land_registry::utils::utils::{create_land_id, LandUseIntoOptionFelt252};
     use core::array::ArrayTrait;
@@ -75,7 +75,7 @@ pub mod LandRegistryContract {
                 location: location,
                 area: area,
                 land_use: land_use,
-                is_approved: false,
+                status: LandStatus::Pending,
                 inspector: Option::None,
                 last_transaction_timestamp: timestamp,
             };
@@ -133,9 +133,9 @@ pub mod LandRegistryContract {
 
         fn transfer_land(ref self: ContractState, land_id: u256, new_owner: ContractAddress) {
             assert(InternalFunctions::only_owner(@self, land_id), 'Only owner can transfer');
-            assert(self.approved_lands.read(land_id), 'Land must be approved');
 
             let mut land = self.lands.read(land_id);
+            assert(land.status == LandStatus::Approved, 'Land must be approved');
             let old_owner = land.owner;
             land.owner = new_owner;
             self.lands.write(land_id, land);
@@ -186,7 +186,10 @@ pub mod LandRegistryContract {
             self.approved_lands.write(land_id, true);
 
             // Mint NFT
-            let land = self.lands.read(land_id);
+            let mut land = self.lands.read(land_id);
+            assert(land.status == LandStatus::Pending, 'Land must be in Pending status');
+            land.status = LandStatus::Approved;
+            self.lands.write(land_id, land);
             let nft_contract = self.nft_contract.read();
             let nft_dispatcher = ILandNFTDispatcher { contract_address: nft_contract };
             nft_dispatcher.mint(land.owner, land_id);
@@ -197,8 +200,10 @@ pub mod LandRegistryContract {
         fn reject_land(ref self: ContractState, land_id: u256) {
             assert(InternalFunctions::only_inspector(@self), 'Only inspector can reject');
             let mut land = self.lands.read(land_id);
-            land.is_approved = false;
+            assert(land.status == LandStatus::Pending, 'Land must be in Pending status');
+            land.status = LandStatus::Rejected;
             self.lands.write(land_id, land);
+
             self.emit(LandVerified { land_id: land_id });
         }
 

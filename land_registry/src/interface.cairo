@@ -7,9 +7,16 @@ pub struct Land {
     location: Location,
     area: u256,
     land_use: LandUse,
-    is_approved: bool,
+    status: LandStatus,
     inspector: Option<ContractAddress>,
     last_transaction_timestamp: u64,
+}
+
+#[derive(Drop, Copy, Serde, Clone, starknet::Store, PartialEq)]
+pub enum LandStatus {
+    Pending,
+    Approved,
+    Rejected,
 }
 
 #[derive(Drop, Copy, Serde, starknet::Store, PartialEq)]

@@ -4,7 +4,7 @@ use snforge_std::{
 };
 use starknet::ContractAddress;
 use land_registry::interface::{ILandRegistryDispatcher, ILandRegistryDispatcherTrait};
-use land_registry::interface::{LandUse, Location};
+use land_registry::interface::{LandUse, Location, LandStatus};
 
 pub mod Accounts {
     use starknet::ContractAddress;
@@ -62,7 +62,7 @@ fn test_can_register_land() {
     assert(registered_land.location == location, 'Wrong location');
     assert(registered_land.area == area, 'Wrong area');
     assert(registered_land.land_use == land_use, 'Wrong land use');
-    assert(registered_land.is_approved == false, 'Should not be approved');
+    assert(registered_land.status == LandStatus::Pending, 'Should not be approved');
     assert(registered_land.inspector.is_none(), 'Should have no inspector');
 }
 
