@@ -62,8 +62,10 @@ fn test_can_register_land() {
     assert(registered_land.location == location, 'Wrong location');
     assert(registered_land.area == area, 'Wrong area');
     assert(registered_land.land_use == land_use, 'Wrong land use');
-    assert(registered_land.status == LandStatus::Pending, 'Should not be approved');
-    assert(registered_land.inspector.is_none(), 'Should have no inspector');
+    match registered_land.status {
+        LandStatus::Pending => {},
+        _ => panic!("Must be Pending"),
+    }    assert(registered_land.inspector.is_none(), 'Should have no inspector');
 }
 
 #[test]
@@ -157,4 +159,64 @@ fn test_can_get_lands_by_owner() {
         land_register_dispatcher.get_lands_by_owner(owner_address),
         array![land_id1, land_id2, land_id3].span(),
     );
+}
+
+#[test]
+fn test_can_approve_land() {
+    let contract_address = deploy("LandRegistryContract");
+
+    // Instance of LandRegistryContract
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    // Set up
+    let caller_address = starknet::contract_address_const::<0x123>();
+    let location = Location { latitude: 1, longitude: 2 };
+    let area = 1000;
+    let land_use = LandUse::Residential;
+
+    // Register lands
+    start_cheat_caller_address(contract_address, caller_address);
+    let land_id = land_register_dispatcher.register_land(location, area, land_use);
+
+    // Approve lands
+    land_register_dispatcher.approve_land(land_id);
+
+    // Get approved land
+    let approved_land = land_register_dispatcher.get_land(land_id);
+
+    // Assert match
+    match approved_land.status {
+        LandStatus::Approved => {},
+        _ => panic!("Must be Approved"),
+    }
+}
+
+#[test]
+fn test_can_reject_land() {
+    let contract_address = deploy("LandRegistryContract");
+
+    // Instance of LandRegistryContract
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    // Set up
+    let caller_address = starknet::contract_address_const::<0x123>();
+    let location = Location { latitude: 1, longitude: 2 };
+    let area = 1000;
+    let land_use = LandUse::Residential;
+
+    // Register lands
+    start_cheat_caller_address(contract_address, caller_address);
+    let land_id = land_register_dispatcher.register_land(location, area, land_use);
+
+    // Reject lands
+    land_register_dispatcher.reject_land(land_id);
+
+    // Get rejected land
+    let rejected_land = land_register_dispatcher.get_land(land_id);
+
+    // Assert match
+    match rejected_land.status {
+        LandStatus::Rejected => {},
+        _ => panic!("Must be Rejected"),
+    }
 }
