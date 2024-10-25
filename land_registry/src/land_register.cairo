@@ -215,6 +215,11 @@ pub mod LandRegistryContract {
             // Todo: Add logic to ensure only authorized entities can remove inspectors
             self.land_inspectors.write(inspector, false);
         }
+        
+        fn is_land_approved(self: @ContractState, land_id: u256) -> bool{
+            self.approved_lands.read(land_id)
+        }
+
     }
 
     #[generate_trait]
