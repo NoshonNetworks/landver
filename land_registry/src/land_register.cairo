@@ -266,7 +266,6 @@ pub mod LandRegistryContract {
             };
 
             land_history
-
         }
         fn get_land_status(self: @ContractState, land_id: u256) -> LandStatus {
             let land = self.lands.read(land_id);
@@ -294,7 +293,7 @@ pub mod LandRegistryContract {
             } else {
                 Option::Some(self.land_inspector_assignments.read(land_id))
             }
-         }
+        }
     }
 
     #[generate_trait]
