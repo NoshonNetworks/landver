@@ -1,10 +1,20 @@
+"use client"
 import Link from "next/link";
-import React from "react";
 import { Home } from "lucide-react";
 import Image from "next/image";
 import ThemeSwitch from "../components/ThemeSwitcher";
+import React, { useState } from "react";
 
 const GuidesPage = () => {
+  const [openSection, setOpenSection] = useState(null);
+  const [openFAQ, setOpenFAQ] = useState(null);
+
+  const toggleFAQ = (index) => {
+    setOpenFAQ(openFAQ === index ? null : index);
+  };
+  const toggleSection = (section) => {
+    setOpenSection(openSection === section ? null : section);
+  };
   return (
     <div className="mx-auto p-8 bg-gradient-to-b from-green-100 to-white shadow-lg rounded-lg dark:from-gray-800 dark:to-black dark:bg-[#060304]">
       <div className="flex justify-between items-center mb-6">
@@ -120,49 +130,59 @@ const GuidesPage = () => {
         <h2 className="text-xl font-semibold text-gray-700 dark:text-white">
           Getting Started
         </h2>
-        <ol className="list-decimal list-inside mt-2 space-y-2 dark:text-white text-gray-700">
-          <li>
-            <strong>Create an Account:</strong> Sign up on the Landver platform
-            to begin your journey in digital land management.
-          </li>
-          <li>
-            <strong>Learn the Basics:</strong> Familiarize yourself with our
-            resources to protect your assets and manage land effectively.
-          </li>
-          <li>
-            <strong>Engage with the Community:</strong> Join our forums and
-            discussions to connect with other users and share insights.
-          </li>
-        </ol>
+        <button 
+          className="w-full text-left focus:outline-none"
+          onClick={() => toggleSection('gettingStarted')}
+        >
+          <h3 className="font-medium mt-2">{openSection === 'gettingStarted' ? '−' : '+'} Steps to Get Started</h3>
+        </button>
+        {openSection === 'gettingStarted' && (
+          <ol className="list-decimal list-inside mt-2 space-y-2 dark:text-white text-gray-700">
+            <li>
+              <strong>Create an Account:</strong> Sign up on the Landver platform to begin your journey in digital land management.
+            </li>
+            <li>
+              <strong>Learn the Basics:</strong> Familiarize yourself with our resources to protect your assets and manage land effectively.
+            </li>
+            <li>
+              <strong>Engage with the Community:</strong> Join our forums and discussions to connect with other users and share insights.
+            </li>
+          </ol>
+        )}
       </section>
 
       <section className="mb-8">
         <h2 className="text-xl font-semibold text-gray-700 dark:text-white">
           FAQs
         </h2>
-        <dl className="mt-2 text-gray-700 dark:text-white">
-          <dt className="font-medium mt-4">What is Landver?</dt>
-          <dd>
-            Landver is a cryptocurrency platform focused on enhancing land
-            ownership and management through secure and transparent solutions.
-          </dd>
-
-          <dt className="font-medium mt-4">
-            How does onchain technology work?
-          </dt>
-          <dd>
-            Onchain technology records all transactions on a blockchain,
-            ensuring they are secure, transparent, and immutable.
-          </dd>
-
-          <dt className="font-medium mt-4">
-            What are the benefits of using Landver?
-          </dt>
-          <dd>
-            Our platform simplifies the land registration process, enhances
-            transparency, and builds trust among all stakeholders.
-          </dd>
-        </dl>
+        <div className="mt-2 text-gray-700 dark:text-white">
+          {[
+            {
+              question: "What is Landver?",
+              answer: "Landver is a cryptocurrency platform focused on enhancing land ownership and management through secure and transparent solutions."
+            },
+            {
+              question: "How does onchain technology work?",
+              answer: "Onchain technology records all transactions on a blockchain, ensuring they are secure, transparent, and immutable."
+            },
+            {
+              question: "What are the benefits of using Landver?",
+              answer: "Our platform simplifies the land registration process, enhances transparency, and builds trust among all stakeholders."
+            }
+          ].map((faq, index) => (
+            <div key={index} className="mb-4">
+              <button 
+                className="w-full text-left focus:outline-none font-medium mt-2"
+                onClick={() => toggleFAQ(index)}
+              >
+                <h3 className=" font-bold">{openFAQ === index ? '−' : '+'} {faq.question}</h3>
+              </button>
+              {openFAQ === index && (
+                <p className="mt-2">{faq.answer}</p>
+              )}
+            </div>
+          ))}
+        </div>
       </section>
 
       <footer className="mt-10 border-t pt-4">

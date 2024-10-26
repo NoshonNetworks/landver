@@ -5,7 +5,7 @@ const Footer: React.FC = () => {
   return (
     <footer className="bg-gradient-to-b from-gray-500 to-gray-950 text-white py-8">
       <div className="container mx-auto flex flex-col gap-4 px-4">
-        <div className=" flex  justify-around">
+        <div className=" flex flex-col gap-6  xl:justify-around">
           {/* Left Column: Resources */}
           <div className="flex flex-col">
             <h4 className="text-lg font-semibold mb-4">Resources</h4>

@@ -131,9 +131,9 @@ const Header: React.FC = () => {
           <div className="grid grid-cols-2 items-center justify-evenly p-3 py-0">
             <Image
               src={
-                resolvedTheme === "light"
-                  ? "/images/LANDVER-NO-BG.png"
-                  : "/images/LANDVER_BLACK.jpg"
+                resolvedTheme === "dark"
+                  ? "/images/LANDVER_BLACK.jpg"
+                  : "/images/LANDVER-NO-BG.png"
               }
               alt="Landver Logo"
               className="w-[3.5em]"
@@ -156,9 +156,9 @@ const Header: React.FC = () => {
           <a href="#" onClick={() => setIsOpen(false)}>
             API
           </a>
-          <a href="#" onClick={() => setIsOpen(false)}>
+          <Link href="/Guides" onClick={() => setIsOpen(false)}>
             GUIDES
-          </a>
+          </Link>
           <select
             name=""
             id=""
