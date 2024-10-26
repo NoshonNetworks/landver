@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import { FaGithub } from "react-icons/fa";
 import Image from "next/image";
-import { SunDim, Search, Home } from "lucide-react";
+import { Search, Home } from "lucide-react";
 import { FaX } from "react-icons/fa6";
 import { useTheme } from "next-themes";
 
@@ -90,7 +90,7 @@ const Header: React.FC = () => {
           <div>
             <input
               type="search"
-              className="border-2 border-gray-800 p-3 bg-inherit rounded-lg hidden md:block"
+              className="border-2 border-gray-800 dark:border-gray-400 p-3 bg-inherit rounded-lg hidden md:block"
               placeholder="Search"
             />
             {isSearchIconClicked ? (
@@ -162,7 +162,7 @@ const Header: React.FC = () => {
           <select
             name=""
             id=""
-            className="border-2 border-black rounded p-2 bg-inherit"
+            className="border-2 border-black dark:border-gray-400 rounded p-2 bg-inherit"
           >
             <option value="">0.3</option>
             <option value="">0.2</option>
@@ -173,7 +173,7 @@ const Header: React.FC = () => {
             href="https://github.com/NoshonNetworks/landver/"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-black"
+            className="text-black dark:text-gray-300"
           >
             <FaGithub className="w-5 h-5" />
           </a>

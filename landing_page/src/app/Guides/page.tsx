@@ -6,13 +6,14 @@ import ThemeSwitch from "../components/ThemeSwitcher";
 import React, { useState } from "react";
 
 const GuidesPage = () => {
-  const [openSection, setOpenSection] = useState(null);
-  const [openFAQ, setOpenFAQ] = useState(null);
+  const [openSection, setOpenSection] = useState<string | null>(null);
+  const [openFAQ, setOpenFAQ] = useState<number | null>(null);
 
-  const toggleFAQ = (index:any) => {
+  const toggleFAQ = (index: number) => {
     setOpenFAQ(openFAQ === index ? null : index);
   };
-  const toggleSection = (section:any) => {
+  
+  const toggleSection = (section: string) => {
     setOpenSection(openSection === section ? null : section);
   };
   return (
