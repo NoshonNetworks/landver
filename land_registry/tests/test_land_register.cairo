@@ -135,6 +135,8 @@ fn test_can_get_land_count() {
         .register_land(Location { latitude: 1, longitude: 2 }, 1000, LandUse::Residential);
     // Assert land_count is equal to one after registration
     assert(land_register_dispatcher.get_land_count() == 1, 'Should be equal to one');
+
+    stop_cheat_caller_address(contract_address);
 }
 
 #[test]
@@ -157,10 +159,12 @@ fn test_can_get_lands_by_owner() {
         land_register_dispatcher.get_lands_by_owner(owner_address),
         array![land_id1, land_id2, land_id3].span(),
     );
+
+    stop_cheat_caller_address(contract_address);
 }
 
 #[test]
-fn test_can_get_is_land_approved(){
+fn test_can_get_is_land_approved() {
     let contract_address = deploy("LandRegistryContract");
 
     // Get an instance of the deployed Counter contract
@@ -178,11 +182,15 @@ fn test_can_get_is_land_approved(){
     // Register the land
     let land_id = land_register_dispatcher.register_land(location, area, land_use);
 
-    assert(land_register_dispatcher.is_land_approved(land_id) == false, 'Land should not be approved');
+    assert(
+        land_register_dispatcher.is_land_approved(land_id) == false, 'Land should not be approved'
+    );
+
+    stop_cheat_caller_address(contract_address);
 }
 
 #[test]
-fn test_can_get_pending_approvals(){
+fn test_can_get_pending_approvals() {
     let contract_address = deploy("LandRegistryContract");
 
     // Get an instance of the deployed Counter contract
@@ -199,6 +207,39 @@ fn test_can_get_pending_approvals(){
 
     // Register the land
     let land_id = land_register_dispatcher.register_land(location, area, land_use);
-    
-    assert(land_register_dispatcher.get_pending_approvals() == array![land_id], 'Not enough pending approvals');
+
+    assert(
+        land_register_dispatcher.get_pending_approvals() == array![land_id],
+        'Not enough pending approvals'
+    );
+}
+
+#[test]
+fn test_can_get_land_transaction_history() {
+    let contract_address = deploy("LandRegistryContract");
+
+    // Get an instance of the deployed Counter contract
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    // Set up test data
+    let caller_address = starknet::contract_address_const::<0x123>();
+    let location: Location = Location { latitude: 12, longitude: 34 };
+    let area: u256 = 1234;
+    let land_use = LandUse::Residential;
+
+    // Start cheating the caller address
+    start_cheat_caller_address(contract_address, caller_address);
+    start_cheat_block_timestamp(contract_address, 1);
+
+    // Register the land
+    let land_id = land_register_dispatcher.register_land(location, area, land_use);
+
+    assert(
+        land_register_dispatcher
+            .get_land_transaction_history(land_id) == array![(caller_address, 1)],
+        'Inaccurate land history'
+    );
+
+    stop_cheat_caller_address(contract_address);
+    stop_cheat_block_timestamp(contract_address);
 }
