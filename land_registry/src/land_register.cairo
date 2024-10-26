@@ -17,6 +17,7 @@ pub mod LandRegistryContract {
         approved_lands: Map::<u256, bool>,
         land_count: u256,
         nft_contract: ContractAddress,
+        land_inspector_assignments: Map::<u256, ContractAddress>,
     }
 
     #[event]
@@ -26,6 +27,7 @@ pub mod LandRegistryContract {
         LandTransferred: LandTransferred,
         LandVerified: LandVerified,
         LandUpdated: LandUpdated,
+        InspectorAssigned: InspectorAssigned,
     }
 
     #[derive(Drop, starknet::Event)]
@@ -54,6 +56,12 @@ pub mod LandRegistryContract {
         land_id: u256,
         land_use: Option<felt252>,
         area: u256
+    }
+
+    #[derive(Drop, starknet::Event)]
+    struct InspectorAssigned {
+        land_id: u256,
+        inspector: ContractAddress,
     }
 
     #[constructor]
@@ -207,23 +215,44 @@ pub mod LandRegistryContract {
             self.emit(LandVerified { land_id: land_id });
         }
 
-        fn is_inspector(self: @ContractState, address: ContractAddress) -> bool {
-            self.land_inspectors.read(address)
+        fn is_inspector(self: @ContractState, inspector: ContractAddress) -> bool {
+            self.land_inspectors.read(inspector)
         }
 
         fn add_inspector(ref self: ContractState, inspector: ContractAddress) {
-            // Todo: Add logic to ensure only authorized entities can add inspectors
             self.land_inspectors.write(inspector, true);
         }
 
         fn remove_inspector(ref self: ContractState, inspector: ContractAddress) {
-            // Todo: Add logic to ensure only authorized entities can remove inspectors
             self.land_inspectors.write(inspector, false);
         }
 
         fn get_land_status(self: @ContractState, land_id: u256) -> LandStatus {
             let land = self.lands.read(land_id);
             land.status
+        }
+
+        fn set_land_inspector(ref self: ContractState, land_id: u256, inspector: ContractAddress) {
+            // Ensure inspector is approved
+            assert(self.land_inspectors.read(inspector), 'Inspector not approved');
+
+            // Ensure land exists
+            let land = self.lands.read(land_id);
+            assert(land.status == LandStatus::Pending, 'Land must be pending');
+
+            // Assign inspector
+            self.land_inspector_assignments.write(land_id, inspector);
+
+            // Emit event
+            self.emit(InspectorAssigned { land_id: land_id, inspector: inspector });
+        }
+
+        fn get_land_inspector(self: @ContractState, land_id: u256) -> Option<ContractAddress> {
+            if self.land_inspector_assignments.read(land_id).is_zero() {
+                Option::None
+            } else {
+                Option::Some(self.land_inspector_assignments.read(land_id))
+            }
         }
     }
 
