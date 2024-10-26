@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaGithub } from "react-icons/fa";
 import Image from "next/image";
 import { Search, Home } from "lucide-react";
@@ -12,7 +12,16 @@ const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isSearchIconClicked, setIsSearchIconClicked] =
     useState<boolean>(false);
+  const [logo, setLogo] = useState("/images/LANDVER-NO-BG.png");
+
   const { resolvedTheme } = useTheme();
+  useEffect(() => {
+    if (resolvedTheme === "dark") {
+      setLogo("/images/LANDVER_BLACK.jpg");
+    } else {
+      setLogo("/images/LANDVER-NO-BG.png");
+    }
+  }, [resolvedTheme]);
 
   return (
     <header className="text-black dark:text-white bg-white dark:bg-[#0D0D0D]">
@@ -48,11 +57,7 @@ const Header: React.FC = () => {
             </button>
           </div>
           <Image
-            src={
-              resolvedTheme === "dark"
-                ? "/images/LANDVER_BLACK.jpg"
-                : "/images/LANDVER-NO-BG.png"
-            }
+            src={logo}
             alt="Landver Logo"
             className="w-[3.5em] ml-3"
             width={56}
@@ -62,7 +67,7 @@ const Header: React.FC = () => {
             <Home size={40} />
           ) : (
             <ul>
-              <li className="hover:text-gray-400 font-bold">Home</li>
+              <Link href="/" className="hover:text-gray-400 font-bold">Home</Link>
             </ul>
           )}
           <ul className="hidden md:flex space-x-6 items-center ml-2">
@@ -98,7 +103,7 @@ const Header: React.FC = () => {
                 <input
                   type="text"
                   placeholder="Search Docs"
-                  className={`p-3 rounded-lg bg-inherit text-black border-2 border-black placeholder:text-center w-[80%] block ${
+                  className={`p-3 rounded-lg bg-inherit text-black border-2 border-black dark:border-gray-500 placeholder:text-center w-[80%] block ${
                     isSearchIconClicked
                       ? "sm:absolute sm:top-2 sm:left-1 md:block lg:block"
                       : ""
@@ -106,7 +111,7 @@ const Header: React.FC = () => {
                 />
                 <FaX
                   onClick={() => setIsSearchIconClicked(false)}
-                  className="p-4 rounded text-gray-700"
+                  className="p-4 rounded text-gray-700 dark:text-gray-300"
                   size={45}
                 />
               </div>
@@ -130,11 +135,7 @@ const Header: React.FC = () => {
         <div className="flex items-center justify-around border">
           <div className="grid grid-cols-2 items-center justify-evenly p-3 py-0">
             <Image
-              src={
-                resolvedTheme === "dark"
-                  ? "/images/LANDVER_BLACK.jpg"
-                  : "/images/LANDVER-NO-BG.png"
-              }
+              src={logo}
               alt="Landver Logo"
               className="w-[3.5em]"
               width={56}
@@ -162,11 +163,17 @@ const Header: React.FC = () => {
           <select
             name=""
             id=""
-            className="border-2 border-black dark:border-gray-400 rounded p-2 bg-inherit"
+            className="border-2 border-black  dark:border-gray-400 rounded p-2 bg-inherit"
           >
-            <option value="">0.3</option>
-            <option value="">0.2</option>
-            <option value="">0.1</option>
+            <option value=" " className="dark:text-black">
+              0.3
+            </option>
+            <option value="" className="dark:text-black">
+              0.2
+            </option>
+            <option value="" className="dark:text-black">
+              0.1
+            </option>
           </select>
 
           <a

@@ -26,7 +26,7 @@ const HeroSection: React.FC = () => {
           </p>
 
           <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
-            <div className="bg-white p-4 rounded-lg shadow-md flex items-center space-x-4 w-full">
+            <div className="bg-white md:h-[100px] h-[80px] p-4 rounded-lg shadow-md flex items-center space-x-4 w-full">
               <ShieldCheck className="h-10 w-10 text-gray-800" />
 
               <div className="text-left h-auto md:p-2 lg:p-2">
@@ -38,7 +38,7 @@ const HeroSection: React.FC = () => {
                 </p>
               </div>
             </div>
-            <div className="bg-white p-4 rounded-lg shadow-md flex items-center space-x-4 w-full">
+            <div className="bg-white p-4  md:h-[100px] h-[80px] rounded-lg shadow-md flex items-center space-x-4 w-full">
               <File className="h-10 w-10 text-green-600" />
               <div className="text-left h-auto">
                 <h2 className="text-xl font-semibold text-gray-800">
