@@ -169,27 +169,32 @@ fn test_can_approve_land() {
     // Instance of LandRegistryContract
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
 
-    // Set up
-    let caller_address = starknet::contract_address_const::<0x123>();
+    // Set up test data
+    let owner_address = starknet::contract_address_const::<0x123>();
+    let inspector_address = starknet::contract_address_const::<0x456>();
     let location = Location { latitude: 1, longitude: 2 };
     let area = 1000;
     let land_use = LandUse::Residential;
 
-    // Register lands
-    start_cheat_caller_address(contract_address, caller_address);
+    // Register land as owner
+    start_cheat_caller_address(contract_address, owner_address);
     let land_id = land_register_dispatcher.register_land(location, area, land_use);
+    stop_cheat_caller_address(contract_address);
 
-    // Approve lands
+    // Add inspector
+    start_cheat_caller_address(contract_address, inspector_address);
+    land_register_dispatcher.add_inspector(inspector_address);
+
+    // Approve land as inspector
+    let land_before = land_register_dispatcher.get_land(land_id);
+    assert_eq!(land_before.status, LandStatus::Pending, "Should be pending before approval");
+
     land_register_dispatcher.approve_land(land_id);
 
-    // Get approved land
-    let approved_land = land_register_dispatcher.get_land(land_id);
-
-    // Assert match
-    match approved_land.status {
-        LandStatus::Approved => {},
-        _ => panic!("Must be Approved"),
-    }
+    // Get approved land and verify status
+    let land_after = land_register_dispatcher.get_land(land_id);
+    assert_eq!(land_after.status, LandStatus::Approved, "Should be approved after");
+    stop_cheat_caller_address(contract_address);
 }
 
 #[test]
@@ -199,25 +204,30 @@ fn test_can_reject_land() {
     // Instance of LandRegistryContract
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
 
-    // Set up
-    let caller_address = starknet::contract_address_const::<0x123>();
+    // Set up test data
+    let owner_address = starknet::contract_address_const::<0x123>();
+    let inspector_address = starknet::contract_address_const::<0x456>();
     let location = Location { latitude: 1, longitude: 2 };
     let area = 1000;
     let land_use = LandUse::Residential;
 
-    // Register lands
-    start_cheat_caller_address(contract_address, caller_address);
+    // Register land as owner
+    start_cheat_caller_address(contract_address, owner_address);
     let land_id = land_register_dispatcher.register_land(location, area, land_use);
+    stop_cheat_caller_address(contract_address);
 
-    // Reject lands
+    // Add inspector
+    start_cheat_caller_address(contract_address, inspector_address);
+    land_register_dispatcher.add_inspector(inspector_address);
+
+    // Reject land as inspector
+    let land_before = land_register_dispatcher.get_land(land_id);
+    assert_eq!(land_before.status, LandStatus::Pending, "Should be pending before reject");
+
     land_register_dispatcher.reject_land(land_id);
 
-    // Get rejected land
-    let rejected_land = land_register_dispatcher.get_land(land_id);
-
-    // Assert match
-    match rejected_land.status {
-        LandStatus::Rejected => {},
-        _ => panic!("Must be Rejected"),
-    }
+    // Get rejected land and verify status
+    let land_after = land_register_dispatcher.get_land(land_id);
+    assert_eq!(land_after.status, LandStatus::Rejected, "Should be rejected after");
+    stop_cheat_caller_address(contract_address);
 }

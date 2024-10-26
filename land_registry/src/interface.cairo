@@ -12,7 +12,7 @@ pub struct Land {
     last_transaction_timestamp: u64,
 }
 
-#[derive(Drop, Copy, Serde, Clone, starknet::Store, PartialEq)]
+#[derive(Drop, Debug, Copy, Serde, Clone, starknet::Store, PartialEq)]
 pub enum LandStatus {
     Pending,
     Approved,
