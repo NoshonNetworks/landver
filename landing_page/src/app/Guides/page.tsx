@@ -9,10 +9,10 @@ const GuidesPage = () => {
   const [openSection, setOpenSection] = useState(null);
   const [openFAQ, setOpenFAQ] = useState(null);
 
-  const toggleFAQ = (index) => {
+  const toggleFAQ = (index:any) => {
     setOpenFAQ(openFAQ === index ? null : index);
   };
-  const toggleSection = (section) => {
+  const toggleSection = (section:any) => {
     setOpenSection(openSection === section ? null : section);
   };
   return (
