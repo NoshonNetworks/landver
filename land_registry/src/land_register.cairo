@@ -17,6 +17,7 @@ pub mod LandRegistryContract {
         approved_lands: Map::<u256, bool>,
         land_count: u256,
         nft_contract: ContractAddress,
+
     }
 
     #[event]
@@ -220,6 +221,21 @@ pub mod LandRegistryContract {
             self.approved_lands.read(land_id)
         }
 
+        fn get_pending_approvals(self: @ContractState) -> Array<u256>{
+            let mut pending_approvals = array![];
+            let owner = get_caller_address();
+            let owner_land_count = self.owner_land_count.read(owner);
+            let mut i = 0;
+            while i < owner_land_count {
+                let land_id = self.owner_lands.read((owner, i));
+                if(!self.approved_lands.read(land_id)){
+                    pending_approvals.append(land_id);
+                }
+                i += 1;
+            };
+            pending_approvals
+        }
+        
     }
 
     #[generate_trait]

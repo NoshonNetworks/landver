@@ -47,5 +47,5 @@ pub trait ILandRegistry<TContractState> {
     fn add_inspector(ref self: TContractState, inspector: ContractAddress);
     fn remove_inspector(ref self: TContractState, inspector: ContractAddress);
     fn is_land_approved(self: @TContractState, land_id: u256) -> bool;
-
+    fn get_pending_approvals(self: @TContractState) -> Array<u256>;
 }

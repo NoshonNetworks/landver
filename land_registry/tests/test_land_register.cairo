@@ -180,3 +180,25 @@ fn test_can_get_is_land_approved(){
 
     assert(land_register_dispatcher.is_land_approved(land_id) == false, 'Land should not be approved');
 }
+
+#[test]
+fn test_can_get_pending_approvals(){
+    let contract_address = deploy("LandRegistryContract");
+
+    // Get an instance of the deployed Counter contract
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    // Set up test data
+    let caller_address = starknet::contract_address_const::<0x123>();
+    let location: Location = Location { latitude: 12, longitude: 34 };
+    let area: u256 = 1234;
+    let land_use = LandUse::Residential;
+
+    // Start cheating the caller address
+    start_cheat_caller_address(contract_address, caller_address);
+
+    // Register the land
+    let land_id = land_register_dispatcher.register_land(location, area, land_use);
+    
+    assert(land_register_dispatcher.get_pending_approvals() == array![land_id], 'Not enough pending approvals');
+}
