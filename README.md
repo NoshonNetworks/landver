@@ -1,7 +1,7 @@
 # LandVer - Land Verification System
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-9-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-10-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 LandVer is a decentralized land registration and verification protocol, utilizing blockchain technology to provide a secure, transparent, and immutable system for managing land records. The protocol facilitates land transactions and ownership verification across multiple blockchains, beginning with StarkNet.
@@ -84,6 +84,7 @@ scarb test
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/saimeunt"><img src="https://avatars.githubusercontent.com/u/5597359?v=4?s=100" width="100px;" alt="saimeunt"/><br /><sub><b>saimeunt</b></sub></a><br /><a href="https://github.com/NoshonNetworks/landver/commits?author=saimeunt" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://deveche.vercel.app/"><img src="https://avatars.githubusercontent.com/u/111073744?v=4?s=100" width="100px;" alt="Echefula Ndukwe"/><br /><sub><b>Echefula Ndukwe</b></sub></a><br /><a href="https://github.com/NoshonNetworks/landver/commits?author=Eche5" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://poulav.vercel.app"><img src="https://avatars.githubusercontent.com/u/133862694?v=4?s=100" width="100px;" alt="Poulav Bhowmick"/><br /><sub><b>Poulav Bhowmick</b></sub></a><br /><a href="https://github.com/NoshonNetworks/landver/commits?author=PoulavBhowmick03" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
