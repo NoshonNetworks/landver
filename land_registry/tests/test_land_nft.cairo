@@ -119,6 +119,7 @@ fn test_lock_when_already_locked() {
 fn test_unlock_from_non_land_registry() {
     let metadata_uri = "https://some.metadata.uri/nft_id";
     let dispatcher = deploy(metadata_uri);
+    // ensure state was 'locked'
     start_cheat_caller_address(dispatcher.contract_address, Accounts::land_registry());
     dispatcher.lock();
     stop_cheat_caller_address(dispatcher.contract_address);
