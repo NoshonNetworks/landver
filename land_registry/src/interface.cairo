@@ -1,46 +1,64 @@
 use starknet::ContractAddress;
+use land_registry::utils::utils::{create_land_id};
 
 #[derive(Drop, Copy, Serde, starknet::Store)]
 pub struct Land {
     owner: ContractAddress,
-    location: felt252,
+    location: Location,
     area: u256,
     land_use: LandUse,
-    is_approved: bool,
+    status: LandStatus,
     inspector: Option<ContractAddress>,
     last_transaction_timestamp: u64,
 }
 
-#[derive(Debug, Drop, Copy, Clone, Serde, starknet::Store, PartialEq)]
+#[derive(Drop, Debug, Copy, Serde, Clone, starknet::Store, PartialEq)]
+pub enum LandStatus {
+    Pending,
+    Approved,
+    Rejected,
+}
+
+#[derive(Drop, Copy, Serde, starknet::Store, PartialEq)]
+pub struct Location {
+    latitude: felt252,
+    longitude: felt252,
+}
+
+#[derive(Debug, Drop, Copy, Serde, Clone, starknet::Store, PartialEq)]
 pub enum LandUse {
     Residential,
     Commercial,
     Industrial,
     Agricultural,
+    Recreational,
+    Institutional,
+    MixedUse,
+    Unclassified,
 }
 
-impl LandUseIntoFelt252 of Into<LandUse, felt252> {
-    fn into(self: LandUse) -> felt252 {
-        match self {
-            LandUse::Residential => 1,
-            LandUse::Commercial => 2,
-            LandUse::Industrial => 3,
-            LandUse::Agricultural => 4,
-        }
-    }
-}
 
 #[starknet::interface]
 pub trait ILandRegistry<TContractState> {
     fn register_land(
-        ref self: TContractState, location: felt252, area: u256, land_use: LandUse,
+        ref self: TContractState, location: Location, area: u256, land_use: LandUse,
     ) -> u256;
+    fn set_land_inspector(ref self: TContractState, land_id: u256, inspector: ContractAddress);
+    fn get_land_inspector(self: @TContractState, land_id: u256) -> Option<ContractAddress>;
     fn transfer_land(ref self: TContractState, land_id: u256, new_owner: ContractAddress);
     fn get_land(self: @TContractState, land_id: u256) -> Land;
+    fn get_land_count(self: @TContractState) -> u256;
+    fn get_lands_by_owner(self: @TContractState, owner: ContractAddress) -> Span<u256>;
     fn update_land(ref self: TContractState, land_id: u256, area: u256, land_use: LandUse);
     fn approve_land(ref self: TContractState, land_id: u256);
     fn reject_land(ref self: TContractState, land_id: u256);
-    fn is_inspector(self: @TContractState, address: ContractAddress) -> bool;
+    fn is_inspector(self: @TContractState, inspector: ContractAddress) -> bool;
     fn add_inspector(ref self: TContractState, inspector: ContractAddress);
     fn remove_inspector(ref self: TContractState, inspector: ContractAddress);
+    fn is_land_approved(self: @TContractState, land_id: u256) -> bool;
+    fn get_pending_approvals(self: @TContractState) -> Array<u256>;
+    fn get_land_transaction_history(
+        self: @TContractState, land_id: u256
+    ) -> Array<(ContractAddress, u64)>;
+    fn get_land_status(self: @TContractState, land_id: u256) -> LandStatus;
 }
