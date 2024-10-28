@@ -17,6 +17,8 @@ pub mod LandRegistryContract {
         approved_lands: Map::<u256, bool>,
         land_count: u256,
         nft_contract: ContractAddress,
+        land_transaction_history: Map::<(u256, u256), (ContractAddress, u64)>,
+        land_transaction_count: Map::<u256, u256>,
         land_inspector_assignments: Map::<u256, ContractAddress>,
     }
 
@@ -77,6 +79,7 @@ pub mod LandRegistryContract {
             let caller = get_caller_address();
             let timestamp = get_block_timestamp();
             let land_id = create_land_id(caller, timestamp, location);
+            let transaction_count = self.land_transaction_count.read(land_id);
 
             let new_land = Land {
                 owner: caller,
@@ -94,6 +97,11 @@ pub mod LandRegistryContract {
             let owner_land_count = self.owner_land_count.read(caller);
             self.owner_lands.write((caller, owner_land_count), land_id);
             self.owner_land_count.write(caller, owner_land_count + 1);
+
+            self.land_transaction_history.write((land_id, transaction_count), (caller, timestamp));
+            self
+                .land_transaction_count
+                .write(land_id, self.land_transaction_count.read(land_id) + 1);
 
             self
                 .emit(
@@ -227,6 +235,41 @@ pub mod LandRegistryContract {
             self.land_inspectors.write(inspector, false);
         }
 
+
+        fn is_land_approved(self: @ContractState, land_id: u256) -> bool {
+            let land = self.lands.read(land_id);
+            land.status == LandStatus::Approved
+        }
+
+
+        fn get_pending_approvals(self: @ContractState) -> Array<u256> {
+            let mut pending_approvals = array![];
+            let owner = get_caller_address();
+            let owner_land_count = self.owner_land_count.read(owner);
+            let mut i = 0;
+            while i < owner_land_count {
+                let land_id = self.owner_lands.read((owner, i));
+                if (!self.approved_lands.read(land_id)) {
+                    pending_approvals.append(land_id);
+                }
+                i += 1;
+            };
+            pending_approvals
+        }
+
+        fn get_land_transaction_history(
+            self: @ContractState, land_id: u256
+        ) -> Array<(ContractAddress, u64)> {
+            let mut land_history = array![];
+            let transaction_count = self.land_transaction_count.read(land_id);
+            let mut i = 0;
+            while i < transaction_count {
+                land_history.append(self.land_transaction_history.read((land_id, i)));
+                i += 1;
+            };
+
+            land_history
+        }
         fn get_land_status(self: @ContractState, land_id: u256) -> LandStatus {
             let land = self.lands.read(land_id);
             land.status
