@@ -236,9 +236,8 @@ pub mod LandRegistryContract {
         }
 
 
-        fn is_land_approved(ref self: ContractState, land_id: u256) -> bool {
+        fn is_land_approved(self: @ContractState, land_id: u256) -> bool {
             let land = self.lands.read(land_id);
-            assert(land.status == LandStatus::Approved, 'Land must be approved');
             land.status == LandStatus::Approved
         }
 
