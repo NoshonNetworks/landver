@@ -1,30 +1,31 @@
 const LandOwner = require('../models/LandOwner');
 const blockchainService = require('../services/blockchainService');
+const CustomError = require('../errors/CustomError');
 
-exports.registerLandOwner = async (req, res) => {
+exports.registerLandOwner = async (req, res, next) => {
   try {
     const newLandOwner = new LandOwner(req.body);
     await newLandOwner.save();
     res.status(201).json({ message: 'Land owner registered successfully', landOwner: newLandOwner });
   } catch (error) {
-    res.status(400).json({ message: 'Error registering land owner', error: error.message });
+    next(new CustomError('Error registering land owner', 400, 'LAND_OWNER_REGISTRATION_ERROR', error.message));
   }
 };
 
-exports.getAllLandOwners = async (req, res) => {
+exports.getAllLandOwners = async (req, res, next) => {
   try {
     const landOwners = await LandOwner.find().populate('ownedLands');
     res.status(200).json(landOwners);
   } catch (error) {
-    res.status(400).json({ message: 'Error fetching land owners', error: error.message });
+    next(new CustomError('Error fetching land owners', 500, 'FETCH_LAND_OWNERS_ERROR', error.message));
   }
 };
 
-exports.getLandOwner = async (req, res) => {
+exports.getLandOwner = async (req, res, next) => {
   try {
     const landOwner = await LandOwner.findById(req.params.id).populate('ownedLands');
     if (!landOwner) {
-      return res.status(404).json({ message: 'Land owner not found' });
+      throw new CustomError('Land owner not found', 404, 'LAND_OWNER_NOT_FOUND');
     }
 
     // Get owner's lands from blockchain
@@ -33,35 +34,35 @@ exports.getLandOwner = async (req, res) => {
     // Combine database and blockchain data
     const combinedLandOwnerDetails = {
       ...landOwner.toObject(),
-      blockchainLands: blockchainLands
+      blockchainLands
     };
 
     res.status(200).json(combinedLandOwnerDetails);
   } catch (error) {
-    res.status(400).json({ message: 'Error fetching land owner', error: error.message });
+    next(error instanceof CustomError ? error : new CustomError('Error fetching land owner', 500));
   }
 };
 
-exports.updateLandOwner = async (req, res) => {
+exports.updateLandOwner = async (req, res, next) => {
   try {
     const updatedLandOwner = await LandOwner.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updatedLandOwner) {
-      return res.status(404).json({ message: 'Land owner not found' });
+      throw new CustomError('Land owner not found', 404, 'LAND_OWNER_NOT_FOUND');
     }
     res.status(200).json({ message: 'Land owner updated successfully', landOwner: updatedLandOwner });
   } catch (error) {
-    res.status(400).json({ message: 'Error updating land owner', error: error.message });
+    next(new CustomError('Error updating land owner', 500, 'UPDATE_LAND_OWNER_ERROR', error.message));
   }
 };
 
-exports.deleteLandOwner = async (req, res) => {
+exports.deleteLandOwner = async (req, res, next) => {
   try {
     const deletedLandOwner = await LandOwner.findByIdAndDelete(req.params.id);
     if (!deletedLandOwner) {
-      return res.status(404).json({ message: 'Land owner not found' });
+      throw new CustomError('Land owner not found', 404, 'LAND_OWNER_NOT_FOUND');
     }
     res.status(200).json({ message: 'Land owner deleted successfully' });
   } catch (error) {
-    res.status(400).json({ message: 'Error deleting land owner', error: error.message });
+    next(new CustomError('Error deleting land owner', 500, 'DELETE_LAND_OWNER_ERROR', error.message));
   }
 };

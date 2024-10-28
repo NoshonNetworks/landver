@@ -8,7 +8,7 @@ exports.login = async (req, res, next) => {
   try {
     let admin = await Admin.findOne({ email });
     if (!admin) {
-      throw new CustomError('Invalid credentials', 400, 'INVALID_CREDENTIALS');
+      throw new CustomError('Invalid credentials', 400, 'INVALID_CREDENTIALS', {date: new Date()});
     }
 
     const isMatch = await bcrypt.compare(password, admin.password);

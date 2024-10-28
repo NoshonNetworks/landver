@@ -1,8 +1,10 @@
+const errorHandler = require('./middleware/errorHandler');
 const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const path = require('path');
 const cors = require('cors');
+
 
 dotenv.config();
 
@@ -33,6 +35,9 @@ app.use(cors(corsOptions));
 
 // Middleware
 app.use(express.json());
+
+//Errors middleware
+app.use(errorHandler)
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
