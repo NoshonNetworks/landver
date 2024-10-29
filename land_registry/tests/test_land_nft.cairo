@@ -26,6 +26,7 @@ pub mod Accounts {
 }
 
 const TOKEN_ID: u256 = 1;
+const NON_EXISTENT_TOKEN_ID: u256 = 2;
 
 fn deploy(base_uri: ByteArray) -> ILandNFTDispatcher {
     let mut constructor_args: Array<felt252> = array![];
@@ -104,22 +105,32 @@ fn test_lock() {
     start_cheat_caller_address(dispatcher.contract_address, Accounts::land_registry());
 
     // verify default state is unlocked
-    assert!(!dispatcher.is_locked());
+    assert!(!dispatcher.is_locked(TOKEN_ID));
 
-    dispatcher.lock();
-    assert!(dispatcher.is_locked());
+    dispatcher.lock(TOKEN_ID);
+    assert!(dispatcher.is_locked(TOKEN_ID));
 
     spy
         .assert_emitted(
-            @array![(dispatcher.contract_address, LandNFT::Event::Locked(LandNFT::Locked {}))]
+            @array![
+                (
+                    dispatcher.contract_address,
+                    LandNFT::Event::Locked(LandNFT::Locked { token_id: TOKEN_ID })
+                )
+            ]
         );
 
-    dispatcher.unlock();
-    assert!(!dispatcher.is_locked());
+    dispatcher.unlock(TOKEN_ID);
+    assert!(!dispatcher.is_locked(TOKEN_ID));
 
     spy
         .assert_emitted(
-            @array![(dispatcher.contract_address, LandNFT::Event::Unlocked(LandNFT::Unlocked {}))]
+            @array![
+                (
+                    dispatcher.contract_address,
+                    LandNFT::Event::Unlocked(LandNFT::Unlocked { token_id: TOKEN_ID })
+                )
+            ]
         );
 }
 
@@ -129,7 +140,7 @@ fn test_lock_from_non_land_registry() {
     let base_uri = "https://some.base.uri/";
     let dispatcher = deploy(base_uri);
 
-    dispatcher.lock();
+    dispatcher.lock(TOKEN_ID);
 }
 
 #[test]
@@ -139,8 +150,18 @@ fn test_lock_when_already_locked() {
     let dispatcher = deploy(base_uri);
     start_cheat_caller_address(dispatcher.contract_address, Accounts::land_registry());
 
-    dispatcher.lock();
-    dispatcher.lock();
+    dispatcher.lock(TOKEN_ID);
+    dispatcher.lock(TOKEN_ID);
+}
+
+#[test]
+#[should_panic(expected: ('ERC721: invalid token ID',))]
+fn test_lock_non_existing_token() {
+    let base_uri = "https://some.base.uri/";
+    let dispatcher = deploy(base_uri);
+    start_cheat_caller_address(dispatcher.contract_address, Accounts::land_registry());
+
+    dispatcher.lock(NON_EXISTENT_TOKEN_ID);
 }
 
 #[test]
@@ -150,10 +171,10 @@ fn test_unlock_from_non_land_registry() {
     let dispatcher = deploy(base_uri);
     // ensure state was 'locked'
     start_cheat_caller_address(dispatcher.contract_address, Accounts::land_registry());
-    dispatcher.lock();
+    dispatcher.lock(TOKEN_ID);
     stop_cheat_caller_address(dispatcher.contract_address);
 
-    dispatcher.unlock();
+    dispatcher.unlock(TOKEN_ID);
 }
 
 #[test]
@@ -163,6 +184,16 @@ fn test_unlock_when_already_unlocked() {
     let dispatcher = deploy(base_uri);
     start_cheat_caller_address(dispatcher.contract_address, Accounts::land_registry());
 
-    dispatcher.unlock();
+    dispatcher.unlock(TOKEN_ID);
+}
+
+#[test]
+#[should_panic(expected: ('ERC721: invalid token ID',))]
+fn test_unlock_non_existing_token() {
+    let base_uri = "https://some.base.uri/";
+    let dispatcher = deploy(base_uri);
+    start_cheat_caller_address(dispatcher.contract_address, Accounts::land_registry());
+
+    dispatcher.unlock(NON_EXISTENT_TOKEN_ID);
 }
 
