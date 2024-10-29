@@ -9,6 +9,7 @@ use openzeppelin::token::erc721::interface::{
 };
 
 pub mod Accounts {
+    use core::num::traits::Zero;
     use starknet::{ContractAddress, contract_address_const};
 
     pub fn land_registry() -> ContractAddress {
@@ -17,6 +18,10 @@ pub mod Accounts {
 
     pub fn land_owner() -> ContractAddress {
         contract_address_const::<'land_owner'>()
+    }
+
+    pub fn zero() -> ContractAddress {
+        Zero::zero()
     }
 }
 
@@ -52,7 +57,7 @@ fn test_set_base_uri() {
     start_cheat_caller_address(dispatcher.contract_address, Accounts::land_registry());
 
     let new_base_uri = "https://new.base.uri/";
-    dispatcher.set_base_uri(new_base_uri.clone());
+    dispatcher.set_base_uri(new_base_uri.clone(), Accounts::land_owner());
 
     let dispatcher = IERC721MetadataDispatcher { contract_address: dispatcher.contract_address };
     assert_eq!(format!("{new_base_uri}{TOKEN_ID}"), dispatcher.token_uri(TOKEN_ID));
@@ -62,7 +67,9 @@ fn test_set_base_uri() {
             @array![
                 (
                     dispatcher.contract_address,
-                    LandNFT::Event::BaseURIUpdated(LandNFT::BaseURIUpdated { new_base_uri })
+                    LandNFT::Event::BaseURIUpdated(
+                        LandNFT::BaseURIUpdated { caller: Accounts::land_owner(), new_base_uri }
+                    )
                 )
             ]
         );
@@ -75,9 +82,19 @@ fn test_set_base_uri_from_non_land_registry() {
     let dispatcher = deploy(original_base_uri);
 
     let new_base_uri = "https://new.base.uri/";
-    dispatcher.set_base_uri(new_base_uri);
+    dispatcher.set_base_uri(new_base_uri, Accounts::land_owner());
 }
 
+#[test]
+#[should_panic(expected: ('Invalid address',))]
+fn test_set_base_uri_updated_zero_address() {
+    let original_base_uri = "https://original.base.uri/";
+    let dispatcher = deploy(original_base_uri);
+    start_cheat_caller_address(dispatcher.contract_address, Accounts::land_registry());
+
+    let new_base_uri = "https://new.base.uri/";
+    dispatcher.set_base_uri(new_base_uri, Accounts::zero());
+}
 
 #[test]
 fn test_lock() {

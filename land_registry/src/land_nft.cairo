@@ -8,7 +8,7 @@ pub trait ILandNFT<TContractState> {
     fn transfer(
         ref self: TContractState, from: ContractAddress, to: ContractAddress, token_id: u256
     );
-    fn set_base_uri(ref self: TContractState, new_base_uri: ByteArray);
+    fn set_base_uri(ref self: TContractState, new_base_uri: ByteArray, updater: ContractAddress);
     fn lock(ref self: TContractState);
     fn unlock(ref self: TContractState);
     fn is_locked(self: @TContractState) -> bool;
@@ -58,6 +58,7 @@ pub mod LandNFT {
 
     #[derive(Drop, starknet::Event)]
     struct BaseURIUpdated {
+        caller: ContractAddress,
         new_base_uri: ByteArray
     }
 
@@ -68,6 +69,7 @@ pub mod LandNFT {
     pub struct Unlocked {}
 
     pub mod Errors {
+        pub const INVALID_ADDRESS: felt252 = 'Invalid address';
         pub const LOCKED: felt252 = 'Locked';
         pub const NOT_LOCKED: felt252 = 'Not locked';
     }
@@ -102,14 +104,17 @@ pub mod LandNFT {
             self.erc721.transfer(from, to, token_id);
         }
 
-        fn set_base_uri(ref self: ContractState, new_base_uri: ByteArray) {
+        fn set_base_uri(
+            ref self: ContractState, new_base_uri: ByteArray, updater: ContractAddress
+        ) {
             // Only the land registry contract can update the metadata URI
             assert(
                 starknet::get_caller_address() == self.land_registry.read(),
                 'Only land registry can update'
             );
+            assert(Zero::is_non_zero(@updater), Errors::INVALID_ADDRESS);
             self.erc721._set_base_uri(new_base_uri.clone());
-            self.emit(BaseURIUpdated { new_base_uri });
+            self.emit(BaseURIUpdated { caller: updater, new_base_uri });
         }
 
         fn lock(ref self: ContractState) {
