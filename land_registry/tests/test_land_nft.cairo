@@ -4,6 +4,9 @@ use snforge_std::{
     start_cheat_caller_address, stop_cheat_caller_address
 };
 use land_registry::land_nft::{LandNFT, ILandNFTDispatcher, ILandNFTDispatcherTrait};
+use openzeppelin::token::erc721::interface::{
+    IERC721MetadataDispatcher, IERC721MetadataDispatcherTrait
+};
 
 pub mod Accounts {
     use starknet::{ContractAddress, contract_address_const};
@@ -11,46 +14,55 @@ pub mod Accounts {
     pub fn land_registry() -> ContractAddress {
         contract_address_const::<'land_registry'>()
     }
+
+    pub fn land_owner() -> ContractAddress {
+        contract_address_const::<'land_owner'>()
+    }
 }
 
-fn deploy(metadata_uri: ByteArray) -> ILandNFTDispatcher {
+const TOKEN_ID: u256 = 1;
+
+fn deploy(base_uri: ByteArray) -> ILandNFTDispatcher {
     let mut constructor_args: Array<felt252> = array![];
-    (Accounts::land_registry(), metadata_uri).serialize(ref constructor_args);
+    (Accounts::land_registry(), base_uri).serialize(ref constructor_args);
 
     let contract = declare("LandNFT").unwrap().contract_class();
     let (contract_address, _) = contract.deploy(@constructor_args).unwrap();
 
-    ILandNFTDispatcher { contract_address }
+    let dispatcher = ILandNFTDispatcher { contract_address };
+    dispatcher.mint(Accounts::land_owner(), TOKEN_ID);
+
+    dispatcher
 }
 
 #[test]
-fn test_metadata_uri() {
-    let metadata_uri = "https://some.metadata.uri/nft_id";
-    let dispatcher = deploy(metadata_uri.clone());
+fn test_base_uri() {
+    let base_uri = "https://some.base.uri/";
+    let dispatcher = deploy(base_uri.clone());
+    let dispatcher = IERC721MetadataDispatcher { contract_address: dispatcher.contract_address };
 
-    assert_eq!(metadata_uri, dispatcher.metadata_uri());
+    assert_eq!(format!("{base_uri}{TOKEN_ID}"), dispatcher.token_uri(TOKEN_ID));
 }
 
 #[test]
-fn test_update_metadata_uri() {
-    let original_metadata_uri = "https://original.metadata.uri/nft_id";
-    let dispatcher = deploy(original_metadata_uri.clone());
+fn test_set_base_uri() {
+    let original_base_uri = "https://original.base.uri/";
+    let dispatcher = deploy(original_base_uri.clone());
     let mut spy = spy_events();
     start_cheat_caller_address(dispatcher.contract_address, Accounts::land_registry());
 
-    let new_metadata_uri = "https://new.metadata.uri/nft_id";
-    dispatcher.update_metadata_uri(new_metadata_uri.clone());
+    let new_base_uri = "https://new.base.uri/";
+    dispatcher.set_base_uri(new_base_uri.clone());
 
-    assert_eq!(new_metadata_uri, dispatcher.metadata_uri());
+    let dispatcher = IERC721MetadataDispatcher { contract_address: dispatcher.contract_address };
+    assert_eq!(format!("{new_base_uri}{TOKEN_ID}"), dispatcher.token_uri(TOKEN_ID));
 
     spy
         .assert_emitted(
             @array![
                 (
                     dispatcher.contract_address,
-                    LandNFT::Event::MetadataURIUpdated(
-                        LandNFT::MetadataURIUpdated { new_metadata_uri }
-                    )
+                    LandNFT::Event::BaseURIUpdated(LandNFT::BaseURIUpdated { new_base_uri })
                 )
             ]
         );
@@ -58,19 +70,19 @@ fn test_update_metadata_uri() {
 
 #[test]
 #[should_panic(expected: ('Only land registry can update',))]
-fn test_update_metadata_uri_from_non_land_registry() {
-    let original_metadata_uri = "https://original.metadata.uri/nft_id";
-    let dispatcher = deploy(original_metadata_uri);
+fn test_set_base_uri_from_non_land_registry() {
+    let original_base_uri = "https://original.base.uri/";
+    let dispatcher = deploy(original_base_uri);
 
-    let new_metadata_uri = "https://new.metadata.uri/nft_id";
-    dispatcher.update_metadata_uri(new_metadata_uri);
+    let new_base_uri = "https://new.base.uri/";
+    dispatcher.set_base_uri(new_base_uri);
 }
 
 
 #[test]
 fn test_lock() {
-    let metadata_uri = "https://some.metadata.uri/nft_id";
-    let dispatcher = deploy(metadata_uri);
+    let base_uri = "https://some.base.uri/";
+    let dispatcher = deploy(base_uri);
     let mut spy = spy_events();
     start_cheat_caller_address(dispatcher.contract_address, Accounts::land_registry());
 
@@ -97,8 +109,8 @@ fn test_lock() {
 #[test]
 #[should_panic(expected: ('Only land registry can lock',))]
 fn test_lock_from_non_land_registry() {
-    let metadata_uri = "https://some.metadata.uri/nft_id";
-    let dispatcher = deploy(metadata_uri);
+    let base_uri = "https://some.base.uri/";
+    let dispatcher = deploy(base_uri);
 
     dispatcher.lock();
 }
@@ -106,8 +118,8 @@ fn test_lock_from_non_land_registry() {
 #[test]
 #[should_panic(expected: ('Locked',))]
 fn test_lock_when_already_locked() {
-    let metadata_uri = "https://some.metadata.uri/nft_id";
-    let dispatcher = deploy(metadata_uri);
+    let base_uri = "https://some.base.uri/";
+    let dispatcher = deploy(base_uri);
     start_cheat_caller_address(dispatcher.contract_address, Accounts::land_registry());
 
     dispatcher.lock();
@@ -117,8 +129,8 @@ fn test_lock_when_already_locked() {
 #[test]
 #[should_panic(expected: ('Only land registry can unlock',))]
 fn test_unlock_from_non_land_registry() {
-    let metadata_uri = "https://some.metadata.uri/nft_id";
-    let dispatcher = deploy(metadata_uri);
+    let base_uri = "https://some.base.uri/";
+    let dispatcher = deploy(base_uri);
     // ensure state was 'locked'
     start_cheat_caller_address(dispatcher.contract_address, Accounts::land_registry());
     dispatcher.lock();
@@ -130,8 +142,8 @@ fn test_unlock_from_non_land_registry() {
 #[test]
 #[should_panic(expected: ('Not locked',))]
 fn test_unlock_when_already_unlocked() {
-    let metadata_uri = "https://some.metadata.uri/nft_id";
-    let dispatcher = deploy(metadata_uri);
+    let base_uri = "https://some.base.uri/";
+    let dispatcher = deploy(base_uri);
     start_cheat_caller_address(dispatcher.contract_address, Accounts::land_registry());
 
     dispatcher.unlock();

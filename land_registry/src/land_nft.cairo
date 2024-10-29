@@ -8,8 +8,7 @@ pub trait ILandNFT<TContractState> {
     fn transfer(
         ref self: TContractState, from: ContractAddress, to: ContractAddress, token_id: u256
     );
-    fn update_metadata_uri(ref self: TContractState, new_metadata_uri: ByteArray);
-    fn metadata_uri(self: @TContractState) -> ByteArray;
+    fn set_base_uri(ref self: TContractState, new_base_uri: ByteArray);
     fn lock(ref self: TContractState);
     fn unlock(ref self: TContractState);
     fn is_locked(self: @TContractState) -> bool;
@@ -17,18 +16,20 @@ pub trait ILandNFT<TContractState> {
 
 #[starknet::contract]
 pub mod LandNFT {
+    use core::num::traits::Zero;
     use super::ILandNFT;
     use starknet::ContractAddress;
     use openzeppelin::token::erc721::ERC721Component;
     use openzeppelin::introspection::src5::SRC5Component;
     use openzeppelin::token::erc721::ERC721HooksEmptyImpl;
 
-
     component!(path: ERC721Component, storage: erc721, event: ERC721Event);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);
 
     #[abi(embed_v0)]
     impl ERC721Impl = ERC721Component::ERC721Impl<ContractState>;
+    #[abi(embed_v0)]
+    impl ERC721MetadataImpl = ERC721Component::ERC721MetadataImpl<ContractState>;
     #[abi(embed_v0)]
     impl ERC721CamelOnlyImpl = ERC721Component::ERC721CamelOnlyImpl<ContractState>;
     impl ERC721InternalImpl = ERC721Component::InternalImpl<ContractState>;
@@ -40,7 +41,6 @@ pub mod LandNFT {
         #[substorage(v0)]
         src5: SRC5Component::Storage,
         land_registry: ContractAddress,
-        metadata_uri: ByteArray,
         locked: bool,
     }
 
@@ -51,14 +51,14 @@ pub mod LandNFT {
         ERC721Event: ERC721Component::Event,
         #[flat]
         SRC5Event: SRC5Component::Event,
-        MetadataURIUpdated: MetadataURIUpdated,
+        BaseURIUpdated: BaseURIUpdated,
         Locked: Locked,
         Unlocked: Unlocked,
     }
 
     #[derive(Drop, starknet::Event)]
-    struct MetadataURIUpdated {
-        new_metadata_uri: ByteArray
+    struct BaseURIUpdated {
+        new_base_uri: ByteArray
     }
 
     #[derive(Drop, starknet::Event)]
@@ -73,12 +73,9 @@ pub mod LandNFT {
     }
 
     #[constructor]
-    fn constructor(
-        ref self: ContractState, land_registry: ContractAddress, metadata_uri: ByteArray
-    ) {
-        self.erc721.initializer("Land NFT", "LAND", format!(""));
+    fn constructor(ref self: ContractState, land_registry: ContractAddress, base_uri: ByteArray) {
+        self.erc721.initializer("Land NFT", "LAND", base_uri);
         self.land_registry.write(land_registry);
-        self.metadata_uri.write(metadata_uri);
     }
 
     #[abi(embed_v0)]
@@ -105,18 +102,14 @@ pub mod LandNFT {
             self.erc721.transfer(from, to, token_id);
         }
 
-        fn update_metadata_uri(ref self: ContractState, new_metadata_uri: ByteArray) {
+        fn set_base_uri(ref self: ContractState, new_base_uri: ByteArray) {
             // Only the land registry contract can update the metadata URI
             assert(
                 starknet::get_caller_address() == self.land_registry.read(),
                 'Only land registry can update'
             );
-            self.metadata_uri.write(new_metadata_uri.clone());
-            self.emit(MetadataURIUpdated { new_metadata_uri });
-        }
-
-        fn metadata_uri(self: @ContractState) -> ByteArray {
-            self.metadata_uri.read()
+            self.erc721._set_base_uri(new_base_uri.clone());
+            self.emit(BaseURIUpdated { new_base_uri });
         }
 
         fn lock(ref self: ContractState) {
