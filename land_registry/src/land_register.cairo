@@ -288,7 +288,7 @@ pub mod LandRegistryContract {
 
             let prev_land = self.lands.read(land_id);
 
-            self.lands.write(land_id, Land { inspector, ..prev_land });
+            self.lands.write(land_id, Land { inspector: inspector, ..prev_land });
 
             self.emit(LandInspectorSet { land_id, inspector });
         }
