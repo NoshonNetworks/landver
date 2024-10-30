@@ -248,7 +248,7 @@ fn test_can_get_land_transaction_history() {
 }
 
 #[test]
-fn test_set_inspector(){
+fn test_set_inspector() {
     let contract_address = deploy("LandRegistryContract");
 
     // Get an instance of the deployed Counter contract
@@ -298,7 +298,7 @@ fn test_can_approve_land() {
     start_cheat_caller_address(contract_address, owner_address);
     land_register_dispatcher.set_land_inspector(land_id, inspector_address);
     stop_cheat_caller_address(contract_address);
-    
+
     // Approve land as inspector
     start_cheat_caller_address(contract_address, inspector_address);
     let land_before = land_register_dispatcher.get_land(land_id);
