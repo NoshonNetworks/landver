@@ -66,7 +66,7 @@ fn test_can_register_land() {
         LandStatus::Pending => {},
         _ => panic!("Must be Pending"),
     }
-    assert(registered_land.inspector.is_none(), 'Should have no inspector');
+    assert(registered_land.inspector == 0.try_into().unwrap(), 'Should have no inspector');
 }
 
 #[test]
@@ -248,6 +248,34 @@ fn test_can_get_land_transaction_history() {
 }
 
 #[test]
+fn test_set_inspector(){
+    let contract_address = deploy("LandRegistryContract");
+
+    // Get an instance of the deployed Counter contract
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    // Set up test data
+    let owner_address = starknet::contract_address_const::<0x123>();
+    let inspector_address = starknet::contract_address_const::<0x456>();
+    let location: Location = Location { latitude: 1, longitude: 2 };
+    let area: u256 = 1000;
+    let land_use = LandUse::Residential;
+
+    // Start cheating the caller address
+    start_cheat_caller_address(contract_address, owner_address);
+
+    // Register the land
+    let land_id = land_register_dispatcher.register_land(location, area, land_use);
+
+    // Get the registered land
+    land_register_dispatcher.set_land_inspector(land_id, inspector_address);
+    let registered_land = land_register_dispatcher.get_land(land_id);
+
+    // Assert land details are correct
+    assert(registered_land.inspector == inspector_address, 'Wrong inspector');
+}
+
+#[test]
 fn test_can_approve_land() {
     let contract_address = deploy("LandRegistryContract");
 
@@ -266,11 +294,13 @@ fn test_can_approve_land() {
     let land_id = land_register_dispatcher.register_land(location, area, land_use);
     stop_cheat_caller_address(contract_address);
 
-    // Add inspector
-    start_cheat_caller_address(contract_address, inspector_address);
-    land_register_dispatcher.add_inspector(inspector_address);
-
+    // Set inspector as owner address
+    start_cheat_caller_address(contract_address, owner_address);
+    land_register_dispatcher.set_land_inspector(land_id, inspector_address);
+    stop_cheat_caller_address(contract_address);
+    
     // Approve land as inspector
+    start_cheat_caller_address(contract_address, inspector_address);
     let land_before = land_register_dispatcher.get_land(land_id);
     assert_eq!(land_before.status, LandStatus::Pending, "Should be pending before approval");
 
@@ -301,11 +331,13 @@ fn test_can_reject_land() {
     let land_id = land_register_dispatcher.register_land(location, area, land_use);
     stop_cheat_caller_address(contract_address);
 
-    // Add inspector
-    start_cheat_caller_address(contract_address, inspector_address);
-    land_register_dispatcher.add_inspector(inspector_address);
+    // Set inspector as owner
+    start_cheat_caller_address(contract_address, owner_address);
+    land_register_dispatcher.set_land_inspector(land_id, inspector_address);
+    stop_cheat_caller_address(contract_address);
 
     // Reject land as inspector
+    start_cheat_caller_address(contract_address, inspector_address);
     let land_before = land_register_dispatcher.get_land(land_id);
     assert_eq!(land_before.status, LandStatus::Pending, "Should be pending before reject");
 
@@ -316,3 +348,4 @@ fn test_can_reject_land() {
     assert_eq!(land_after.status, LandStatus::Rejected, "Should be rejected after");
     stop_cheat_caller_address(contract_address);
 }
+
