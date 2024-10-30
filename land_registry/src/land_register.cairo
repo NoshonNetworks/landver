@@ -13,7 +13,8 @@ pub mod LandRegistryContract {
         lands: Map::<u256, Land>,
         owner_lands: Map::<(ContractAddress, u256), u256>,
         owner_land_count: Map::<ContractAddress, u256>,
-        land_inspectors: Map::<ContractAddress, bool>,
+        land_inspectors: Map::<u256, ContractAddress>,
+        lands_assigned_to_inspector: Map::<ContractAddress, u256>,
         approved_lands: Map::<u256, bool>,
         land_count: u256,
         nft_contract: ContractAddress,
@@ -29,7 +30,7 @@ pub mod LandRegistryContract {
         LandTransferred: LandTransferred,
         LandVerified: LandVerified,
         LandUpdated: LandUpdated,
-        InspectorAssigned: InspectorAssigned,
+        LandInspectorSet: LandInspectorSet,
     }
 
     #[derive(Drop, starknet::Event)]
@@ -60,8 +61,8 @@ pub mod LandRegistryContract {
         area: u256
     }
 
-    #[derive(Drop, starknet::Event)]
-    struct InspectorAssigned {
+    #[derive(Drop, Copy, starknet::Event)]
+    struct LandInspectorSet {
         land_id: u256,
         inspector: ContractAddress,
     }
@@ -87,7 +88,7 @@ pub mod LandRegistryContract {
                 area: area,
                 land_use: land_use,
                 status: LandStatus::Pending,
-                inspector: Option::None,
+                inspector: 0.try_into().unwrap(),
                 last_transaction_timestamp: timestamp,
             };
 
@@ -198,7 +199,7 @@ pub mod LandRegistryContract {
         }
 
         fn approve_land(ref self: ContractState, land_id: u256) {
-            assert(InternalFunctions::only_inspector(@self), 'Only inspector can approve');
+            assert(InternalFunctions::only_inspector(@self, land_id), 'Only inspector can approve');
             self.approved_lands.write(land_id, true);
 
             // Mint NFT
@@ -214,7 +215,11 @@ pub mod LandRegistryContract {
         }
 
         fn reject_land(ref self: ContractState, land_id: u256) {
-            assert(InternalFunctions::only_inspector(@self), 'Only inspector can reject');
+            assert(
+                InternalFunctions::only_inspector(@self, land_id)
+                    | InternalFunctions::only_owner(@self, land_id),
+                'Only inspector/owner can reject'
+            );
             let mut land = self.lands.read(land_id);
             assert(land.status == LandStatus::Pending, 'Land must be in Pending status');
             land.status = LandStatus::Rejected;
@@ -224,15 +229,13 @@ pub mod LandRegistryContract {
         }
 
         fn is_inspector(self: @ContractState, inspector: ContractAddress) -> bool {
-            self.land_inspectors.read(inspector)
-        }
+            let count = self.lands_assigned_to_inspector.read(inspector);
 
-        fn add_inspector(ref self: ContractState, inspector: ContractAddress) {
-            self.land_inspectors.write(inspector, true);
-        }
+            if count > 0 {
+                return true;
+            }
 
-        fn remove_inspector(ref self: ContractState, inspector: ContractAddress) {
-            self.land_inspectors.write(inspector, false);
+            return false;
         }
 
 
@@ -276,26 +279,22 @@ pub mod LandRegistryContract {
         }
 
         fn set_land_inspector(ref self: ContractState, land_id: u256, inspector: ContractAddress) {
-            // Ensure inspector is approved
-            assert(self.land_inspectors.read(inspector), 'Inspector not approved');
+            assert(
+                InternalFunctions::only_owner(@self, land_id), 'Only owner can set an inspector'
+            );
+            let prev_land_count = self.lands_assigned_to_inspector.read(inspector);
+            self.land_inspectors.write(land_id, inspector);
+            self.lands_assigned_to_inspector.write(inspector, prev_land_count + 1);
 
-            // Ensure land exists
-            let land = self.lands.read(land_id);
-            assert(land.status == LandStatus::Pending, 'Land must be pending');
+            let prev_land = self.lands.read(land_id);
 
-            // Assign inspector
-            self.land_inspector_assignments.write(land_id, inspector);
+            self.lands.write(land_id, Land { inspector, ..prev_land });
 
-            // Emit event
-            self.emit(InspectorAssigned { land_id: land_id, inspector: inspector });
+            self.emit(LandInspectorSet { land_id, inspector });
         }
 
-        fn get_land_inspector(self: @ContractState, land_id: u256) -> Option<ContractAddress> {
-            if self.land_inspector_assignments.read(land_id).is_zero() {
-                Option::None
-            } else {
-                Option::Some(self.land_inspector_assignments.read(land_id))
-            }
+        fn get_land_inspector(self: @ContractState, land_id: u256) -> ContractAddress {
+            self.land_inspectors.read(land_id)
         }
     }
 
@@ -306,9 +305,11 @@ pub mod LandRegistryContract {
             land.owner == get_caller_address()
         }
 
-        fn only_inspector(self: @ContractState) -> bool {
+        fn only_inspector(self: @ContractState, land_id: u256) -> bool {
             let caller = get_caller_address();
-            self.land_inspectors.read(caller)
+            let inspector = self.land_inspectors.read(land_id);
+
+            inspector == caller
         }
     }
 }
