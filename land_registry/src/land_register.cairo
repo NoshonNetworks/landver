@@ -21,6 +21,8 @@ pub mod LandRegistryContract {
         land_transaction_history: Map::<(u256, u256), (ContractAddress, u64)>,
         land_transaction_count: Map::<u256, u256>,
         land_inspector_assignments: Map::<u256, ContractAddress>,
+        registered_inspectors: Map::<ContractAddress, bool>,
+        inspector_count: u256,
     }
 
     #[event]
@@ -31,6 +33,8 @@ pub mod LandRegistryContract {
         LandVerified: LandVerified,
         LandUpdated: LandUpdated,
         LandInspectorSet: LandInspectorSet,
+        InspectorAdded: InspectorAdded,
+        InspectorRemoved: InspectorRemoved,
     }
 
     #[derive(Drop, starknet::Event)]
@@ -67,9 +71,20 @@ pub mod LandRegistryContract {
         inspector: ContractAddress,
     }
 
+    #[derive(Drop, starknet::Event)]
+    struct InspectorAdded {
+        inspector: ContractAddress,
+    }
+
+    #[derive(Drop, starknet::Event)]
+    struct InspectorRemoved {
+        inspector: ContractAddress,
+    }
+
     #[constructor]
     fn constructor(ref self: ContractState, nft_contract: ContractAddress) {
         self.nft_contract.write(nft_contract);
+        self.inspector_count.write(0);
     }
 
     #[abi(embed_v0)]
@@ -295,6 +310,30 @@ pub mod LandRegistryContract {
 
         fn get_land_inspector(self: @ContractState, land_id: u256) -> ContractAddress {
             self.land_inspectors.read(land_id)
+        }
+
+        fn add_inspector(ref self: ContractState, inspector: ContractAddress) {
+            assert(inspector != 0.try_into().unwrap(), 'Invalid inspector address');
+            assert(!self.registered_inspectors.read(inspector), 'Inspector already registered');
+
+            // Register the inspector
+            self.registered_inspectors.write(inspector, true);
+            self.inspector_count.write(self.inspector_count.read() + 1);
+            self.lands_assigned_to_inspector.write(inspector, 0);
+
+            self.emit(InspectorAdded { inspector });
+        }
+
+        fn remove_inspector(ref self: ContractState, inspector: ContractAddress) {
+            assert(self.registered_inspectors.read(inspector), 'Inspector not registered');
+
+            let assigned_lands = self.lands_assigned_to_inspector.read(inspector);
+            assert(assigned_lands == 0, 'Inspector is active');
+
+            self.registered_inspectors.write(inspector, false);
+            self.inspector_count.write(self.inspector_count.read() - 1);
+
+            self.emit(InspectorRemoved { inspector });
         }
     }
 
