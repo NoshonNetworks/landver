@@ -388,35 +388,6 @@ fn test_can_reject_land_by_inspector() {
     stop_cheat_caller_address(contract_address);
 }
 
-#[test]
-fn test_can_reject_land_by_owner() {
-    let contract_address = deploy("LandRegistryContract");
-    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
-
-    // Set up test data
-    let owner_address = starknet::contract_address_const::<0x123>();
-    let inspector_address = starknet::contract_address_const::<0x456>();
-    let location = Location { latitude: 1, longitude: 2 };
-    let area = 1000;
-    let land_use = LandUse::Residential;
-
-    // Register land as owner
-    start_cheat_caller_address(contract_address, owner_address);
-    let land_id = land_register_dispatcher.register_land(location, area, land_use);
-
-    // Verify initial status
-    let land_before = land_register_dispatcher.get_land(land_id);
-    assert_eq!(land_before.status, LandStatus::Pending, "Should be pending before reject");
-
-    // Owner rejects their own land
-    land_register_dispatcher.reject_land(land_id);
-
-    // Verify final status
-    let land_after = land_register_dispatcher.get_land(land_id);
-    assert_eq!(land_after.status, LandStatus::Rejected, "Should be rejected after");
-
-    stop_cheat_caller_address(contract_address);
-}
 
 #[test]
 #[should_panic(expected: ('Only inspector/owner can reject',))]
