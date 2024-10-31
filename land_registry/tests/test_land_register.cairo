@@ -373,7 +373,7 @@ fn test_can_reject_land_by_inspector() {
 
     // Reject land as inspector
     start_cheat_caller_address(contract_address, inspector_address);
-    
+
     // Verify initial status
     let land_before = land_register_dispatcher.get_land(land_id);
     assert_eq!(land_before.status, LandStatus::Pending, "Should be pending before reject");
@@ -384,7 +384,7 @@ fn test_can_reject_land_by_inspector() {
     // Verify final status
     let land_after = land_register_dispatcher.get_land(land_id);
     assert_eq!(land_after.status, LandStatus::Rejected, "Should be rejected after");
-    
+
     stop_cheat_caller_address(contract_address);
 }
 
@@ -414,7 +414,7 @@ fn test_can_reject_land_by_owner() {
     // Verify final status
     let land_after = land_register_dispatcher.get_land(land_id);
     assert_eq!(land_after.status, LandStatus::Rejected, "Should be rejected after");
-    
+
     stop_cheat_caller_address(contract_address);
 }
 
@@ -468,7 +468,7 @@ fn test_can_update_land() {
     let updated_land = land_register_dispatcher.get_land(land_id);
     assert(updated_land.area == new_area, 'Area not updated correctly');
     assert(updated_land.land_use == new_land_use, 'Land use not updated correctly');
-    
+
     stop_cheat_caller_address(contract_address);
 }
 
