@@ -186,9 +186,9 @@ pub mod LandRegistryContract {
             self.owner_land_count.write(new_owner, new_owner_land_count + 1);
 
             // Transfer NFT
-            let nft_contract = self.nft_contract.read();
-            let nft_dispatcher = ILandNFTDispatcher { contract_address: nft_contract };
-            nft_dispatcher.transfer(old_owner, new_owner, land_id);
+            // let nft_contract = self.nft_contract.read();
+            // let nft_dispatcher = ILandNFTDispatcher { contract_address: nft_contract };
+            // nft_dispatcher.transfer(old_owner, new_owner, land_id);
 
             self
                 .emit(
