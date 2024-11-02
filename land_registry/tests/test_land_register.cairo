@@ -349,3 +349,232 @@ fn test_can_reject_land() {
     stop_cheat_caller_address(contract_address);
 }
 
+#[test]
+fn test_can_reject_land_by_inspector() {
+    let contract_address = deploy("LandRegistryContract");
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    // Set up test data
+    let owner_address = starknet::contract_address_const::<0x123>();
+    let inspector_address = starknet::contract_address_const::<0x456>();
+    let location = Location { latitude: 1, longitude: 2 };
+    let area = 1000;
+    let land_use = LandUse::Residential;
+
+    // Register land as owner
+    start_cheat_caller_address(contract_address, owner_address);
+    let land_id = land_register_dispatcher.register_land(location, area, land_use);
+    stop_cheat_caller_address(contract_address);
+
+    // Set inspector as owner
+    start_cheat_caller_address(contract_address, owner_address);
+    land_register_dispatcher.set_land_inspector(land_id, inspector_address);
+    stop_cheat_caller_address(contract_address);
+
+    // Reject land as inspector
+    start_cheat_caller_address(contract_address, inspector_address);
+
+    // Verify initial status
+    let land_before = land_register_dispatcher.get_land(land_id);
+    assert_eq!(land_before.status, LandStatus::Pending, "Should be pending before reject");
+
+    // Perform rejection
+    land_register_dispatcher.reject_land(land_id);
+
+    // Verify final status
+    let land_after = land_register_dispatcher.get_land(land_id);
+    assert_eq!(land_after.status, LandStatus::Rejected, "Should be rejected after");
+
+    stop_cheat_caller_address(contract_address);
+}
+
+
+#[test]
+#[should_panic(expected: ('Only inspector/owner can reject',))]
+fn test_reject_land_by_unauthorized_user() {
+    let contract_address = deploy("LandRegistryContract");
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    // Set up test data
+    let owner_address = starknet::contract_address_const::<0x123>();
+    let unauthorized_address = starknet::contract_address_const::<0x789>();
+    let location = Location { latitude: 1, longitude: 2 };
+    let area = 1000;
+    let land_use = LandUse::Residential;
+
+    // Register land as owner
+    start_cheat_caller_address(contract_address, owner_address);
+    let land_id = land_register_dispatcher.register_land(location, area, land_use);
+    stop_cheat_caller_address(contract_address);
+
+    // Attempt to reject land as unauthorized user
+    start_cheat_caller_address(contract_address, unauthorized_address);
+    land_register_dispatcher.reject_land(land_id); // This should panic
+    stop_cheat_caller_address(contract_address);
+}
+
+#[test]
+fn test_can_update_land() {
+    let contract_address = deploy("LandRegistryContract");
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    // Set up initial test data
+    let owner_address = starknet::contract_address_const::<0x123>();
+    let location = Location { latitude: 1, longitude: 2 };
+    let initial_area = 1000;
+    let initial_land_use = LandUse::Residential;
+
+    // Register land as owner
+    start_cheat_caller_address(contract_address, owner_address);
+    let land_id = land_register_dispatcher.register_land(location, initial_area, initial_land_use);
+
+    // Update data
+    let new_area = 1500;
+    let new_land_use = LandUse::Commercial;
+
+    // Update land
+    land_register_dispatcher.update_land(land_id, new_area, new_land_use);
+
+    // Verify updates
+    let updated_land = land_register_dispatcher.get_land(land_id);
+    assert(updated_land.area == new_area, 'Area not updated correctly');
+    assert(updated_land.land_use == new_land_use, 'Land use not updated correctly');
+
+    stop_cheat_caller_address(contract_address);
+}
+
+#[test]
+#[should_panic(expected: ('Only owner can update land',))]
+fn test_update_land_by_unauthorized_user() {
+    let contract_address = deploy("LandRegistryContract");
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    // Set up test data
+    let owner_address = starknet::contract_address_const::<0x123>();
+    let unauthorized_address = starknet::contract_address_const::<0x789>();
+    let location = Location { latitude: 1, longitude: 2 };
+    let area = 1000;
+    let land_use = LandUse::Residential;
+
+    // Register land as owner
+    start_cheat_caller_address(contract_address, owner_address);
+    let land_id = land_register_dispatcher.register_land(location, area, land_use);
+    stop_cheat_caller_address(contract_address);
+
+    // Attempt to update land as unauthorized user
+    start_cheat_caller_address(contract_address, unauthorized_address);
+    land_register_dispatcher.update_land(land_id, 1500, LandUse::Commercial); // This should panic
+    stop_cheat_caller_address(contract_address);
+}
+
+#[test]
+fn test_can_add_inspector() {
+    let contract_address = deploy("LandRegistryContract");
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    // Set up test data
+    let inspector_address = starknet::contract_address_const::<0x456>();
+    let admin_address = starknet::contract_address_const::<0x123>();
+
+    // Add inspector
+    start_cheat_caller_address(contract_address, admin_address);
+
+    // Add the inspector
+    land_register_dispatcher.add_inspector(inspector_address);
+
+    // Get land for inspector to verify assignment
+    let location = Location { latitude: 1, longitude: 2 };
+    let area = 1000;
+    let land_use = LandUse::Residential;
+
+    // Register land
+    let land_id = land_register_dispatcher.register_land(location, area, land_use);
+
+    // Set inspector for the land to make them active
+    land_register_dispatcher.set_land_inspector(land_id, inspector_address);
+
+    // Verify inspector is registered
+    assert(land_register_dispatcher.is_inspector(inspector_address), 'Should be registered');
+
+    stop_cheat_caller_address(contract_address);
+}
+
+#[test]
+#[should_panic(expected: ('Inspector already registered',))]
+fn test_cannot_add_duplicate_inspector() {
+    let contract_address = deploy("LandRegistryContract");
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    // Set up test data
+    let inspector_address = starknet::contract_address_const::<0x456>();
+    let admin_address = starknet::contract_address_const::<0x123>();
+
+    start_cheat_caller_address(contract_address, admin_address);
+
+    // Add inspector first time
+    land_register_dispatcher.add_inspector(inspector_address);
+
+    // Try to add same inspector again - should panic
+    land_register_dispatcher.add_inspector(inspector_address);
+
+    stop_cheat_caller_address(contract_address);
+}
+
+#[test]
+#[should_panic(expected: ('Invalid inspector address',))]
+fn test_cannot_add_zero_address_inspector() {
+    let contract_address = deploy("LandRegistryContract");
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    let admin_address = starknet::contract_address_const::<0x123>();
+    start_cheat_caller_address(contract_address, admin_address);
+
+    // Try to add zero address as inspector
+    land_register_dispatcher.add_inspector(Accounts::zero());
+
+    stop_cheat_caller_address(contract_address);
+}
+
+#[test]
+#[should_panic(expected: ('Inspector not registered',))]
+fn test_cannot_remove_unregistered_inspector() {
+    let contract_address = deploy("LandRegistryContract");
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    let admin_address = starknet::contract_address_const::<0x123>();
+    let unregistered_inspector = starknet::contract_address_const::<0x789>();
+
+    start_cheat_caller_address(contract_address, admin_address);
+
+    // Try to remove an inspector that was never registered
+    land_register_dispatcher.remove_inspector(unregistered_inspector);
+
+    stop_cheat_caller_address(contract_address);
+}
+
+#[test]
+#[should_panic(expected: ('Inspector is active',))]
+fn test_cannot_remove_active_inspector() {
+    let contract_address = deploy("LandRegistryContract");
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    // Set up test data
+    let owner_address = starknet::contract_address_const::<0x123>();
+    let inspector_address = starknet::contract_address_const::<0x456>();
+    let location = Location { latitude: 1, longitude: 2 };
+    let area = 1000;
+    let land_use = LandUse::Residential;
+
+    // Add inspector
+    start_cheat_caller_address(contract_address, owner_address);
+    land_register_dispatcher.add_inspector(inspector_address);
+
+    // Register land and assign inspector
+    let land_id = land_register_dispatcher.register_land(location, area, land_use);
+    land_register_dispatcher.set_land_inspector(land_id, inspector_address);
+
+    // Try to remove active inspector
+    land_register_dispatcher.remove_inspector(inspector_address); // Should panic
+
+    stop_cheat_caller_address(contract_address);
+}
