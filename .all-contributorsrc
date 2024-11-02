@@ -52,6 +52,60 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Akshola00",
+      "name": "Akinshola",
+      "avatar_url": "https://avatars.githubusercontent.com/u/114211385?v=4",
+      "profile": "https://github.com/Akshola00",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "SoarinSkySagar",
+      "name": "Sagar Rana",
+      "avatar_url": "https://avatars.githubusercontent.com/u/117727361?v=4",
+      "profile": "https://github.com/SoarinSkySagar",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "saimeunt",
+      "name": "saimeunt",
+      "avatar_url": "https://avatars.githubusercontent.com/u/5597359?v=4",
+      "profile": "https://github.com/saimeunt",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Eche5",
+      "name": "Echefula Ndukwe",
+      "avatar_url": "https://avatars.githubusercontent.com/u/111073744?v=4",
+      "profile": "https://deveche.vercel.app/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "PoulavBhowmick03",
+      "name": "Poulav Bhowmick",
+      "avatar_url": "https://avatars.githubusercontent.com/u/133862694?v=4",
+      "profile": "https://poulav.vercel.app",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "No-bodyq",
+      "name": "Asher",
+      "avatar_url": "https://avatars.githubusercontent.com/u/141028690?v=4",
+      "profile": "https://github.com/No-bodyq",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
