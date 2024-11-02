@@ -374,7 +374,7 @@ fn test_can_transfer_land() {
     land_register_dispatcher.set_land_inspector(land_id, inspector_address);
     stop_cheat_caller_address(contract_address);
 
-    // approve land 
+    // approve land
     start_cheat_caller_address(contract_address, inspector_address);
     land_register_dispatcher.approve_land(land_id);
     stop_cheat_caller_address(contract_address);
