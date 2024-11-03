@@ -23,7 +23,7 @@ const Header = () => {
     };
 
     return (
-        <header className="bg-gradient-to-r from-blue-400 to-blue-700 text-white">
+        <header className=" bg-gradient-to-b from-green-100 to-white dark:from-gray-800 dark:to-black dark:bg-[#060304] text-white">
             <nav className="flex justify-between items-center p-4 md:p-6 flex-wrap">
                 <div
                     className="text-xl md:text-2xl font-bold cursor-pointer"
@@ -127,13 +127,13 @@ const Header = () => {
                 <div className="flex flex-col md:flex-row justify-center space-y-3 md:space-y-0 md:space-x-4 mb-8">
                     <button
                         onClick={() => scrollToSection("/register", "register")}
-                        className="bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 md:py-3 md:px-6 rounded-full text-sm md:text-lg font-semibold transition transform hover:scale-105 hover:shadow-lg"
+                        className="bg-white hover:bg-gray-100 text-white py-2 px-4 md:py-3 md:px-6 text-sm md:text-lg font-semibold transition transform hover:scale-105 hover:shadow-lg text-black"
                     >
                         Register Your Land
                     </button>
                     <button
                         onClick={() => scrollToSection("/lands", "register")}
-                        className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 md:py-3 md:px-6 rounded-full text-sm md:text-lg font-semibold transition transform hover:scale-105 hover:shadow-lg"
+                        className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 md:py-3 md:px-6 text-sm md:text-lg font-semibold transition transform hover:scale-105 hover:shadow-lg"
                     >
                         View Lands
                     </button>
