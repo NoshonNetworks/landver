@@ -18,6 +18,7 @@ pub mod LandNFT {
     use openzeppelin::token::erc721::{ERC721Component, ERC721Component::InternalTrait};
     use openzeppelin::introspection::src5::SRC5Component;
     use openzeppelin::token::erc721::ERC721HooksEmptyImpl;
+    use crate::land_registry::errors::Errors;
 
 
     component!(path: ERC721Component, storage: erc721, event: ERC721Event);
@@ -59,7 +60,7 @@ pub mod LandNFT {
             // Only the land registry contract can mint NFTs
             // assert(
             //     starknet::get_caller_address() == self.land_registry.read(),
-            //     Error::MINT_NFT
+            //     Errors::MINT_NFT
             // );
             self.erc721.mint(to, token_id);
         }
@@ -70,7 +71,7 @@ pub mod LandNFT {
             // Only the land registry contract can transfer NFTs
             assert(
                 starknet::get_caller_address() == self.land_registry.read(),
-                Error::TRANSFER_NFT
+                Errors::TRANSFER_NFT
             );
             self.erc721.transfer(from, to, token_id);
         }
