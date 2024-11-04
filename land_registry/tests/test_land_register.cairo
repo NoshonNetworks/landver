@@ -578,3 +578,43 @@ fn test_cannot_remove_active_inspector() {
 
     stop_cheat_caller_address(contract_address);
 }
+#[test]
+fn test_can_transfer_land() {
+    let contract_address = deploy("LandRegistryContract");
+
+    // Instance of LandRegistryContract
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    // Set up test data
+    let owner_address = starknet::contract_address_const::<0x123>();
+    let inspector_address = starknet::contract_address_const::<0x456>();
+    let new_owner_address = starknet::contract_address_const::<0x789>();
+    let location = Location { latitude: 1, longitude: 2 };
+    let area = 1000;
+    let land_use = LandUse::Residential;
+
+    // Register land as owner
+    start_cheat_caller_address(contract_address, owner_address);
+    let land_id = land_register_dispatcher.register_land(location, area, land_use);
+    stop_cheat_caller_address(contract_address);
+
+    // Set inspector as owner
+    start_cheat_caller_address(contract_address, owner_address);
+    land_register_dispatcher.set_land_inspector(land_id, inspector_address);
+    stop_cheat_caller_address(contract_address);
+
+    // approve land
+    start_cheat_caller_address(contract_address, inspector_address);
+    land_register_dispatcher.approve_land(land_id);
+    stop_cheat_caller_address(contract_address);
+
+    // transfer land
+    start_cheat_caller_address(contract_address, owner_address);
+    land_register_dispatcher.transfer_land(land_id, new_owner_address);
+
+    let land_after = land_register_dispatcher.get_land(land_id);
+
+    assert(land_after.owner == new_owner_address, 'Land not transfered');
+
+    stop_cheat_caller_address(contract_address);
+}
