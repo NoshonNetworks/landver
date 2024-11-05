@@ -6,8 +6,8 @@ pub mod LandRegistryContract {
     use land_registry::utils::utils::{create_land_id, LandUseIntoOptionFelt252};
     use core::array::ArrayTrait;
     use starknet::storage::{Map, StorageMapWriteAccess, StorageMapReadAccess};
-    use crate::land_registry::custom_error::Errors;
-    
+    use land_registry::custom_error::Errors;
+
 
     #[storage]
     struct Storage {
@@ -295,9 +295,7 @@ pub mod LandRegistryContract {
         }
 
         fn set_land_inspector(ref self: ContractState, land_id: u256, inspector: ContractAddress) {
-            assert(
-                InternalFunctions::only_owner(@self, land_id), Errors::OWNER_MK_INSPECTOR
-            );
+            assert(InternalFunctions::only_owner(@self, land_id), Errors::OWNER_MK_INSPECTOR);
             let prev_land_count = self.lands_assigned_to_inspector.read(inspector);
             self.land_inspectors.write(land_id, inspector);
             self.lands_assigned_to_inspector.write(inspector, prev_land_count + 1);
