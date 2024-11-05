@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import WalletConnection from "./WalletConnection";
 import LandVerSVG from "../assets/map.svg";
+import LandVer from "../assets/LANDVER-NO-BG.png";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -22,13 +23,13 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-gradient-to-r from-blue-400 to-blue-700 text-white">
+    <header className=" bg-gradient-to-b from-green-200 to-white dark:from-gray-800 dark:to-black dark:bg-[#060304] text-gray-900">
       <nav className="flex justify-between items-center p-4 md:p-6 flex-wrap">
         <div
           className="text-xl md:text-2xl font-bold cursor-pointer"
           onClick={() => scrollToSection("/", "home")}
         >
-          LandVer
+          <img src={LandVer} alt="logo" className="w-[20%]" />
         </div>
 
         <button
@@ -61,7 +62,7 @@ const Header = () => {
           <li className="md:inline-block">
             <button
               onClick={() => scrollToSection("/", "home")}
-              className="block hover:text-gray-200 focus:outline-none py-2 md:py-0"
+              className="block hover:text-gray-700 focus:outline-none py-2 md:py-0"
             >
               Home
             </button>
@@ -69,7 +70,7 @@ const Header = () => {
           <li className="md:inline-block">
             <button
               onClick={() => scrollToSection("/register", "register")}
-              className="block hover:text-gray-200 focus:outline-none py-2 md:py-0"
+              className="block hover:text-gray-700 focus:outline-none py-2 md:py-0 "
             >
               Register Land
             </button>
@@ -77,7 +78,7 @@ const Header = () => {
           <li className="md:inline-block">
             <button
               onClick={() => scrollToSection("/verify", "register")}
-              className="block hover:text-gray-200 focus:outline-none py-2 md:py-0"
+              className="block hover:text-gray-700 focus:outline-none py-2 md:py-0"
             >
               Verify Land
             </button>
@@ -85,7 +86,7 @@ const Header = () => {
           <li className="md:inline-block">
             <button
               onClick={() => scrollToSection("/lands", "lands")}
-              className="block hover:text-gray-200 focus:outline-none py-2 md:py-0"
+              className="block hover:text-gray-700 focus:outline-none py-2 md:py-0"
             >
               How it works
             </button>
@@ -93,7 +94,7 @@ const Header = () => {
           <li className="md:inline-block">
             <button
               onClick={() => scrollToSection("/about", "about")}
-              className="block hover:text-gray-200 focus:outline-none py-2 md:py-0"
+              className="block hover:text-gray-700 focus:outline-none py-2 md:py-0"
             >
               About Us
             </button>
@@ -120,15 +121,15 @@ const Header = () => {
         <div className="flex flex-col md:flex-row justify-center space-y-3 md:space-y-0 md:space-x-4 mb-8">
           <button
             onClick={() => scrollToSection("/register", "register")}
-            className="bg-orange-500 hover:bg-orange-600 text-white py-2 px-4 md:py-3 md:px-6 rounded-full text-sm md:text-lg font-semibold transition transform hover:scale-105 hover:shadow-lg"
+            className="bg-white hover:bg-gray-100 py-2 px-4 md:py-3 md:px-6 text-sm md:text-lg font-semibold transition transform hover:scale-105 hover:shadow-lg text-gray-900 shadow-2xl"
           >
             Register Your Land
           </button>
           <button
             onClick={() => scrollToSection("/lands", "register")}
-            className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 md:py-3 md:px-6 rounded-full text-sm md:text-lg font-semibold transition transform hover:scale-105 hover:shadow-lg"
+            className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 md:py-3 md:px-6 text-sm md:text-lg font-semibold transition transform hover:scale-105 hover:shadow-lg shadow-2xl"
           >
-           View Lands
+            View Lands
           </button>
         </div>
         <img
