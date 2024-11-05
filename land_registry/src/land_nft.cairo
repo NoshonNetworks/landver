@@ -1,6 +1,7 @@
 use starknet::ContractAddress;
 use openzeppelin::token::erc721::ERC721Component;
 use openzeppelin::introspection::src5::SRC5Component;
+use land_registry::custom_error::Errors;
 
 #[starknet::interface]
 pub trait ILandNFT<TContractState> {
@@ -17,6 +18,7 @@ pub mod LandNFT {
     use openzeppelin::token::erc721::{ERC721Component, ERC721Component::InternalTrait};
     use openzeppelin::introspection::src5::SRC5Component;
     use openzeppelin::token::erc721::ERC721HooksEmptyImpl;
+    use land_registry::custom_error::Errors;
 
 
     component!(path: ERC721Component, storage: erc721, event: ERC721Event);
@@ -58,7 +60,7 @@ pub mod LandNFT {
             // Only the land registry contract can mint NFTs
             // assert(
             //     starknet::get_caller_address() == self.land_registry.read(),
-            //     'Only land registry can mint'
+            //     Errors::MINT_NFT
             // );
             self.erc721.mint(to, token_id);
         }
@@ -68,8 +70,7 @@ pub mod LandNFT {
         ) {
             // Only the land registry contract can transfer NFTs
             assert(
-                starknet::get_caller_address() == self.land_registry.read(),
-                'Only land registry can transfer'
+                starknet::get_caller_address() == self.land_registry.read(), Errors::TRANSFER_NFT
             );
             self.erc721.transfer(from, to, token_id);
         }
