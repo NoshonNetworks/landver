@@ -66,7 +66,6 @@ scarb test
 ```
 
 ## Contributors
-
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
@@ -86,9 +85,8 @@ scarb test
       <td align="center" valign="top" width="14.28%"><a href="https://deveche.vercel.app/"><img src="https://avatars.githubusercontent.com/u/111073744?v=4?s=100" width="100px;" alt="Echefula Ndukwe"/><br /><sub><b>Echefula Ndukwe</b></sub></a><br /><a href="https://github.com/NoshonNetworks/landver/commits?author=Eche5" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://poulav.vercel.app"><img src="https://avatars.githubusercontent.com/u/133862694?v=4?s=100" width="100px;" alt="Poulav Bhowmick"/><br /><sub><b>Poulav Bhowmick</b></sub></a><br /><a href="https://github.com/NoshonNetworks/landver/commits?author=PoulavBhowmick03" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/No-bodyq"><img src="https://avatars.githubusercontent.com/u/141028690?v=4?s=100" width="100px;" alt="Asher"/><br /><sub><b>Asher</b></sub></a><br /><a href="https://github.com/NoshonNetworks/landver/commits?author=No-bodyq" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Villarley"><img src="https://avatars.githubusercontent.com/u/115122095?v=4?s=100" width="100px;" alt="Santiago Villarreal Arley"/><br /><sub><b>Santiago Villarreal Arley</b></sub></a><br /><a href="https://github.com/NoshonNetworks/landver/commits?author=Villarley" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Villarley"><img src="https://avatars.githubusercontent.com/u/115122095?v=4?s=100" width="100px;" alt="Santiago Villarreal Arley"/><br /><sub><b>Santiago Villarreal Arley</b></sub></a><br /><a href="https://github.com/NoshonNetworks/landver/commits?author=Villarley" title="Code">💻</a> </td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Otaiki1"><img src="https://avatars.githubusercontent.com/u/38711713?v=4?s=100" width="100px;" alt="Abdulsamad sadiq"/><br /><sub><b>Abdulsamad sadiq</b></sub></a><br /><a href="https://github.com/NoshonNetworks/landver/commits?author=Otaiki1" title="Code">💻</a></td>
-
     </tr>
   </tbody>
 </table>
