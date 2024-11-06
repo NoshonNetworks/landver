@@ -1,7 +1,7 @@
 # LandVer - Land Verification System
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-14-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-15-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 LandVer is a decentralized land registration and verification protocol, utilizing blockchain technology to provide a secure, transparent, and immutable system for managing land records. The protocol facilitates land transactions and ownership verification across multiple blockchains, beginning with StarkNet.
@@ -88,6 +88,9 @@ scarb test
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Villarley"><img src="https://avatars.githubusercontent.com/u/115122095?v=4?s=100" width="100px;" alt="Santiago Villarreal Arley"/><br /><sub><b>Santiago Villarreal Arley</b></sub></a><br /><a href="https://github.com/NoshonNetworks/landver/commits?author=Villarley" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Otaiki1"><img src="https://avatars.githubusercontent.com/u/38711713?v=4?s=100" width="100px;" alt="Abdulsamad sadiq"/><br /><sub><b>Abdulsamad sadiq</b></sub></a><br /><a href="https://github.com/NoshonNetworks/landver/commits?author=Otaiki1" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Calebux"><img src="https://avatars.githubusercontent.com/u/119738245?v=4?s=100" width="100px;" alt="Caleb "/><br /><sub><b>Caleb </b></sub></a><br /><a href="#design-Calebux" title="Design">🎨</a> <a href="https://github.com/NoshonNetworks/landver/commits?author=Calebux" title="Documentation">📖</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Oshioke-Salaki"><img src="https://avatars.githubusercontent.com/u/105825121?v=4?s=100" width="100px;" alt="Oshioke Salaki"/><br /><sub><b>Oshioke Salaki</b></sub></a><br /><a href="https://github.com/NoshonNetworks/landver/commits?author=Oshioke-Salaki" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
