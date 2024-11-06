@@ -125,6 +125,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Calebux",
+      "name": "Caleb ",
+      "avatar_url": "https://avatars.githubusercontent.com/u/119738245?v=4",
+      "profile": "https://github.com/Calebux",
+      "contributions": [
+        "design",
+        "doc"
+      ]
     }
   ],
   "contributorsPerLine": 7,
