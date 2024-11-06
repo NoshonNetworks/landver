@@ -1,7 +1,8 @@
 const Transaction = require('../models/Transaction');
 const blockchainService = require('../services/blockchainService');
+const CustomError = require('../errors/CustomError');
 
-exports.createTransaction = async (req, res) => {
+exports.createTransaction = async (req, res, next) => {
   try {
     const newTransaction = new Transaction(req.body);
     await newTransaction.save();
@@ -13,18 +14,18 @@ exports.createTransaction = async (req, res) => {
     );
 
     if (!blockchainResult) {
-      // If blockchain transfer fails, you might want to delete the transaction from your database
+      // If blockchain transfer fails, delete the transaction from the database
       await Transaction.findByIdAndDelete(newTransaction._id);
-      return res.status(500).json({ message: 'Failed to transfer land on blockchain' });
+      throw new CustomError('Failed to transfer land on blockchain', 500, 'BLOCKCHAIN_TRANSFER_FAILED');
     }
 
     res.status(201).json({ message: 'Transaction created successfully', transaction: newTransaction });
   } catch (error) {
-    res.status(400).json({ message: 'Error creating transaction', error: error.message });
+    next(error instanceof CustomError ? error : new CustomError('Error creating transaction', 400));
   }
 };
 
-exports.getAllTransactions = async (req, res) => {
+exports.getAllTransactions = async (req, res, next) => {
   try {
     const transactions = await Transaction.find()
       .populate('landId')
@@ -34,11 +35,11 @@ exports.getAllTransactions = async (req, res) => {
       .populate('documents');
     res.status(200).json(transactions);
   } catch (error) {
-    res.status(400).json({ message: 'Error fetching transactions', error: error.message });
+    next(new CustomError('Error fetching transactions', 500, 'FETCH_TRANSACTIONS_ERROR', error.message));
   }
 };
 
-exports.getTransaction = async (req, res) => {
+exports.getTransaction = async (req, res, next) => {
   try {
     const transaction = await Transaction.findById(req.params.id)
       .populate('landId')
@@ -47,34 +48,34 @@ exports.getTransaction = async (req, res) => {
       .populate('approvedBy')
       .populate('documents');
     if (!transaction) {
-      return res.status(404).json({ message: 'Transaction not found' });
+      throw new CustomError('Transaction not found', 404, 'TRANSACTION_NOT_FOUND');
     }
     res.status(200).json(transaction);
   } catch (error) {
-    res.status(400).json({ message: 'Error fetching transaction', error: error.message });
+    next(error instanceof CustomError ? error : new CustomError('Error fetching transaction', 500));
   }
 };
 
-exports.updateTransaction = async (req, res) => {
+exports.updateTransaction = async (req, res, next) => {
   try {
     const updatedTransaction = await Transaction.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updatedTransaction) {
-      return res.status(404).json({ message: 'Transaction not found' });
+      throw new CustomError('Transaction not found', 404, 'TRANSACTION_NOT_FOUND');
     }
     res.status(200).json({ message: 'Transaction updated successfully', transaction: updatedTransaction });
   } catch (error) {
-    res.status(400).json({ message: 'Error updating transaction', error: error.message });
+    next(new CustomError('Error updating transaction', 500, 'UPDATE_TRANSACTION_ERROR', error.message));
   }
 };
 
-exports.deleteTransaction = async (req, res) => {
+exports.deleteTransaction = async (req, res, next) => {
   try {
     const deletedTransaction = await Transaction.findByIdAndDelete(req.params.id);
     if (!deletedTransaction) {
-      return res.status(404).json({ message: 'Transaction not found' });
+      throw new CustomError('Transaction not found', 404, 'TRANSACTION_NOT_FOUND');
     }
     res.status(200).json({ message: 'Transaction deleted successfully' });
   } catch (error) {
-    res.status(400).json({ message: 'Error deleting transaction', error: error.message });
+    next(new CustomError('Error deleting transaction', 500, 'DELETE_TRANSACTION_ERROR', error.message));
   }
 };
