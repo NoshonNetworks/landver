@@ -25,8 +25,11 @@ pub mod Accounts {
 
 fn deploy(name: ByteArray) -> ContractAddress {
     // Deploy Ownable contract
+    let base_uri: ByteArray = "https://example.base.uri/";
+    let mut constructor_args: Array<felt252> = array![];
+    (Accounts::nft(), base_uri).serialize(ref constructor_args);
     let nft_contract = declare("LandNFT").unwrap().contract_class();
-    let (nft_address, _) = nft_contract.deploy(@array![Accounts::nft().into()]).unwrap();
+    let (nft_address, _) = nft_contract.deploy(@constructor_args).unwrap();
 
     // Deploy Aggregator contract
     let land_registry_contract = declare(name).unwrap().contract_class();
