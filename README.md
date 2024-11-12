@@ -1,7 +1,7 @@
 # LandVer - Land Verification System
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-11-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-15-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 LandVer is a decentralized land registration and verification protocol, utilizing blockchain technology to provide a secure, transparent, and immutable system for managing land records. The protocol facilitates land transactions and ownership verification across multiple blockchains, beginning with StarkNet.
@@ -66,14 +66,13 @@ scarb test
 ```
 
 ## Contributors
-
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
 <table>
   <tbody>
     <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://fishonsnote.medium.com/"><img src="https://avatars.githubusercontent.com/u/43862685?v=4?s=100" width="100px;" alt="Fishon Amos"/><br /><sub><b>Fishon Amos</b></sub></a><br /><a href="https://github.com/NoshonNetworks/landver/commits?author=fishonamos" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://fishonsnote.medium.com/"><img src="https://avatars.githubusercontent.com/u/43862685?v=4?s=100" width="100px;" alt="Fishon Amos"/><br /><sub><b>Fishon Amos</b></sub></a><br /><a href="https://github.com/NoshonNetworks/landver/commits?author=fishonamos" title="Code">💻</a> <a href="https://github.com/NoshonNetworks/landver/pulls?q=is%3Apr+reviewed-by%3Afishonamos" title="Reviewed Pull Requests">👀</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Solomonsolomonsolomon"><img src="https://avatars.githubusercontent.com/u/103282647?v=4?s=100" width="100px;" alt="Solomonsolomonsolomon"/><br /><sub><b>Solomonsolomonsolomon</b></sub></a><br /><a href="https://github.com/NoshonNetworks/landver/commits?author=Solomonsolomonsolomon" title="Code">💻</a> <a href="#infra-Solomonsolomonsolomon" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/GoSTEAN"><img src="https://avatars.githubusercontent.com/u/63151237?v=4?s=100" width="100px;" alt="Stephanie Nwankwo"/><br /><sub><b>Stephanie Nwankwo</b></sub></a><br /><a href="https://github.com/NoshonNetworks/landver/commits?author=GoSTEAN" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/rajiabdul"><img src="https://avatars.githubusercontent.com/u/119139404?v=4?s=100" width="100px;" alt="RAJI ABDUL"/><br /><sub><b>RAJI ABDUL</b></sub></a><br /><a href="https://github.com/NoshonNetworks/landver/commits?author=rajiabdul" title="Documentation">📖</a></td>
@@ -86,6 +85,12 @@ scarb test
       <td align="center" valign="top" width="14.28%"><a href="https://deveche.vercel.app/"><img src="https://avatars.githubusercontent.com/u/111073744?v=4?s=100" width="100px;" alt="Echefula Ndukwe"/><br /><sub><b>Echefula Ndukwe</b></sub></a><br /><a href="https://github.com/NoshonNetworks/landver/commits?author=Eche5" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://poulav.vercel.app"><img src="https://avatars.githubusercontent.com/u/133862694?v=4?s=100" width="100px;" alt="Poulav Bhowmick"/><br /><sub><b>Poulav Bhowmick</b></sub></a><br /><a href="https://github.com/NoshonNetworks/landver/commits?author=PoulavBhowmick03" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/No-bodyq"><img src="https://avatars.githubusercontent.com/u/141028690?v=4?s=100" width="100px;" alt="Asher"/><br /><sub><b>Asher</b></sub></a><br /><a href="https://github.com/NoshonNetworks/landver/commits?author=No-bodyq" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Villarley"><img src="https://avatars.githubusercontent.com/u/115122095?v=4?s=100" width="100px;" alt="Santiago Villarreal Arley"/><br /><sub><b>Santiago Villarreal Arley</b></sub></a><br /><a href="https://github.com/NoshonNetworks/landver/commits?author=Villarley" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Otaiki1"><img src="https://avatars.githubusercontent.com/u/38711713?v=4?s=100" width="100px;" alt="Abdulsamad sadiq"/><br /><sub><b>Abdulsamad sadiq</b></sub></a><br /><a href="https://github.com/NoshonNetworks/landver/commits?author=Otaiki1" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Calebux"><img src="https://avatars.githubusercontent.com/u/119738245?v=4?s=100" width="100px;" alt="Caleb "/><br /><sub><b>Caleb </b></sub></a><br /><a href="#design-Calebux" title="Design">🎨</a> <a href="https://github.com/NoshonNetworks/landver/commits?author=Calebux" title="Documentation">📖</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Oshioke-Salaki"><img src="https://avatars.githubusercontent.com/u/105825121?v=4?s=100" width="100px;" alt="Oshioke Salaki"/><br /><sub><b>Oshioke Salaki</b></sub></a><br /><a href="https://github.com/NoshonNetworks/landver/commits?author=Oshioke-Salaki" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>

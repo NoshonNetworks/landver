@@ -8,8 +8,8 @@ pub struct Land {
     area: u256,
     land_use: LandUse,
     status: LandStatus,
-    inspector: Option<ContractAddress>,
     last_transaction_timestamp: u64,
+    inspector: ContractAddress,
 }
 
 #[derive(Drop, Debug, Copy, Serde, Clone, starknet::Store, PartialEq)]
@@ -43,8 +43,6 @@ pub trait ILandRegistry<TContractState> {
     fn register_land(
         ref self: TContractState, location: Location, area: u256, land_use: LandUse,
     ) -> u256;
-    fn set_land_inspector(ref self: TContractState, land_id: u256, inspector: ContractAddress);
-    fn get_land_inspector(self: @TContractState, land_id: u256) -> Option<ContractAddress>;
     fn transfer_land(ref self: TContractState, land_id: u256, new_owner: ContractAddress);
     fn get_land(self: @TContractState, land_id: u256) -> Land;
     fn get_land_count(self: @TContractState) -> u256;
@@ -53,12 +51,17 @@ pub trait ILandRegistry<TContractState> {
     fn approve_land(ref self: TContractState, land_id: u256);
     fn reject_land(ref self: TContractState, land_id: u256);
     fn is_inspector(self: @TContractState, inspector: ContractAddress) -> bool;
-    fn add_inspector(ref self: TContractState, inspector: ContractAddress);
-    fn remove_inspector(ref self: TContractState, inspector: ContractAddress);
+    // fn add_inspector(ref self: TContractState, inspector: ContractAddress);
+    // fn remove_inspector(ref self: TContractState, inspector: ContractAddress);
     fn is_land_approved(self: @TContractState, land_id: u256) -> bool;
     fn get_pending_approvals(self: @TContractState) -> Array<u256>;
     fn get_land_transaction_history(
         self: @TContractState, land_id: u256
     ) -> Array<(ContractAddress, u64)>;
     fn get_land_status(self: @TContractState, land_id: u256) -> LandStatus;
+
+    fn set_land_inspector(ref self: TContractState, land_id: u256, inspector: ContractAddress);
+    fn get_land_inspector(self: @TContractState, land_id: u256) -> ContractAddress;
+    fn add_inspector(ref self: TContractState, inspector: ContractAddress);
+    fn remove_inspector(ref self: TContractState, inspector: ContractAddress);
 }

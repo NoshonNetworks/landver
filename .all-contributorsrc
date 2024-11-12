@@ -13,7 +13,8 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/43862685?v=4",
       "profile": "https://fishonsnote.medium.com/",
       "contributions": [
-        "code"
+        "code",
+        "review"
       ]
     },
     {
@@ -103,6 +104,43 @@
       "name": "Asher",
       "avatar_url": "https://avatars.githubusercontent.com/u/141028690?v=4",
       "profile": "https://github.com/No-bodyq",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Villarley",
+      "name": "Santiago Villarreal Arley",
+      "avatar_url": "https://avatars.githubusercontent.com/u/115122095?v=4",
+      "profile": "https://github.com/Villarley",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Otaiki1",
+      "name": "Abdulsamad sadiq",
+      "avatar_url": "https://avatars.githubusercontent.com/u/38711713?v=4",
+      "profile": "https://github.com/Otaiki1",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Calebux",
+      "name": "Caleb ",
+      "avatar_url": "https://avatars.githubusercontent.com/u/119738245?v=4",
+      "profile": "https://github.com/Calebux",
+      "contributions": [
+        "design",
+        "doc"
+      ]
+    },
+    {
+      "login": "Oshioke-Salaki",
+      "name": "Oshioke Salaki",
+      "avatar_url": "https://avatars.githubusercontent.com/u/105825121?v=4",
+      "profile": "https://github.com/Oshioke-Salaki",
       "contributions": [
         "code"
       ]

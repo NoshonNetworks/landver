@@ -1,37 +1,38 @@
 const Document = require('../models/Document');
+const CustomError = require('../errors/CustomError');
 
-exports.uploadDocument = async (req, res) => {
+exports.uploadDocument = async (req, res, next) => {
   try {
     if (!req.file) {
-      return res.status(400).json({ message: 'No file uploaded' });
+      throw new CustomError('No file uploaded', 400, 'NO_FILE_UPLOADED');
     }
 
     const newDocument = new Document({
       name: req.body.name,
       type: req.file.mimetype,
-      filePath: req.file.path
+      filePath: req.file.path,
     });
 
     await newDocument.save();
     res.status(201).json({ message: 'Document uploaded successfully', document: newDocument });
   } catch (error) {
-    res.status(400).json({ message: 'Error uploading document', error: error.message });
+    next(error instanceof CustomError ? error : new CustomError('Error uploading document', 500));
   }
 };
 
-exports.getDocument = async (req, res) => {
+exports.getDocument = async (req, res, next) => {
   try {
     const document = await Document.findById(req.params.id);
     if (!document) {
-      return res.status(404).json({ message: 'Document not found' });
+      throw new CustomError('Document not found', 404, 'DOCUMENT_NOT_FOUND');
     }
     res.status(200).json(document);
   } catch (error) {
-    res.status(400).json({ message: 'Error fetching document', error: error.message });
+    next(error instanceof CustomError ? error : new CustomError('Error fetching document', 500));
   }
 };
 
-exports.updateDocumentStatus = async (req, res) => {
+exports.updateDocumentStatus = async (req, res, next) => {
   try {
     const updatedDocument = await Document.findByIdAndUpdate(
       req.params.id,
@@ -39,10 +40,10 @@ exports.updateDocumentStatus = async (req, res) => {
       { new: true }
     );
     if (!updatedDocument) {
-      return res.status(404).json({ message: 'Document not found' });
+      throw new CustomError('Document not found', 404, 'DOCUMENT_NOT_FOUND');
     }
     res.status(200).json({ message: 'Document status updated successfully', document: updatedDocument });
   } catch (error) {
-    res.status(400).json({ message: 'Error updating document status', error: error.message });
+    next(error instanceof CustomError ? error : new CustomError('Error updating document status', 500));
   }
 };
