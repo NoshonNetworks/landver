@@ -1,6 +1,9 @@
 #[starknet::contract]
 pub mod LandRegistryContract {
-    use starknet::{get_caller_address, get_block_timestamp, ContractAddress};
+    use starknet::SyscallResultTrait;
+    use starknet::{
+        get_caller_address, get_contract_address, get_block_timestamp, ContractAddress, syscalls
+    };
     use land_registry::interface::{ILandRegistry, Land, LandUse, Location, LandStatus};
     use land_registry::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait, LandNFT};
     use land_registry::utils::utils::{create_land_id, LandUseIntoOptionFelt252};
@@ -28,7 +31,7 @@ pub mod LandRegistryContract {
 
     #[event]
     #[derive(Drop, starknet::Event)]
-    enum Event {
+    pub enum Event {
         LandRegistered: LandRegistered,
         LandTransferred: LandTransferred,
         LandVerified: LandVerified,
@@ -39,7 +42,7 @@ pub mod LandRegistryContract {
     }
 
     #[derive(Drop, starknet::Event)]
-    struct LandRegistered {
+    pub struct LandRegistered {
         land_id: u256,
         owner: ContractAddress,
         location: Location,
@@ -48,44 +51,55 @@ pub mod LandRegistryContract {
     }
 
     #[derive(Drop, starknet::Event)]
-    struct LandTransferred {
+    pub struct LandTransferred {
         land_id: u256,
         from_owner: ContractAddress,
         to_owner: ContractAddress,
     }
 
     #[derive(Drop, starknet::Event)]
-    struct LandVerified {
+    pub struct LandVerified {
         land_id: u256,
     }
 
     #[derive(Drop, Copy, starknet::Event)]
-    struct LandUpdated {
+    pub struct LandUpdated {
         land_id: u256,
         land_use: Option<felt252>,
         area: u256
     }
 
     #[derive(Drop, Copy, starknet::Event)]
-    struct LandInspectorSet {
+    pub struct LandInspectorSet {
         land_id: u256,
         inspector: ContractAddress,
     }
 
     #[derive(Drop, starknet::Event)]
-    struct InspectorAdded {
+    pub struct InspectorAdded {
         inspector: ContractAddress,
     }
 
     #[derive(Drop, starknet::Event)]
-    struct InspectorRemoved {
+    pub struct InspectorRemoved {
         inspector: ContractAddress,
     }
 
     #[constructor]
-    fn constructor(ref self: ContractState, nft_contract: ContractAddress) {
-        self.nft_contract.write(nft_contract);
+    fn constructor(
+        ref self: ContractState, nft_contract_class_hash: starknet::class_hash::ClassHash
+    ) {
         self.inspector_count.write(0);
+
+        let land_register_contract_address = get_contract_address();
+        let mut call_data = ArrayTrait::<felt252>::new();
+        call_data.append(land_register_contract_address.try_into().unwrap());
+        let (nft_contract_address, _) = syscalls::deploy_syscall(
+            nft_contract_class_hash, 0, call_data.span(), true
+        )
+            .unwrap_syscall();
+
+        self.nft_contract.write(nft_contract_address);
     }
 
     #[abi(embed_v0)]
@@ -202,9 +216,9 @@ pub mod LandRegistryContract {
             self.owner_land_count.write(new_owner, new_owner_land_count + 1);
 
             // Transfer NFT
-            // let nft_contract = self.nft_contract.read();
-            // let nft_dispatcher = ILandNFTDispatcher { contract_address: nft_contract };
-            // nft_dispatcher.transfer(old_owner, new_owner, land_id);
+            let nft_contract = self.nft_contract.read();
+            let nft_dispatcher = ILandNFTDispatcher { contract_address: nft_contract };
+            nft_dispatcher.transfer(old_owner, new_owner, land_id);
 
             self
                 .emit(

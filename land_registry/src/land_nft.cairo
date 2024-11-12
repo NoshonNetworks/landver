@@ -58,10 +58,7 @@ pub mod LandNFT {
     impl LandNFTImpl of ILandNFT<ContractState> {
         fn mint(ref self: ContractState, to: ContractAddress, token_id: u256) {
             // Only the land registry contract can mint NFTs
-            // assert(
-            //     starknet::get_caller_address() == self.land_registry.read(),
-            //     Errors::MINT_NFT
-            // );
+            assert(starknet::get_caller_address() == self.land_registry.read(), Errors::MINT_NFT);
             self.erc721.mint(to, token_id);
         }
 
