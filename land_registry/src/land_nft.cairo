@@ -26,7 +26,7 @@ pub mod LandNFT {
     use openzeppelin::token::erc721::ERC721Component;
     use openzeppelin::introspection::src5::SRC5Component;
     use openzeppelin::token::erc721::ERC721HooksEmptyImpl;
-    use land_registry::custom_error::Errors;
+    use land_registry::custom_error;
 
     component!(path: ERC721Component, storage: erc721, event: ERC721Event);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);
@@ -105,7 +105,8 @@ pub mod LandNFT {
         ) {
             // Only the land registry contract can transfer NFTs
             assert(
-                starknet::get_caller_address() == self.land_registry.read(), Errors::TRANSFER_NFT
+                starknet::get_caller_address() == self.land_registry.read(),
+                custom_error::Errors::TRANSFER_NFT
             );
             self._assert_not_locked(token_id);
 
