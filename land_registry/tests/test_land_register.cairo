@@ -14,10 +14,6 @@ pub mod Accounts {
         0x0000000000000000000000000000000000000000.try_into().unwrap()
     }
 
-    pub fn nft() -> ContractAddress {
-        'nft'.try_into().unwrap()
-    }
-
     pub fn account1() -> ContractAddress {
         'account1'.try_into().unwrap()
     }
@@ -28,7 +24,6 @@ fn deploy(name: ByteArray) -> ContractAddress {
     let nft_contract_class_hash = nft_class_hash.class_hash;
     let land_registry_contract = declare(name).unwrap().contract_class();
     let mut call_data = ArrayTrait::<felt252>::new();
-    // call_data.append(nft_contract_class_hash);
     nft_contract_class_hash.serialize(ref call_data);
     let (contract_address, _) = land_registry_contract.deploy(@call_data).unwrap();
     contract_address

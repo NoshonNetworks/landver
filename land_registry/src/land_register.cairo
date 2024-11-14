@@ -92,8 +92,10 @@ pub mod LandRegistryContract {
         self.inspector_count.write(0);
 
         let land_register_contract_address = get_contract_address();
+        let base_uri: ByteArray = "https://example.base.uri/";
         let mut call_data = ArrayTrait::<felt252>::new();
         call_data.append(land_register_contract_address.try_into().unwrap());
+        base_uri.serialize(ref call_data);
         let (nft_contract_address, _) = syscalls::deploy_syscall(
             nft_contract_class_hash, 0, call_data.span(), true
         )
