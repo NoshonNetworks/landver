@@ -27,6 +27,8 @@ pub mod LandRegistryContract {
         land_inspector_assignments: Map::<u256, ContractAddress>,
         registered_inspectors: Map::<ContractAddress, bool>,
         inspector_count: u256,
+        registration_fee: u256,
+        land_payment: Map::<u256, (ContractAddress, u256)>
     }
 
     #[event]
@@ -110,9 +112,14 @@ pub mod LandRegistryContract {
             ref self: ContractState, location: Location, area: u256, land_use: LandUse,
         ) -> u256 {
             let caller = get_caller_address();
+            let registration_fee = 1000000000000000; 
+            let payment = starknet::info::get_tx_info().unbox().max_fee.into();
+            assert(payment == registration_fee, Errors::INSUFFICIENT_PAYMENT);  
             let timestamp = get_block_timestamp();
             let land_id = create_land_id(caller, timestamp, location);
             let transaction_count = self.land_transaction_count.read(land_id);
+
+            self.land_payment.write(land_id, (caller, payment));
 
             let new_land = Land {
                 owner: caller,
@@ -156,6 +163,10 @@ pub mod LandRegistryContract {
 
         fn get_land_count(self: @ContractState) -> u256 {
             self.land_count.read()
+        }
+
+        fn get_land_payment(self: @ContractState, land_id: u256) -> (ContractAddress, u256) {
+            self.land_payment.read(land_id)
         }
 
         fn get_lands_by_owner(self: @ContractState, owner: ContractAddress) -> Span<u256> {

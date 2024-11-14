@@ -64,4 +64,5 @@ pub trait ILandRegistry<TContractState> {
     fn get_land_inspector(self: @TContractState, land_id: u256) -> ContractAddress;
     fn add_inspector(ref self: TContractState, inspector: ContractAddress);
     fn remove_inspector(ref self: TContractState, inspector: ContractAddress);
+    fn get_land_payment(self: @TContractState, land_id: u256) -> (ContractAddress, u256);
 }
