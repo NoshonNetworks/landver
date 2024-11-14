@@ -13,11 +13,11 @@ pub mod Accounts {
     use starknet::{ContractAddress, contract_address_const};
 
     pub fn land_registry() -> ContractAddress {
-        contract_address_const::<'land_registry'>()
+        contract_address_const::<'0x123'>()
     }
 
     pub fn land_owner() -> ContractAddress {
-        contract_address_const::<'land_owner'>()
+        contract_address_const::<'0x456'>()
     }
 
     pub fn zero() -> ContractAddress {
@@ -30,13 +30,17 @@ const NON_EXISTENT_TOKEN_ID: u256 = 2;
 
 fn deploy(base_uri: ByteArray) -> ILandNFTDispatcher {
     let mut constructor_args: Array<felt252> = array![];
-    (Accounts::land_registry(), base_uri).serialize(ref constructor_args);
+    constructor_args.append(Accounts::land_registry().try_into().unwrap());
+    base_uri.serialize(ref constructor_args);
 
     let contract = declare("LandNFT").unwrap().contract_class();
     let (contract_address, _) = contract.deploy(@constructor_args).unwrap();
 
     let dispatcher = ILandNFTDispatcher { contract_address };
+
+    start_cheat_caller_address(dispatcher.contract_address, Accounts::land_registry());
     dispatcher.mint(Accounts::land_owner(), TOKEN_ID);
+    stop_cheat_caller_address(dispatcher.contract_address);
 
     dispatcher
 }
