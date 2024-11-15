@@ -113,7 +113,7 @@ pub mod LandRegistryContract {
             ref self: ContractState, location: Location, area: u256, land_use: LandUse,
         ) -> u256 {
             let caller = get_caller_address();
-            let registration_fee = InternalFunctions::calculate_area(@self, area);
+            let registration_fee = InternalFunctions::get_fee(@self, area);
             let payment = starknet::info::get_tx_info().unbox().max_fee.into();
             assert(payment >= registration_fee, Errors::INSUFFICIENT_PAYMENT);
 
@@ -378,7 +378,7 @@ pub mod LandRegistryContract {
             inspector == caller
         }
 
-        fn calculate_area(self: @ContractState, area: u256) -> u256 {
+        fn get_fee(self: @ContractState, area: u256) -> u256 {
             area * self.fee_per_square_unit.read()
         }
     }
