@@ -90,7 +90,7 @@ pub mod LandRegistryContract {
     fn constructor(
         ref self: ContractState,
         nft_contract_class_hash: starknet::class_hash::ClassHash,
-        initial_fee_rate: u256  
+        initial_fee_rate: u256
     ) {
         self.inspector_count.write(0);
         self.fee_per_square_unit.write(initial_fee_rate);
@@ -120,7 +120,6 @@ pub mod LandRegistryContract {
             let timestamp = get_block_timestamp();
             let land_id = create_land_id(caller, timestamp, location);
             let transaction_count = self.land_transaction_count.read(land_id);
-
 
             let new_land = Land {
                 owner: caller,
@@ -196,7 +195,7 @@ pub mod LandRegistryContract {
 
             let mut land = self.lands.read(land_id);
             assert(land.status == LandStatus::Approved, Errors::LAND_APPROVAL);
-  
+
             let old_owner = land.owner;
             land.owner = new_owner;
             self.lands.write(land_id, land);
@@ -382,6 +381,5 @@ pub mod LandRegistryContract {
         fn calculate_area(self: @ContractState, area: u256) -> u256 {
             area * self.fee_per_square_unit.read()
         }
-
     }
 }
