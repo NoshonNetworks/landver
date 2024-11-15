@@ -27,9 +27,7 @@ pub mod LandRegistryContract {
         land_inspector_assignments: Map::<u256, ContractAddress>,
         registered_inspectors: Map::<ContractAddress, bool>,
         inspector_count: u256,
-        registration_fee: u256,
-        land_payment: Map::<u256, (ContractAddress, u256)>,
-        initial_fee: u256,
+        fee_per_square_unit: u256,
     }
 
     #[event]
@@ -92,11 +90,10 @@ pub mod LandRegistryContract {
     fn constructor(
         ref self: ContractState,
         nft_contract_class_hash: starknet::class_hash::ClassHash,
-        initial_fee: u256
+        initial_fee_rate: u256  
     ) {
         self.inspector_count.write(0);
-        self.initial_fee.write(initial_fee);
-
+        self.fee_per_square_unit.write(initial_fee_rate);
         let land_register_contract_address = get_contract_address();
         let base_uri: ByteArray = "https://example.base.uri/";
         let mut call_data = ArrayTrait::<felt252>::new();
@@ -124,7 +121,6 @@ pub mod LandRegistryContract {
             let land_id = create_land_id(caller, timestamp, location);
             let transaction_count = self.land_transaction_count.read(land_id);
 
-            self.land_payment.write(land_id, (caller, payment));
 
             let new_land = Land {
                 owner: caller,
@@ -171,9 +167,6 @@ pub mod LandRegistryContract {
             self.land_count.read()
         }
 
-        fn get_land_payment(self: @ContractState, land_id: u256) -> (ContractAddress, u256) {
-            self.land_payment.read(land_id)
-        }
 
         fn get_lands_by_owner(self: @ContractState, owner: ContractAddress) -> Span<u256> {
             let mut result = array![];
@@ -203,15 +196,7 @@ pub mod LandRegistryContract {
 
             let mut land = self.lands.read(land_id);
             assert(land.status == LandStatus::Approved, Errors::LAND_APPROVAL);
-            
-            // Add payment validation
-            let transfer_fee = InternalFunctions::calculate_area(@self, land.area);
-            let payment = starknet::info::get_tx_info().unbox().max_fee.into();
-            assert(payment >= transfer_fee, Errors::INSUFFICIENT_PAYMENT);
-            
-            // Store payment information
-            self.land_payment.write(land_id, (get_caller_address(), payment));
-
+  
             let old_owner = land.owner;
             land.owner = new_owner;
             self.lands.write(land_id, land);
@@ -395,7 +380,8 @@ pub mod LandRegistryContract {
         }
 
         fn calculate_area(self: @ContractState, area: u256) -> u256 {
-            area * self.initial_fee.read()
+            area * self.fee_per_square_unit.read()
         }
+
     }
 }
