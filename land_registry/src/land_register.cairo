@@ -28,7 +28,8 @@ pub mod LandRegistryContract {
         registered_inspectors: Map::<ContractAddress, bool>,
         inspector_count: u256,
         registration_fee: u256,
-        land_payment: Map::<u256, (ContractAddress, u256)>
+        land_payment: Map::<u256, (ContractAddress, u256)>,
+        initial_fee: u256,
     }
 
     #[event]
@@ -89,9 +90,12 @@ pub mod LandRegistryContract {
 
     #[constructor]
     fn constructor(
-        ref self: ContractState, nft_contract_class_hash: starknet::class_hash::ClassHash
+        ref self: ContractState,
+        nft_contract_class_hash: starknet::class_hash::ClassHash,
+        initial_fee: u256
     ) {
         self.inspector_count.write(0);
+        self.initial_fee.write(initial_fee);
 
         let land_register_contract_address = get_contract_address();
         let base_uri: ByteArray = "https://example.base.uri/";
@@ -112,9 +116,10 @@ pub mod LandRegistryContract {
             ref self: ContractState, location: Location, area: u256, land_use: LandUse,
         ) -> u256 {
             let caller = get_caller_address();
-            let registration_fee = 1000000000000000; 
+            let registration_fee = InternalFunctions::calculate_area(@self, area);
             let payment = starknet::info::get_tx_info().unbox().max_fee.into();
-            assert(payment == registration_fee, Errors::INSUFFICIENT_PAYMENT);  
+            assert(payment >= registration_fee, Errors::INSUFFICIENT_PAYMENT);
+
             let timestamp = get_block_timestamp();
             let land_id = create_land_id(caller, timestamp, location);
             let transaction_count = self.land_transaction_count.read(land_id);
@@ -129,6 +134,7 @@ pub mod LandRegistryContract {
                 status: LandStatus::Pending,
                 inspector: 0.try_into().unwrap(),
                 last_transaction_timestamp: timestamp,
+                fee: registration_fee,
             };
 
             self.lands.write(land_id, new_land);
@@ -375,6 +381,10 @@ pub mod LandRegistryContract {
             let inspector = self.land_inspectors.read(land_id);
 
             inspector == caller
+        }
+
+        fn calculate_area(self: @ContractState, area: u256) -> u256 {
+            area * self.initial_fee.read()
         }
     }
 }

@@ -10,6 +10,7 @@ pub struct Land {
     status: LandStatus,
     last_transaction_timestamp: u64,
     inspector: ContractAddress,
+    fee: u256,
 }
 
 #[derive(Drop, Debug, Copy, Serde, Clone, starknet::Store, PartialEq)]
