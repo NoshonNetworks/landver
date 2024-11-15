@@ -199,9 +199,19 @@ pub mod LandRegistryContract {
 
         fn transfer_land(ref self: ContractState, land_id: u256, new_owner: ContractAddress) {
             assert(InternalFunctions::only_owner(@self, land_id), Errors::ONLY_OWNER_TRNF);
+            assert(new_owner != 0.try_into().unwrap(), 'Invalid new owner address');
 
             let mut land = self.lands.read(land_id);
             assert(land.status == LandStatus::Approved, Errors::LAND_APPROVAL);
+            
+            // Add payment validation
+            let transfer_fee = InternalFunctions::calculate_area(@self, land.area);
+            let payment = starknet::info::get_tx_info().unbox().max_fee.into();
+            assert(payment >= transfer_fee, Errors::INSUFFICIENT_PAYMENT);
+            
+            // Store payment information
+            self.land_payment.write(land_id, (get_caller_address(), payment));
+
             let old_owner = land.owner;
             land.owner = new_owner;
             self.lands.write(land_id, land);
@@ -249,6 +259,7 @@ pub mod LandRegistryContract {
 
         fn approve_land(ref self: ContractState, land_id: u256) {
             assert(InternalFunctions::only_inspector(@self, land_id), Errors::INSPECTOR_APPROVE);
+
             self.approved_lands.write(land_id, true);
 
             // Mint NFT
