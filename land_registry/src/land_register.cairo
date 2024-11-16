@@ -40,6 +40,7 @@ pub mod LandRegistryContract {
         LandInspectorSet: LandInspectorSet,
         InspectorAdded: InspectorAdded,
         InspectorRemoved: InspectorRemoved,
+        FeeUpdated: FeeUpdated,
     }
 
     #[derive(Drop, starknet::Event)]
@@ -84,6 +85,12 @@ pub mod LandRegistryContract {
     #[derive(Drop, starknet::Event)]
     pub struct InspectorRemoved {
         inspector: ContractAddress,
+    }
+
+    #[derive(Drop, starknet::Event)]
+    pub struct FeeUpdated {
+        old_fee: u256,
+        new_fee: u256,
     }
 
     #[constructor]
@@ -191,7 +198,7 @@ pub mod LandRegistryContract {
 
         fn transfer_land(ref self: ContractState, land_id: u256, new_owner: ContractAddress) {
             assert(InternalFunctions::only_owner(@self, land_id), Errors::ONLY_OWNER_TRNF);
-            assert(new_owner != 0.try_into().unwrap(), 'Invalid new owner address');
+            assert(new_owner != 0.try_into().unwrap(), Errors::ADDRESS_ZERO);
 
             let mut land = self.lands.read(land_id);
             assert(land.status == LandStatus::Approved, Errors::LAND_APPROVAL);
@@ -362,6 +369,18 @@ pub mod LandRegistryContract {
 
             self.emit(InspectorRemoved { inspector });
         }
+
+        fn set_fee(ref self: ContractState, fee: u256) {
+            let caller = get_caller_address();
+            assert(self.registered_inspectors.read(caller), Errors::NOT_AUTHORIZED);
+            let old_fee = self.fee_per_square_unit.read();
+            self.fee_per_square_unit.write(fee);
+            self.emit(FeeUpdated { old_fee, new_fee: fee });
+        }
+
+        fn get_fee(self: @ContractState) -> u256 {
+            self.fee_per_square_unit.read()
+        }
     }
 
     #[generate_trait]
@@ -379,6 +398,11 @@ pub mod LandRegistryContract {
         }
 
         fn get_fee(self: @ContractState, area: u256) -> u256 {
+            area * self.fee_per_square_unit.read()
+        }
+
+        fn calculate_fee(self: @ContractState, area: u256) -> u256 {
+            assert(area > 0, 'Area must be greater than 0');
             area * self.fee_per_square_unit.read()
         }
     }
