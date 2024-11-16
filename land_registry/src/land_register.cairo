@@ -14,19 +14,21 @@ pub mod LandRegistryContract {
 
     #[storage]
     struct Storage {
-        lands: Map::<u256, Land>,
-        owner_lands: Map::<(ContractAddress, u256), u256>,
-        owner_land_count: Map::<ContractAddress, u256>,
-        land_inspectors: Map::<u256, ContractAddress>,
-        lands_assigned_to_inspector: Map::<ContractAddress, u256>,
-        approved_lands: Map::<u256, bool>,
-        land_count: u256,
-        nft_contract: ContractAddress,
-        land_transaction_history: Map::<(u256, u256), (ContractAddress, u64)>,
-        land_transaction_count: Map::<u256, u256>,
-        land_inspector_assignments: Map::<u256, ContractAddress>,
-        registered_inspectors: Map::<ContractAddress, bool>,
-        inspector_count: u256,
+        lands: Map::<u256, Land>, // Stores all registered lands
+        owner_lands: Map::<(ContractAddress, u256), u256>, // Maps owners to their lands
+        owner_land_count: Map::<ContractAddress, u256>, // Number of lands per owner
+        land_inspectors: Map::<u256, ContractAddress>, // Assigned inspector for each land
+        lands_assigned_to_inspector: Map::<ContractAddress, u256>, // Number of lands per inspector
+        approved_lands: Map::<u256, bool>, // Tracks approved land status
+        land_count: u256, // Total number of registered lands
+        nft_contract: ContractAddress, // Address of the NFT contract
+        land_transaction_history: Map::<
+            (u256, u256), (ContractAddress, u64)
+        >, // Transaction history
+        land_transaction_count: Map::<u256, u256>, // Number of transactions per land
+        land_inspector_assignments: Map::<u256, ContractAddress>, // Inspector assignments
+        registered_inspectors: Map::<ContractAddress, bool>, // List of registered inspectors
+        inspector_count: u256, // Total number of registered inspectors
     }
 
     #[event]

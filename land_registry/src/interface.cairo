@@ -1,40 +1,46 @@
 use starknet::ContractAddress;
 use land_registry::utils::utils::{create_land_id};
 
+// Core data structures and interfaces for the Land Registry system
+
+// Represents a land parcel with its properties and metadata
 #[derive(Drop, Copy, Serde, starknet::Store)]
 pub struct Land {
-    owner: ContractAddress,
-    location: Location,
-    area: u256,
-    land_use: LandUse,
-    status: LandStatus,
-    last_transaction_timestamp: u64,
-    inspector: ContractAddress,
+    owner: ContractAddress, // Address of the current land owner
+    location: Location, // Geographic coordinates of the land
+    area: u256, // Size of the land parcel
+    land_use: LandUse, // Designated purpose/usage of the land
+    status: LandStatus, // Current verification status
+    last_transaction_timestamp: u64, // Timestamp of the most recent transaction
+    inspector: ContractAddress, // Address of assigned inspector
 }
 
+// Represents the verification status of a land parcel
 #[derive(Drop, Debug, Copy, Serde, Clone, starknet::Store, PartialEq)]
 pub enum LandStatus {
-    Pending,
-    Approved,
-    Rejected,
+    Pending, // Awaiting verification
+    Approved, // Verified and approved
+    Rejected, // Verification failed
 }
 
+// Geographic coordinates of a land parcel
 #[derive(Drop, Copy, Serde, starknet::Store, PartialEq)]
 pub struct Location {
-    latitude: felt252,
-    longitude: felt252,
+    latitude: felt252, // Latitude coordinate
+    longitude: felt252, // Longitude coordinate
 }
 
+// Classification of land usage types
 #[derive(Debug, Drop, Copy, Serde, Clone, starknet::Store, PartialEq)]
 pub enum LandUse {
-    Residential,
-    Commercial,
-    Industrial,
-    Agricultural,
-    Recreational,
-    Institutional,
-    MixedUse,
-    Unclassified,
+    Residential, // Housing and living spaces
+    Commercial, // Business and retail
+    Industrial, // Manufacturing and production
+    Agricultural, // Farming and cultivation
+    Recreational, // Parks and leisure
+    Institutional, // Schools, hospitals, government buildings
+    MixedUse, // Combined purposes
+    Unclassified, // Undefined usage
 }
 
 

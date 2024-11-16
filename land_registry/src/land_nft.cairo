@@ -1,17 +1,31 @@
+// Implementation of NFT functionality for land parcels using ERC721 standard
+
 use starknet::ContractAddress;
 use openzeppelin::token::erc721::ERC721Component;
 use openzeppelin::introspection::src5::SRC5Component;
 use land_registry::custom_error::Errors;
 
+// Interface for Land NFT operations
 #[starknet::interface]
 pub trait ILandNFT<TContractState> {
+    // Mints a new NFT representing a land parcel
     fn mint(ref self: TContractState, to: ContractAddress, token_id: u256);
+
+    // Transfers ownership of a land NFT
     fn transfer(
         ref self: TContractState, from: ContractAddress, to: ContractAddress, token_id: u256
     );
+
+    // Updates the base URI for NFT metadata
     fn set_base_uri(ref self: TContractState, new_base_uri: ByteArray, updater: ContractAddress);
+
+    // Locks a land NFT to prevent transfers
     fn lock(ref self: TContractState, token_id: u256);
+
+    // Unlocks a previously locked land NFT
     fn unlock(ref self: TContractState, token_id: u256);
+
+    // Checks if a land NFT is currently locked
     fn is_locked(self: @TContractState, token_id: u256) -> bool;
 }
 
@@ -42,11 +56,11 @@ pub mod LandNFT {
     #[storage]
     struct Storage {
         #[substorage(v0)]
-        erc721: ERC721Component::Storage,
+        erc721: ERC721Component::Storage, // ERC721 standard storage
         #[substorage(v0)]
-        src5: SRC5Component::Storage,
-        land_registry: ContractAddress,
-        locked: Map<u256, bool>,
+        src5: SRC5Component::Storage, // SRC5 interface storage
+        land_registry: ContractAddress, // Address of the land registry contract
+        locked: Map<u256, bool>, // Mapping of locked status for each token
     }
 
     #[event]
