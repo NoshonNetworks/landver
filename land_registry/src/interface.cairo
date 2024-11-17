@@ -10,6 +10,7 @@ pub struct Land {
     status: LandStatus,
     last_transaction_timestamp: u64,
     inspector: ContractAddress,
+    fee: u256,
 }
 
 #[derive(Drop, Debug, Copy, Serde, Clone, starknet::Store, PartialEq)]
@@ -64,4 +65,6 @@ pub trait ILandRegistry<TContractState> {
     fn get_land_inspector(self: @TContractState, land_id: u256) -> ContractAddress;
     fn add_inspector(ref self: TContractState, inspector: ContractAddress);
     fn remove_inspector(ref self: TContractState, inspector: ContractAddress);
+    fn set_fee(ref self: TContractState, fee: u256);
+    fn get_fee(self: @TContractState) -> u256;
 }

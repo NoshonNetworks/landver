@@ -2,7 +2,7 @@
 use snforge_std::{
     declare, ContractClassTrait, DeclareResultTrait, start_cheat_caller_address,
     stop_cheat_caller_address, start_cheat_block_timestamp, stop_cheat_block_timestamp, spy_events,
-    EventSpyAssertionsTrait
+    start_cheat_max_fee, EventSpyAssertionsTrait,
 };
 use starknet::ContractAddress;
 use land_registry::interface::{ILandRegistryDispatcher, ILandRegistryDispatcherTrait};
@@ -32,9 +32,11 @@ pub mod Accounts {
 fn deploy(name: ByteArray) -> ContractAddress {
     let nft_class_hash = declare("LandNFT").unwrap().contract_class();
     let nft_contract_class_hash = nft_class_hash.class_hash;
+    let initial_fee_rate: u256 = 1;
     let land_registry_contract = declare(name).unwrap().contract_class();
     let mut call_data = ArrayTrait::<felt252>::new();
     nft_contract_class_hash.serialize(ref call_data);
+    initial_fee_rate.serialize(ref call_data);
     let (contract_address, _) = land_registry_contract.deploy(@call_data).unwrap();
     contract_address
 }
@@ -43,6 +45,8 @@ fn deploy(name: ByteArray) -> ContractAddress {
 fn test_register_and_get_land() {
     let contract_address = deploy("LandRegistryContract");
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    start_cheat_max_fee(contract_address, 10000000000000000000);
 
     // // Set up test data
     let owner = Accounts::ADDR1();
@@ -70,6 +74,8 @@ fn test_register_and_get_land() {
 fn test_register_multiple_lands() {
     let contract_address = deploy("LandRegistryContract");
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    start_cheat_max_fee(contract_address, 10000000000000000000);
 
     // // Set up test data
     let owner = Accounts::ADDR1();
@@ -135,6 +141,8 @@ fn test_register_and_approve() {
     let contract_address = deploy("LandRegistryContract");
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
 
+    start_cheat_max_fee(contract_address, 10000000000000000000);
+
     // // Set up test data
     let owner = Accounts::ADDR1();
     let location: Location = Location { latitude: 1, longitude: 2 };
@@ -161,6 +169,8 @@ fn test_register_and_approve() {
 fn test_register_approve_and_transfer() {
     let contract_address = deploy("LandRegistryContract");
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    start_cheat_max_fee(contract_address, 10000000000000000000);
 
     // // Set up test data
     let owner = Accounts::ADDR1();
@@ -204,6 +214,8 @@ fn test_register_approve_and_transfer() {
 fn test_register_update_approve_and_transfer() {
     let contract_address = deploy("LandRegistryContract");
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    start_cheat_max_fee(contract_address, 10000000000000000000);
 
     // // Set up test data
     let owner = Accounts::ADDR1();
@@ -253,6 +265,8 @@ fn test_register_update_approve_and_transfer() {
 fn test_register_approve_update_and_transfer() {
     let contract_address = deploy("LandRegistryContract");
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    start_cheat_max_fee(contract_address, 10000000000000000000);
 
     // // Set up test data
     let owner = Accounts::ADDR1();
@@ -304,6 +318,8 @@ fn test_register_approve_transfer_and_update_by_new_owner() {
     let contract_address = deploy("LandRegistryContract");
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
 
+    start_cheat_max_fee(contract_address, 10000000000000000000);
+
     // // Set up test data
     let owner = Accounts::ADDR1();
     let inspector = Accounts::ADDR2();
@@ -340,6 +356,8 @@ fn try_to_transfer_before_approve() {
     let contract_address = deploy("LandRegistryContract");
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
 
+    start_cheat_max_fee(contract_address, 10000000000000000000);
+
     // // Set up test data
     let owner = Accounts::ADDR1();
     let location: Location = Location { latitude: 1, longitude: 2 };
@@ -360,6 +378,8 @@ fn try_to_transfer_before_approve() {
 fn previous_owner_tries_to_update_after_transfer_should_fail() {
     let contract_address = deploy("LandRegistryContract");
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    start_cheat_max_fee(contract_address, 10000000000000000000);
 
     // // Set up test data
     let owner = Accounts::ADDR1();
@@ -395,6 +415,8 @@ fn previous_owner_tries_to_update_after_transfer_should_fail() {
 fn test_no_inspector_tries_to_approve_should_fail() {
     let contract_address = deploy("LandRegistryContract");
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    start_cheat_max_fee(contract_address, 10000000000000000000);
 
     // // Set up test data
     let owner = Accounts::ADDR1();
@@ -440,6 +462,8 @@ fn test_try_to_transfer_a_not_existant_land_should_fail() {
 fn test_try_to_update_a_not_existant_land_should_fail() {
     let contract_address = deploy("LandRegistryContract");
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    start_cheat_max_fee(contract_address, 10000000000000000000);
 
     // // Set up test data
     let owner = Accounts::ADDR1();
