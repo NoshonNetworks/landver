@@ -44,6 +44,23 @@ pub enum LandUse {
     Unclassified, // Undefined usage
 }
 
+// Represents a land listing in the marketplace
+#[derive(Drop, Copy, Serde, starknet::Store)]
+pub struct Listing {
+    land_id: u256,
+    seller: ContractAddress,
+    price: u256,
+    status: ListingStatus,
+    created_at: u64,
+    updated_at: u64
+}
+
+#[derive(Drop, Debug, Copy, Serde, Clone, starknet::Store, PartialEq)]
+pub enum ListingStatus {
+    Active,
+    Sold,
+    Cancelled
+}
 
 #[starknet::interface]
 pub trait ILandRegistry<TContractState> {
@@ -73,4 +90,13 @@ pub trait ILandRegistry<TContractState> {
     fn remove_inspector(ref self: TContractState, inspector: ContractAddress);
     fn set_fee(ref self: TContractState, fee: u256);
     fn get_fee(self: @TContractState) -> u256;
+
+    // Marketplace function
+    fn create_listing(ref self: TContractState, land_id: u256, price: u256) -> u256;
+    fn cancel_listing(ref self: TContractState, listing_id: u256);
+    fn update_listing_price(ref self: TContractState, listing_id: u256, new_price: u256);
+    fn buy_land(ref self: TContractState, listing_id: u256);
+    fn get_listing(self: @TContractState, listing_id: u256) -> Listing;
+    fn get_active_listings(self: @TContractState) -> Array<u256>;
+    fn get_listing_price_history(self: @TContractState, listing_id: u256) -> Array<(u256, u64)>;
 }
