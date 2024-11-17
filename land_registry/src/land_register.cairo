@@ -30,7 +30,6 @@ pub mod LandRegistryContract {
         registered_inspectors: Map::<ContractAddress, bool>, // List of registered inspectors
         inspector_count: u256, // Total number of registered inspectors
         fee_per_square_unit: u256,
-
     }
 
     #[event]
