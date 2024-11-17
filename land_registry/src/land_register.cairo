@@ -29,6 +29,8 @@ pub mod LandRegistryContract {
         land_inspector_assignments: Map::<u256, ContractAddress>, // Inspector assignments
         registered_inspectors: Map::<ContractAddress, bool>, // List of registered inspectors
         inspector_count: u256, // Total number of registered inspectors
+        fee_per_square_unit: u256,
+
     }
 
     #[event]
@@ -41,6 +43,7 @@ pub mod LandRegistryContract {
         LandInspectorSet: LandInspectorSet,
         InspectorAdded: InspectorAdded,
         InspectorRemoved: InspectorRemoved,
+        FeeUpdated: FeeUpdated,
     }
 
     #[derive(Drop, starknet::Event)]
@@ -87,14 +90,25 @@ pub mod LandRegistryContract {
         inspector: ContractAddress,
     }
 
+
     // Constructor initializes the contract with NFT functionality
+
+    #[derive(Drop, starknet::Event)]
+    pub struct FeeUpdated {
+        old_fee: u256,
+        new_fee: u256,
+    }
     #[constructor]
     fn constructor(
-        ref self: ContractState, nft_contract_class_hash: starknet::class_hash::ClassHash
+        ref self: ContractState,
+        nft_contract_class_hash: starknet::class_hash::ClassHash,
+        initial_fee_rate: u256
     ) {
         self.inspector_count.write(0);
 
         // Deploy the NFT contract and store its address
+
+        self.fee_per_square_unit.write(initial_fee_rate);
         let land_register_contract_address = get_contract_address();
         let base_uri: ByteArray = "https://example.base.uri/";
         let mut call_data = ArrayTrait::<felt252>::new();
@@ -115,6 +129,10 @@ pub mod LandRegistryContract {
             ref self: ContractState, location: Location, area: u256, land_use: LandUse,
         ) -> u256 {
             let caller = get_caller_address();
+            let registration_fee = InternalFunctions::get_fee(@self, area);
+            let payment = starknet::info::get_tx_info().unbox().max_fee.into();
+            assert(payment >= registration_fee, Errors::INSUFFICIENT_PAYMENT);
+
             let timestamp = get_block_timestamp();
             // Generate unique land ID based on owner, timestamp and location
             let land_id = create_land_id(caller, timestamp, location);
@@ -129,6 +147,7 @@ pub mod LandRegistryContract {
                 status: LandStatus::Pending,
                 inspector: 0.try_into().unwrap(),
                 last_transaction_timestamp: timestamp,
+                fee: registration_fee,
             };
 
             // Update storage with new land information
@@ -169,6 +188,7 @@ pub mod LandRegistryContract {
             self.land_count.read()
         }
 
+
         fn get_lands_by_owner(self: @ContractState, owner: ContractAddress) -> Span<u256> {
             let mut result = array![];
             let owner_land_count = self.owner_land_count.read(owner);
@@ -195,10 +215,12 @@ pub mod LandRegistryContract {
         fn transfer_land(ref self: ContractState, land_id: u256, new_owner: ContractAddress) {
             // Verify caller is the current owner
             assert(InternalFunctions::only_owner(@self, land_id), Errors::ONLY_OWNER_TRNF);
+            assert(new_owner != 0.try_into().unwrap(), Errors::ADDRESS_ZERO);
 
             let mut land = self.lands.read(land_id);
             // Verify land is approved for transfer
             assert(land.status == LandStatus::Approved, Errors::LAND_APPROVAL);
+
             let old_owner = land.owner;
             land.owner = new_owner;
             self.lands.write(land_id, land);
@@ -250,6 +272,7 @@ pub mod LandRegistryContract {
 
         fn approve_land(ref self: ContractState, land_id: u256) {
             assert(InternalFunctions::only_inspector(@self, land_id), Errors::INSPECTOR_APPROVE);
+
             self.approved_lands.write(land_id, true);
 
             // Mint NFT
@@ -368,6 +391,18 @@ pub mod LandRegistryContract {
 
             self.emit(InspectorRemoved { inspector });
         }
+
+        fn set_fee(ref self: ContractState, fee: u256) {
+            let caller = get_caller_address();
+            assert(self.registered_inspectors.read(caller), Errors::NOT_AUTHORIZED);
+            let old_fee = self.fee_per_square_unit.read();
+            self.fee_per_square_unit.write(fee);
+            self.emit(FeeUpdated { old_fee, new_fee: fee });
+        }
+
+        fn get_fee(self: @ContractState) -> u256 {
+            self.fee_per_square_unit.read()
+        }
     }
 
     // Internal helper functions for access control
@@ -384,6 +419,15 @@ pub mod LandRegistryContract {
             let caller = get_caller_address();
             let inspector = self.land_inspectors.read(land_id);
             inspector == caller
+        }
+
+        fn get_fee(self: @ContractState, area: u256) -> u256 {
+            area * self.fee_per_square_unit.read()
+        }
+
+        fn calculate_fee(self: @ContractState, area: u256) -> u256 {
+            assert(area > 0, 'Area must be greater than 0');
+            area * self.fee_per_square_unit.read()
         }
     }
 }
