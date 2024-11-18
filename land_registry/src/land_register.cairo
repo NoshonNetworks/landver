@@ -4,10 +4,16 @@ pub mod LandRegistryContract {
     use starknet::{
         get_caller_address, get_contract_address, get_block_timestamp, ContractAddress, syscalls
     };
-    use land_registry::interface::{
+    use land_registry::interface::land_register::{
         ILandRegistry, Land, LandUse, Location, LandStatus, Listing, ListingStatus
     };
-    use land_registry::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait, LandNFT};
+    use land_registry::interface::land_register::{
+        LandRegistered, LandTransferred, LandVerified, LandUpdated, LandInspectorSet,
+        InspectorAdded, InspectorRemoved, FeeUpdated, ListingCreated, ListingCancelled,
+        ListingPriceUpdated, LandSold
+    };
+    use land_registry::land_nft::{LandNFT};
+    use land_registry::interface::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait};
     use land_registry::utils::utils::{create_land_id, LandUseIntoOptionFelt252};
     use core::array::ArrayTrait;
     use starknet::storage::{Map, StorageMapWriteAccess, StorageMapReadAccess};
@@ -57,85 +63,6 @@ pub mod LandRegistryContract {
         ListingCancelled: ListingCancelled,
         ListingPriceUpdated: ListingPriceUpdated,
         LandSold: LandSold,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct LandRegistered {
-        land_id: u256,
-        owner: ContractAddress,
-        location: Location,
-        area: u256,
-        land_use: Option<felt252>,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct LandTransferred {
-        land_id: u256,
-        from_owner: ContractAddress,
-        to_owner: ContractAddress,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct LandVerified {
-        land_id: u256,
-    }
-
-    #[derive(Drop, Copy, starknet::Event)]
-    pub struct LandUpdated {
-        land_id: u256,
-        land_use: Option<felt252>,
-        area: u256
-    }
-
-    #[derive(Drop, Copy, starknet::Event)]
-    pub struct LandInspectorSet {
-        land_id: u256,
-        inspector: ContractAddress,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct InspectorAdded {
-        inspector: ContractAddress,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct InspectorRemoved {
-        inspector: ContractAddress,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct FeeUpdated {
-        old_fee: u256,
-        new_fee: u256,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct ListingCreated {
-        listing_id: u256,
-        land_id: u256,
-        seller: ContractAddress,
-        price: u256
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct ListingCancelled {
-        listing_id: u256
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct ListingPriceUpdated {
-        listing_id: u256,
-        old_price: u256,
-        new_price: u256
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct LandSold {
-        listing_id: u256,
-        land_id: u256,
-        seller: ContractAddress,
-        buyer: ContractAddress,
-        price: u256
     }
 
     // Constructor initializes the contract with NFT functionality
@@ -450,11 +377,11 @@ pub mod LandRegistryContract {
             let caller = get_caller_address();
 
             // Verify caller owns the land
-            assert(InternalFunctions::only_owner(@self, land_id), 'Only owner can list land');
+            assert(InternalFunctions::only_owner(@self, land_id), Errors::ONLY_OWNER_CAN_LIST);
 
             // Verify land is approved
             let land = self.lands.read(land_id);
-            assert(land.status == LandStatus::Approved, 'Land must be approved');
+            assert(land.status == LandStatus::Approved, Errors::LAND_NOT_APPROVED);
 
             // Create listing
             let listing_id = self.listing_count.read() + 1;
@@ -495,8 +422,8 @@ pub mod LandRegistryContract {
             let mut listing = self.listings.read(listing_id);
             let caller = get_caller_address();
 
-            assert(listing.seller == caller, 'Only seller can cancel');
-            assert(listing.status == ListingStatus::Active, 'Listing not active');
+            assert(listing.seller == caller, Errors::ONLY_SELLER_CAN_CANCEL_LIST);
+            assert(listing.status == ListingStatus::Active, Errors::LISTING_NOT_ACTIVE);
 
             listing.status = ListingStatus::Cancelled;
             listing.updated_at = get_block_timestamp();
@@ -517,8 +444,8 @@ pub mod LandRegistryContract {
             let mut listing = self.listings.read(listing_id);
             let caller = get_caller_address();
 
-            assert(listing.seller == caller, 'Only seller can update');
-            assert(listing.status == ListingStatus::Active, 'Listing not active');
+            assert(listing.seller == caller, Errors::ONLY_SELLER_CAN_UPDATE_LIST);
+            assert(listing.status == ListingStatus::Active, Errors::LISTING_NOT_ACTIVE);
 
             let old_price = listing.price;
             listing.price = new_price;
@@ -539,12 +466,12 @@ pub mod LandRegistryContract {
             let mut listing = self.listings.read(listing_id);
             let buyer = get_caller_address();
 
-            assert(listing.status == ListingStatus::Active, 'Listing not active');
-            assert(buyer != listing.seller, 'Cannot buy own listing');
+            assert(listing.status == ListingStatus::Active, Errors::LISTING_NOT_ACTIVE);
+            assert(buyer != listing.seller, Errors::SELLER_CANT_BUY_OWN);
 
             // Verify payment
             let payment = starknet::info::get_tx_info().unbox().max_fee.into();
-            assert(payment >= listing.price, 'Insufficient payment');
+            assert(payment >= listing.price, Errors::INSUFFICIENT_PAYMENT_TO_BUY_LAND);
 
             // Update listing status
             listing.status = ListingStatus::Sold;
@@ -626,7 +553,7 @@ pub mod LandRegistryContract {
         }
 
         fn calculate_fee(self: @ContractState, area: u256) -> u256 {
-            assert(area > 0, 'Area must be greater than 0');
+            assert(area > 0, Errors::AREA_NOT_ZERO);
             area * self.fee_per_square_unit.read()
         }
 
