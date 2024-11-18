@@ -5,7 +5,7 @@ use openzeppelin::token::erc721::ERC721Component;
 use openzeppelin::introspection::src5::SRC5Component;
 use land_registry::custom_error::Errors;
 
-use land_registry::interface::land_nft::{ ILandNFT };
+use land_registry::interface::land_nft::{ILandNFT};
 
 #[starknet::contract]
 pub mod LandNFT {
@@ -19,7 +19,7 @@ pub mod LandNFT {
     use openzeppelin::introspection::src5::SRC5Component;
     use openzeppelin::token::erc721::ERC721HooksEmptyImpl;
     use land_registry::custom_error;
-    use land_registry::interface::land_nft::{ BaseURIUpdated, Locked, Unlocked };
+    use land_registry::interface::land_nft::{BaseURIUpdated, Locked, Unlocked};
 
 
     component!(path: ERC721Component, storage: erc721, event: ERC721Event);
@@ -99,7 +99,7 @@ pub mod LandNFT {
             self.erc721._set_base_uri(new_base_uri.clone());
             self.emit(BaseURIUpdated { caller: updater, new_base_uri });
         }
-        
+
         fn lock(ref self: ContractState, token_id: u256) {
             // Only land registry can lock
             assert(
@@ -111,7 +111,7 @@ pub mod LandNFT {
             self.locked.entry(token_id).write(true);
             self.emit(Locked { token_id });
         }
-        
+
         fn unlock(ref self: ContractState, token_id: u256) {
             // Only land registry can unlock
             assert(

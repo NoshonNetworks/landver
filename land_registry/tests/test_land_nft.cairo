@@ -4,7 +4,7 @@ use snforge_std::{
     start_cheat_caller_address, stop_cheat_caller_address
 };
 use land_registry::land_nft::{LandNFT};
-use land_registry::interface::land_nft::{ BaseURIUpdated, Locked, Unlocked };
+use land_registry::interface::land_nft::{BaseURIUpdated, Locked, Unlocked};
 use land_registry::interface::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait};
 use openzeppelin::token::erc721::interface::{
     IERC721MetadataDispatcher, IERC721MetadataDispatcherTrait
@@ -119,10 +119,7 @@ fn test_lock() {
     spy
         .assert_emitted(
             @array![
-                (
-                    dispatcher.contract_address,
-                    LandNFT::Event::Locked(Locked { token_id: TOKEN_ID })
-                )
+                (dispatcher.contract_address, LandNFT::Event::Locked(Locked { token_id: TOKEN_ID }))
             ]
         );
 

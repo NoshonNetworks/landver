@@ -24,7 +24,7 @@ pub trait ILandNFT<TContractState> {
     fn is_locked(self: @TContractState, token_id: u256) -> bool;
 }
 
-// Events 
+// Events
 #[derive(Drop, starknet::Event)]
 struct BaseURIUpdated {
     caller: ContractAddress,

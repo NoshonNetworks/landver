@@ -8,18 +8,9 @@ pub mod LandRegistryContract {
         ILandRegistry, Land, LandUse, Location, LandStatus, Listing, ListingStatus
     };
     use land_registry::interface::land_register::{
-        LandRegistered,
-        LandTransferred,
-        LandVerified,
-        LandUpdated,
-        LandInspectorSet,
-        InspectorAdded,
-        InspectorRemoved,
-        FeeUpdated,
-        ListingCreated,
-        ListingCancelled,
-        ListingPriceUpdated,
-        LandSold
+        LandRegistered, LandTransferred, LandVerified, LandUpdated, LandInspectorSet,
+        InspectorAdded, InspectorRemoved, FeeUpdated, ListingCreated, ListingCancelled,
+        ListingPriceUpdated, LandSold
     };
     use land_registry::land_nft::{LandNFT};
     use land_registry::interface::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait};

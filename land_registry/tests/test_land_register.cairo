@@ -4,7 +4,9 @@ use snforge_std::{
     start_cheat_max_fee,
 };
 use starknet::ContractAddress;
-use land_registry::interface::land_register::{ILandRegistryDispatcher, ILandRegistryDispatcherTrait};
+use land_registry::interface::land_register::{
+    ILandRegistryDispatcher, ILandRegistryDispatcherTrait
+};
 use land_registry::interface::land_register::{LandUse, Location, LandStatus};
 
 pub mod Accounts {

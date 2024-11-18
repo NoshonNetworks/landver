@@ -101,7 +101,7 @@ pub trait ILandRegistry<TContractState> {
     fn get_listing_price_history(self: @TContractState, listing_id: u256) -> Array<(u256, u64)>;
 }
 
-// Events 
+// Events
 #[derive(Drop, starknet::Event)]
 pub struct LandRegistered {
     land_id: u256,
