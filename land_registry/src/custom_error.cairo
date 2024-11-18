@@ -25,4 +25,7 @@ mod Errors {
     const ONLY_OWNER_LIST: felt252 = 'Only owner can list';
     const LAND_NOT_APPROVED: felt252 = 'Land not approved';
     const CANNOT_BUY_OWN_LAND: felt252 = 'Cannot buy own land';
+    const INVALID_ADDRESS: felt252 = 'Invalid address';
+    const LOCKED: felt252 = 'Locked';
+    const NOT_LOCKED: felt252 = 'Not locked';
 }
