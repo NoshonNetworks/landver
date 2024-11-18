@@ -100,3 +100,83 @@ pub trait ILandRegistry<TContractState> {
     fn get_active_listings(self: @TContractState) -> Array<u256>;
     fn get_listing_price_history(self: @TContractState, listing_id: u256) -> Array<(u256, u64)>;
 }
+
+// Events 
+#[derive(Drop, starknet::Event)]
+pub struct LandRegistered {
+    land_id: u256,
+    owner: ContractAddress,
+    location: Location,
+    area: u256,
+    land_use: Option<felt252>,
+}
+
+#[derive(Drop, starknet::Event)]
+pub struct LandTransferred {
+    land_id: u256,
+    from_owner: ContractAddress,
+    to_owner: ContractAddress,
+}
+
+#[derive(Drop, starknet::Event)]
+pub struct LandVerified {
+    land_id: u256,
+}
+
+#[derive(Drop, Copy, starknet::Event)]
+pub struct LandUpdated {
+    land_id: u256,
+    land_use: Option<felt252>,
+    area: u256
+}
+
+#[derive(Drop, Copy, starknet::Event)]
+pub struct LandInspectorSet {
+    land_id: u256,
+    inspector: ContractAddress,
+}
+
+#[derive(Drop, starknet::Event)]
+pub struct InspectorAdded {
+    inspector: ContractAddress,
+}
+
+#[derive(Drop, starknet::Event)]
+pub struct InspectorRemoved {
+    inspector: ContractAddress,
+}
+
+#[derive(Drop, starknet::Event)]
+pub struct FeeUpdated {
+    old_fee: u256,
+    new_fee: u256,
+}
+
+#[derive(Drop, starknet::Event)]
+pub struct ListingCreated {
+    listing_id: u256,
+    land_id: u256,
+    seller: ContractAddress,
+    price: u256
+}
+
+#[derive(Drop, starknet::Event)]
+pub struct ListingCancelled {
+    listing_id: u256
+}
+
+#[derive(Drop, starknet::Event)]
+pub struct ListingPriceUpdated {
+    listing_id: u256,
+    old_price: u256,
+    new_price: u256
+}
+
+#[derive(Drop, starknet::Event)]
+pub struct LandSold {
+    listing_id: u256,
+    land_id: u256,
+    seller: ContractAddress,
+    buyer: ContractAddress,
+    price: u256
+}

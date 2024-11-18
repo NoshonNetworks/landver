@@ -7,7 +7,22 @@ pub mod LandRegistryContract {
     use land_registry::interface::land_register::{
         ILandRegistry, Land, LandUse, Location, LandStatus, Listing, ListingStatus
     };
-    use land_registry::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait, LandNFT};
+    use land_registry::interface::land_register::{
+        LandRegistered,
+        LandTransferred,
+        LandVerified,
+        LandUpdated,
+        LandInspectorSet,
+        InspectorAdded,
+        InspectorRemoved,
+        FeeUpdated,
+        ListingCreated,
+        ListingCancelled,
+        ListingPriceUpdated,
+        LandSold
+    };
+    use land_registry::land_nft::{LandNFT};
+    use land_registry::interface::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait};
     use land_registry::utils::utils::{create_land_id, LandUseIntoOptionFelt252};
     use core::array::ArrayTrait;
     use starknet::storage::{Map, StorageMapWriteAccess, StorageMapReadAccess};
@@ -57,85 +72,6 @@ pub mod LandRegistryContract {
         ListingCancelled: ListingCancelled,
         ListingPriceUpdated: ListingPriceUpdated,
         LandSold: LandSold,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct LandRegistered {
-        land_id: u256,
-        owner: ContractAddress,
-        location: Location,
-        area: u256,
-        land_use: Option<felt252>,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct LandTransferred {
-        land_id: u256,
-        from_owner: ContractAddress,
-        to_owner: ContractAddress,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct LandVerified {
-        land_id: u256,
-    }
-
-    #[derive(Drop, Copy, starknet::Event)]
-    pub struct LandUpdated {
-        land_id: u256,
-        land_use: Option<felt252>,
-        area: u256
-    }
-
-    #[derive(Drop, Copy, starknet::Event)]
-    pub struct LandInspectorSet {
-        land_id: u256,
-        inspector: ContractAddress,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct InspectorAdded {
-        inspector: ContractAddress,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct InspectorRemoved {
-        inspector: ContractAddress,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct FeeUpdated {
-        old_fee: u256,
-        new_fee: u256,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct ListingCreated {
-        listing_id: u256,
-        land_id: u256,
-        seller: ContractAddress,
-        price: u256
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct ListingCancelled {
-        listing_id: u256
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct ListingPriceUpdated {
-        listing_id: u256,
-        old_price: u256,
-        new_price: u256
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct LandSold {
-        listing_id: u256,
-        land_id: u256,
-        seller: ContractAddress,
-        buyer: ContractAddress,
-        price: u256
     }
 
     // Constructor initializes the contract with NFT functionality

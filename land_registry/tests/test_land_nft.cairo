@@ -3,7 +3,8 @@ use snforge_std::{
     declare, ContractClassTrait, DeclareResultTrait, EventSpyAssertionsTrait, spy_events,
     start_cheat_caller_address, stop_cheat_caller_address
 };
-use land_registry::land_nft::{LandNFT, ILandNFTDispatcher, ILandNFTDispatcherTrait};
+use land_registry::land_nft::{LandNFT};
+use land_registry::interface::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait};
 use openzeppelin::token::erc721::interface::{
     IERC721MetadataDispatcher, IERC721MetadataDispatcherTrait
 };
