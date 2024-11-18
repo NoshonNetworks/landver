@@ -667,7 +667,7 @@ fn test_update_listing_price() {
     let inspector_address = starknet::contract_address_const::<0x456>();
     let new_owner_address = starknet::contract_address_const::<0x789>();
     let old_price = 200;
-    let new_price = 200;
+    let new_price = 400;
 
     // Register land as owner
     start_cheat_caller_address(contract_address, owner_address);
@@ -687,19 +687,22 @@ fn test_update_listing_price() {
 
     // create a listing
     start_cheat_caller_address(contract_address, owner_address);
-    let listing_id = land_register_dispatcher.create_listing(land_id, 200);
+    let listing_id = land_register_dispatcher.create_listing(land_id, old_price);
     stop_cheat_caller_address(contract_address);
 
-    let listind_details = land_register_dispatcher.get_listing(listing_id);
+    let listing_details = land_register_dispatcher.get_listing(listing_id);
 
     // Assert the price is set correctly
-    assert(listind_details.price == 200, 'Wrong updated price');
+    assert(listing_details.price == old_price, 'Wrong price set');
 
     // update listing
     start_cheat_caller_address(contract_address, owner_address);
-    let listing_id_update = land_register_dispatcher.update_listing_price(listing_id, 400);
+    let listing_id_update = land_register_dispatcher.update_listing_price(listing_id, new_price);
     stop_cheat_caller_address(contract_address);
 
+    // Assert the price is set correctly
+    let new_listing_details = land_register_dispatcher.get_listing(listing_id);
+    assert(new_listing_details.price == new_price, 'Wrong updated price');
+    // checking to make sure no other data was changes or added
 
-    
 }
