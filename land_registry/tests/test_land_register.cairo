@@ -666,6 +666,8 @@ fn test_update_listing_price() {
     let owner_address = starknet::contract_address_const::<0x123>();
     let inspector_address = starknet::contract_address_const::<0x456>();
     let new_owner_address = starknet::contract_address_const::<0x789>();
+    let old_price = 200;
+    let new_price = 200;
 
     // Register land as owner
     start_cheat_caller_address(contract_address, owner_address);
@@ -688,12 +690,16 @@ fn test_update_listing_price() {
     let listing_id = land_register_dispatcher.create_listing(land_id, 200);
     stop_cheat_caller_address(contract_address);
 
-    println!("{} here",listing_id);
+    let listind_details = land_register_dispatcher.get_listing(listing_id);
 
+    // Assert the price is set correctly
+    assert(listind_details.price == 200, 'Wrong updated price');
 
     // update listing
     start_cheat_caller_address(contract_address, owner_address);
     let listing_id_update = land_register_dispatcher.update_listing_price(listing_id, 400);
     stop_cheat_caller_address(contract_address);
+
+
     
 }
