@@ -653,3 +653,56 @@ fn test_can_transfer_land() {
 
     stop_cheat_caller_address(contract_address);
 }
+
+#[test]
+fn test_update_listing_price() {
+    let contract_address = deploy("LandRegistryContract");
+
+    // Instance of LandRegistryContract
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    start_cheat_max_fee(contract_address, 10000000000000000000);
+
+    let owner_address = starknet::contract_address_const::<0x123>();
+    let inspector_address = starknet::contract_address_const::<0x456>();
+    let new_owner_address = starknet::contract_address_const::<0x789>();
+
+    // Register land as owner
+    start_cheat_caller_address(contract_address, owner_address);
+    let land_id = land_register_dispatcher
+        .register_land(Location { latitude: 1, longitude: 2 }, 1000, LandUse::Residential);
+    stop_cheat_caller_address(contract_address);
+
+    // Set inspector as owner
+    start_cheat_caller_address(contract_address, owner_address);
+    land_register_dispatcher.set_land_inspector(land_id, inspector_address);
+    stop_cheat_caller_address(contract_address);
+
+    // approve land
+    start_cheat_caller_address(contract_address, inspector_address);
+    land_register_dispatcher.approve_land(land_id);
+    stop_cheat_caller_address(contract_address);
+
+    // create a listing
+    start_cheat_caller_address(contract_address, owner_address);
+    let listing_id = land_register_dispatcher
+        .create_listing(land_id, 200);
+    stop_cheat_caller_address(contract_address);
+
+    // Get the listing before update to verify price
+    let before_listing = land_register_dispatcher.get_listing(listing_id.try_into().unwrap());
+
+    // Assert the price is set correctly
+    assert(before_listing.price == 200, 'Wrong updated price');
+    
+    // update listing
+    start_cheat_caller_address(contract_address, owner_address);
+    let listing_id_update = land_register_dispatcher
+        .update_listing_price(listing_id, 400);
+    stop_cheat_caller_address(contract_address); 
+
+    // Get the listing after update to verify all fields
+    let updated_listing = land_register_dispatcher.get_listing(listing_id_update);
+
+
+}
