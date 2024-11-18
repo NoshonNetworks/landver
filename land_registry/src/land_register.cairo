@@ -386,11 +386,11 @@ pub mod LandRegistryContract {
             let caller = get_caller_address();
 
             // Verify caller owns the land
-            assert(InternalFunctions::only_owner(@self, land_id), 'Only owner can list land');
+            assert(InternalFunctions::only_owner(@self, land_id), Errors::ONLY_OWNER_CAN_LIST);
 
             // Verify land is approved
             let land = self.lands.read(land_id);
-            assert(land.status == LandStatus::Approved, 'Land must be approved');
+            assert(land.status == LandStatus::Approved, Errors::LAND_NOT_APPROVED);
 
             // Create listing
             let listing_id = self.listing_count.read() + 1;
@@ -431,8 +431,8 @@ pub mod LandRegistryContract {
             let mut listing = self.listings.read(listing_id);
             let caller = get_caller_address();
 
-            assert(listing.seller == caller, 'Only seller can cancel');
-            assert(listing.status == ListingStatus::Active, 'Listing not active');
+            assert(listing.seller == caller, Errors::ONLY_SELLER_CAN_CANCEL_LIST);
+            assert(listing.status == ListingStatus::Active, Errors::LISTING_NOT_ACTIVE);
 
             listing.status = ListingStatus::Cancelled;
             listing.updated_at = get_block_timestamp();
@@ -453,8 +453,8 @@ pub mod LandRegistryContract {
             let mut listing = self.listings.read(listing_id);
             let caller = get_caller_address();
 
-            assert(listing.seller == caller, 'Only seller can update');
-            assert(listing.status == ListingStatus::Active, 'Listing not active');
+            assert(listing.seller == caller, Errors::ONLY_SELLER_CAN_UPDATE_LIST);
+            assert(listing.status == ListingStatus::Active, Errors::LISTING_NOT_ACTIVE);
 
             let old_price = listing.price;
             listing.price = new_price;
@@ -475,12 +475,12 @@ pub mod LandRegistryContract {
             let mut listing = self.listings.read(listing_id);
             let buyer = get_caller_address();
 
-            assert(listing.status == ListingStatus::Active, 'Listing not active');
-            assert(buyer != listing.seller, 'Cannot buy own listing');
+            assert(listing.status == ListingStatus::Active, Errors::LISTING_NOT_ACTIVE);
+            assert(buyer != listing.seller, Errors::SELLER_CANT_BUY_OWN);
 
             // Verify payment
             let payment = starknet::info::get_tx_info().unbox().max_fee.into();
-            assert(payment >= listing.price, 'Insufficient payment');
+            assert(payment >= listing.price, Errors::INSUFFICIENT_PAYMENT_TO_BUY_LAND);
 
             // Update listing status
             listing.status = ListingStatus::Sold;
@@ -562,7 +562,7 @@ pub mod LandRegistryContract {
         }
 
         fn calculate_fee(self: @ContractState, area: u256) -> u256 {
-            assert(area > 0, 'Area must be greater than 0');
+            assert(area > 0, Errors::AREA_NOT_ZERO);
             area * self.fee_per_square_unit.read()
         }
 

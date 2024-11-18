@@ -25,7 +25,19 @@ mod Errors {
     const ONLY_OWNER_LIST: felt252 = 'Only owner can list';
     const LAND_NOT_APPROVED: felt252 = 'Land not approved';
     const CANNOT_BUY_OWN_LAND: felt252 = 'Cannot buy own land';
+    const AREA_NOT_ZERO: felt252 = 'Area must be greater than 0';
     const INVALID_ADDRESS: felt252 = 'Invalid address';
     const LOCKED: felt252 = 'Locked';
     const NOT_LOCKED: felt252 = 'Not locked';
+    const SET_URI_ONLY_LAND_REGISTRY: felt252 = 'Only land registry can update';
+    const LOCK_NFT_ONLY_LAND_REGISTRY: felt252 = 'Only land registry can lock';
+    const UNLOCK_NFT_ONLY_LAND_REGISTRY: felt252 = 'Only land registry can unlock';
+
+    // Listing only
+    const ONLY_OWNER_CAN_LIST: felt252 = 'Only owner can list land';
+    const ONLY_SELLER_CAN_CANCEL_LIST: felt252 = 'Only seller can cancel';
+    const ONLY_SELLER_CAN_UPDATE_LIST: felt252 = 'Only seller can update';
+    const SELLER_CANT_BUY_OWN: felt252 = 'Cannot buy own listing';
+    const LISTING_NOT_ACTIVE: felt252 = 'Listing not active';
+    const INSUFFICIENT_PAYMENT_TO_BUY_LAND: felt252 = 'Insufficient payment';
 }

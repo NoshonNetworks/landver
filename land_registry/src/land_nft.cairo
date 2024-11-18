@@ -93,30 +93,30 @@ pub mod LandNFT {
             // Only the land registry contract can update the metadata URI
             assert(
                 starknet::get_caller_address() == self.land_registry.read(),
-                'Only land registry can update'
+                custom_error::Errors::SET_URI_ONLY_LAND_REGISTRY,
             );
             assert(Zero::is_non_zero(@updater), custom_error::Errors::INVALID_ADDRESS);
             self.erc721._set_base_uri(new_base_uri.clone());
             self.emit(BaseURIUpdated { caller: updater, new_base_uri });
         }
-
+        
         fn lock(ref self: ContractState, token_id: u256) {
             // Only land registry can lock
             assert(
                 starknet::get_caller_address() == self.land_registry.read(),
-                'Only land registry can lock'
+                custom_error::Errors::LOCK_NFT_ONLY_LAND_REGISTRY,
             );
             self.erc721._require_owned(token_id);
             self._assert_not_locked(token_id);
             self.locked.entry(token_id).write(true);
             self.emit(Locked { token_id });
         }
-
+        
         fn unlock(ref self: ContractState, token_id: u256) {
             // Only land registry can unlock
             assert(
                 starknet::get_caller_address() == self.land_registry.read(),
-                'Only land registry can unlock'
+                custom_error::Errors::UNLOCK_NFT_ONLY_LAND_REGISTRY,
             );
             self.erc721._require_owned(token_id);
             self._assert_locked(token_id);
