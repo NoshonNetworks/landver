@@ -8,13 +8,6 @@ LandVer is a decentralized land registration and verification protocol, utilizin
 
 While initially built on StarkNet, LandVer is designed to be cross-chain compatible, allowing land transactions and records to be securely managed across multiple blockchains. LandVer is one of the many products of Noshon Networks, which aims to bring innovation to the world of real estate.
 
-## Roadmap
-
-- Cross-Chain Support: Extend the protocol to support Ethereum, Binance Smart Chain, and other blockchains.
-- Advanced Land Disputes Resolution: Implement on-chain dispute resolution mechanisms.
-- Tokenized Land Ownership: Explore integration with NFTs for land tokenization.
-  nd locations on a map.
-
 ## Project Structure
 
 The project is divided into the following components:
