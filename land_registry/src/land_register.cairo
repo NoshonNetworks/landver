@@ -4,7 +4,9 @@ pub mod LandRegistryContract {
     use starknet::{
         get_caller_address, get_contract_address, get_block_timestamp, ContractAddress, syscalls
     };
-    use land_registry::interface::{ILandRegistry, Land, LandUse, Location, LandStatus};
+    use land_registry::interface::{
+        ILandRegistry, Land, LandUse, Location, LandStatus, Listing, ListingStatus
+    };
     use land_registry::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait, LandNFT};
     use land_registry::utils::utils::{create_land_id, LandUseIntoOptionFelt252};
     use core::array::ArrayTrait;
@@ -30,6 +32,14 @@ pub mod LandRegistryContract {
         registered_inspectors: Map::<ContractAddress, bool>, // List of registered inspectors
         inspector_count: u256, // Total number of registered inspectors
         fee_per_square_unit: u256,
+        listings: Map::<u256, Listing>,
+        listing_count: u256,
+        price_history: Map::<
+            (u256, u256), (u256, u64)
+        >, // (listing_id, index) -> (price, timestamp)
+        price_update_count: Map::<u256, u256>, // listing_id -> number of price updates
+        active_listings: Map::<u256, u256>, // index -> listing_id
+        active_listing_count: u256,
     }
 
     #[event]
@@ -43,6 +53,10 @@ pub mod LandRegistryContract {
         InspectorAdded: InspectorAdded,
         InspectorRemoved: InspectorRemoved,
         FeeUpdated: FeeUpdated,
+        ListingCreated: ListingCreated,
+        ListingCancelled: ListingCancelled,
+        ListingPriceUpdated: ListingPriceUpdated,
+        LandSold: LandSold,
     }
 
     #[derive(Drop, starknet::Event)]
@@ -89,14 +103,43 @@ pub mod LandRegistryContract {
         inspector: ContractAddress,
     }
 
-
-    // Constructor initializes the contract with NFT functionality
-
     #[derive(Drop, starknet::Event)]
     pub struct FeeUpdated {
         old_fee: u256,
         new_fee: u256,
     }
+
+    #[derive(Drop, starknet::Event)]
+    pub struct ListingCreated {
+        listing_id: u256,
+        land_id: u256,
+        seller: ContractAddress,
+        price: u256
+    }
+
+    #[derive(Drop, starknet::Event)]
+    pub struct ListingCancelled {
+        listing_id: u256
+    }
+
+    #[derive(Drop, starknet::Event)]
+    pub struct ListingPriceUpdated {
+        listing_id: u256,
+        old_price: u256,
+        new_price: u256
+    }
+
+    #[derive(Drop, starknet::Event)]
+    pub struct LandSold {
+        listing_id: u256,
+        land_id: u256,
+        seller: ContractAddress,
+        buyer: ContractAddress,
+        price: u256
+    }
+
+    // Constructor initializes the contract with NFT functionality
+
     #[constructor]
     fn constructor(
         ref self: ContractState,
@@ -402,6 +445,164 @@ pub mod LandRegistryContract {
         fn get_fee(self: @ContractState) -> u256 {
             self.fee_per_square_unit.read()
         }
+
+        fn create_listing(ref self: ContractState, land_id: u256, price: u256) -> u256 {
+            let caller = get_caller_address();
+
+            // Verify caller owns the land
+            assert(InternalFunctions::only_owner(@self, land_id), 'Only owner can list land');
+
+            // Verify land is approved
+            let land = self.lands.read(land_id);
+            assert(land.status == LandStatus::Approved, 'Land must be approved');
+
+            // Create listing
+            let listing_id = self.listing_count.read() + 1;
+            let timestamp = get_block_timestamp();
+
+            let listing = Listing {
+                land_id: land_id,
+                seller: caller,
+                price: price,
+                status: ListingStatus::Active,
+                created_at: timestamp,
+                updated_at: timestamp
+            };
+
+            self.listings.write(listing_id, listing);
+            self.listing_count.write(listing_id);
+
+            // Add to active listings
+            let active_count = self.active_listing_count.read();
+            self.active_listings.write(active_count, listing_id);
+            self.active_listing_count.write(active_count + 1);
+
+            // Record initial price in history
+            self.price_history.write((listing_id, 0), (price, timestamp));
+            self.price_update_count.write(listing_id, 1);
+
+            // Lock the NFT
+            let nft_contract = self.nft_contract.read();
+            let nft_dispatcher = ILandNFTDispatcher { contract_address: nft_contract };
+            nft_dispatcher.lock(land_id);
+
+            self.emit(ListingCreated { listing_id, land_id, seller: caller, price });
+
+            listing_id
+        }
+
+        fn cancel_listing(ref self: ContractState, listing_id: u256) {
+            let mut listing = self.listings.read(listing_id);
+            let caller = get_caller_address();
+
+            assert(listing.seller == caller, 'Only seller can cancel');
+            assert(listing.status == ListingStatus::Active, 'Listing not active');
+
+            listing.status = ListingStatus::Cancelled;
+            listing.updated_at = get_block_timestamp();
+            self.listings.write(listing_id, listing);
+
+            // Remove from active listings
+            self._remove_from_active_listings(listing_id);
+
+            // Unlock the NFT
+            let nft_contract = self.nft_contract.read();
+            let nft_dispatcher = ILandNFTDispatcher { contract_address: nft_contract };
+            nft_dispatcher.unlock(listing.land_id);
+
+            self.emit(ListingCancelled { listing_id });
+        }
+
+        fn update_listing_price(ref self: ContractState, listing_id: u256, new_price: u256) {
+            let mut listing = self.listings.read(listing_id);
+            let caller = get_caller_address();
+
+            assert(listing.seller == caller, 'Only seller can update');
+            assert(listing.status == ListingStatus::Active, 'Listing not active');
+
+            let old_price = listing.price;
+            listing.price = new_price;
+            listing.updated_at = get_block_timestamp();
+            self.listings.write(listing_id, listing);
+
+            // Record price update in history
+            let update_count = self.price_update_count.read(listing_id);
+            self
+                .price_history
+                .write((listing_id, update_count), (new_price, get_block_timestamp()));
+            self.price_update_count.write(listing_id, update_count + 1);
+
+            self.emit(ListingPriceUpdated { listing_id, old_price, new_price });
+        }
+
+        fn buy_land(ref self: ContractState, listing_id: u256) {
+            let mut listing = self.listings.read(listing_id);
+            let buyer = get_caller_address();
+
+            assert(listing.status == ListingStatus::Active, 'Listing not active');
+            assert(buyer != listing.seller, 'Cannot buy own listing');
+
+            // Verify payment
+            let payment = starknet::info::get_tx_info().unbox().max_fee.into();
+            assert(payment >= listing.price, 'Insufficient payment');
+
+            // Update listing status
+            listing.status = ListingStatus::Sold;
+            listing.updated_at = get_block_timestamp();
+            self.listings.write(listing_id, listing);
+
+            // Remove from active listings
+            self._remove_from_active_listings(listing_id);
+
+            // Transfer land ownership
+            self.transfer_land(listing.land_id, buyer);
+
+            // Unlock the NFT
+            let nft_contract = self.nft_contract.read();
+            let nft_dispatcher = ILandNFTDispatcher { contract_address: nft_contract };
+            nft_dispatcher.unlock(listing.land_id);
+
+            self
+                .emit(
+                    LandSold {
+                        listing_id,
+                        land_id: listing.land_id,
+                        seller: listing.seller,
+                        buyer,
+                        price: listing.price
+                    }
+                );
+        }
+
+        fn get_listing(self: @ContractState, listing_id: u256) -> Listing {
+            self.listings.read(listing_id)
+        }
+
+        fn get_active_listings(self: @ContractState) -> Array<u256> {
+            let mut active = array![];
+            let count = self.active_listing_count.read();
+
+            let mut i: u256 = 0;
+            while i < count {
+                active.append(self.active_listings.read(i));
+                i += 1;
+            };
+
+            active
+        }
+
+        fn get_listing_price_history(self: @ContractState, listing_id: u256) -> Array<(u256, u64)> {
+            let mut history = array![];
+            let update_count = self.price_update_count.read(listing_id);
+
+            let mut i: u256 = 0;
+            while i < update_count {
+                history.append(self.price_history.read((listing_id, i)));
+                i += 1;
+            };
+
+            history
+        }
     }
 
     // Internal helper functions for access control
@@ -427,6 +628,25 @@ pub mod LandRegistryContract {
         fn calculate_fee(self: @ContractState, area: u256) -> u256 {
             assert(area > 0, 'Area must be greater than 0');
             area * self.fee_per_square_unit.read()
+        }
+
+        fn _remove_from_active_listings(ref self: ContractState, listing_id: u256) {
+            let count = self.active_listing_count.read();
+            let mut i: u256 = 0;
+
+            // Find listing index
+            while i < count {
+                if self.active_listings.read(i) == listing_id {
+                    // Replace with last listing if not last
+                    if i < count - 1 {
+                        let last_listing = self.active_listings.read(count - 1);
+                        self.active_listings.write(i, last_listing);
+                    }
+                    self.active_listing_count.write(count - 1);
+                    break;
+                }
+                i += 1;
+            }
         }
     }
 }

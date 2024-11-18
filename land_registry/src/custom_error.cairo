@@ -20,4 +20,9 @@ mod Errors {
     const INSUFFICIENT_PAYMENT: felt252 = 'Insufficient registration fee';
     const NOT_AUTHORIZED: felt252 = 'Not authorized';
     const ADDRESS_ZERO: felt252 = 'ADDRESS_ZERO';
+    const LAND_NOT_LISTED: felt252 = 'Land not listed';
+    const INVALID_PRICE: felt252 = 'Invalid price';
+    const ONLY_OWNER_LIST: felt252 = 'Only owner can list';
+    const LAND_NOT_APPROVED: felt252 = 'Land not approved';
+    const CANNOT_BUY_OWN_LAND: felt252 = 'Cannot buy own land';
 }
