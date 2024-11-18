@@ -695,14 +695,23 @@ fn test_update_listing_price() {
     // Assert the price is set correctly
     assert(listing_details.price == old_price, 'Wrong price set');
 
-    // update listing
-    start_cheat_caller_address(contract_address, owner_address);
-    let listing_id_update = land_register_dispatcher.update_listing_price(listing_id, new_price);
-    stop_cheat_caller_address(contract_address);
-
-    // Assert the price is set correctly
-    let new_listing_details = land_register_dispatcher.get_listing(listing_id);
-    assert(new_listing_details.price == new_price, 'Wrong updated price');
-    // checking to make sure no other data was changes or added
-
+   // Update listing and record timestamp
+   start_cheat_caller_address(contract_address, owner_address);
+   land_register_dispatcher.update_listing_price(listing_id, new_price);
+   stop_cheat_caller_address(contract_address);
+   
+   // Assert the price is updated correctly
+   let new_listing_details = land_register_dispatcher.get_listing(listing_id);
+   assert(new_listing_details.price == new_price, 'Wrong updated price');
+   
+   // Verify other listing details remain unchanged
+   assert(new_listing_details.seller == owner_address, 'Wrong seller');
+   assert(new_listing_details.land_id == land_id.try_into().unwrap(), 'Wrong land id');
+   
+   // Verify price history
+   let price_history = land_register_dispatcher.get_listing_price_history(listing_id);
+   
+   // Verify number of updates
+   assert(price_history.len() == 1, 'Wrong number of price updates');
+   
 }
