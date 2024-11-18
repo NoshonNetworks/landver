@@ -4,6 +4,7 @@ use snforge_std::{
     start_cheat_caller_address, stop_cheat_caller_address
 };
 use land_registry::land_nft::{LandNFT};
+use land_registry::interface::land_nft::{ BaseURIUpdated, Locked, Unlocked };
 use land_registry::interface::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait};
 use openzeppelin::token::erc721::interface::{
     IERC721MetadataDispatcher, IERC721MetadataDispatcherTrait
@@ -74,7 +75,7 @@ fn test_set_base_uri() {
                 (
                     dispatcher.contract_address,
                     LandNFT::Event::BaseURIUpdated(
-                        LandNFT::BaseURIUpdated { caller: Accounts::land_owner(), new_base_uri }
+                        BaseURIUpdated { caller: Accounts::land_owner(), new_base_uri }
                     )
                 )
             ]
@@ -120,7 +121,7 @@ fn test_lock() {
             @array![
                 (
                     dispatcher.contract_address,
-                    LandNFT::Event::Locked(LandNFT::Locked { token_id: TOKEN_ID })
+                    LandNFT::Event::Locked(Locked { token_id: TOKEN_ID })
                 )
             ]
         );
@@ -133,7 +134,7 @@ fn test_lock() {
             @array![
                 (
                     dispatcher.contract_address,
-                    LandNFT::Event::Unlocked(LandNFT::Unlocked { token_id: TOKEN_ID })
+                    LandNFT::Event::Unlocked(Unlocked { token_id: TOKEN_ID })
                 )
             ]
         );

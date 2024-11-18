@@ -19,6 +19,8 @@ pub mod LandNFT {
     use openzeppelin::introspection::src5::SRC5Component;
     use openzeppelin::token::erc721::ERC721HooksEmptyImpl;
     use land_registry::custom_error;
+    use land_registry::interface::land_nft::{ BaseURIUpdated, Locked, Unlocked };
+
 
     component!(path: ERC721Component, storage: erc721, event: ERC721Event);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);
@@ -52,23 +54,6 @@ pub mod LandNFT {
         Locked: Locked,
         Unlocked: Unlocked,
     }
-
-    #[derive(Drop, starknet::Event)]
-    struct BaseURIUpdated {
-        caller: ContractAddress,
-        new_base_uri: ByteArray
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct Locked {
-        token_id: u256
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct Unlocked {
-        token_id: u256
-    }
-
 
     #[constructor]
     fn constructor(ref self: ContractState, land_registry: ContractAddress, base_uri: ByteArray) {
