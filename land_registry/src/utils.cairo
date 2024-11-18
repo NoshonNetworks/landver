@@ -2,7 +2,7 @@ pub mod utils {
     use starknet::{get_caller_address, get_block_timestamp, ContractAddress};
     use core::poseidon::PoseidonTrait;
     use core::hash::{HashStateTrait, HashStateExTrait};
-    use land_registry::interface::{Location, LandUse};
+    use land_registry::interface::land_register::{Location, LandUse};
 
 
     pub fn create_land_id(caller: ContractAddress, timestamp: u64, location: Location) -> u256 {

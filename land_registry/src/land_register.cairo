@@ -4,7 +4,7 @@ pub mod LandRegistryContract {
     use starknet::{
         get_caller_address, get_contract_address, get_block_timestamp, ContractAddress, syscalls
     };
-    use land_registry::interface::{
+    use land_registry::interface::land_register::{
         ILandRegistry, Land, LandUse, Location, LandStatus, Listing, ListingStatus
     };
     use land_registry::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait, LandNFT};
