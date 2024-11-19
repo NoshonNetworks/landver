@@ -1,13 +1,22 @@
 use snforge_std::{
     declare, ContractClassTrait, DeclareResultTrait, start_cheat_caller_address,
     stop_cheat_caller_address, start_cheat_block_timestamp, stop_cheat_block_timestamp,
-    start_cheat_max_fee,
+    start_cheat_max_fee, stop_cheat_max_fee,
 };
 use starknet::ContractAddress;
+use array::ArrayTrait;
+use array::SpanTrait;
+use traits::TryInto;
+use option::OptionTrait;
+use core::result::ResultTrait;
+use debug::PrintTrait;
+use box::BoxTrait;
+
 use land_registry::interface::land_register::{
-    ILandRegistryDispatcher, ILandRegistryDispatcherTrait
+    ILandRegistryDispatcher, ILandRegistryDispatcherTrait, Land, LandUse, Location, 
+    LandStatus, ListingStatus, Listing
 };
-use land_registry::interface::land_register::{LandUse, Land, Location, LandStatus, ListingStatus};
+
 
 pub mod Accounts {
     use starknet::ContractAddress;
@@ -659,16 +668,17 @@ fn test_buy_land() {
     let contract_address = deploy("LandRegistryContract");
     let dispatcher = ILandRegistryDispatcher { contract_address };
 
-    start_cheat_max_fee(contract_address, 100000); // Use u128 value
-
     // Set up test addresses
     let seller = starknet::contract_address_const::<0x123>();
     let buyer = starknet::contract_address_const::<0x456>();
     let inspector = starknet::contract_address_const::<0x789>();
+
+    // Set high max fee for all operations
+    start_cheat_max_fee(contract_address, 1000000000000000000000000);
     
     // 1. Register land as seller
-    let location = Location { latitude: 1, longitude: 2 };
     start_cheat_caller_address(contract_address, seller);
+    let location = Location { latitude: 1, longitude: 2 };
     let land_id = dispatcher.register_land(
         location,
         1000_u256,
@@ -691,9 +701,8 @@ fn test_buy_land() {
     let listing_id = dispatcher.create_listing(land_id, price);
     stop_cheat_caller_address(contract_address);
 
-    // 5. Buy land as buyer with sufficient payment
+    // 5. Buy land as buyer
     start_cheat_caller_address(contract_address, buyer);
-    start_cheat_max_fee(contract_address, 6000); // Use u128 value
     
     // Execute purchase
     dispatcher.buy_land(listing_id);
