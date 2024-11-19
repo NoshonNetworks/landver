@@ -1,5 +1,5 @@
 import React from "react";
-import { Facebook, Twitter,  Youtube } from "lucide-react";
+import { FaTelegram, FaGithub, FaTwitter } from "react-icons/fa";
 
 const Footer = () => {
   const links = [
@@ -10,15 +10,23 @@ const Footer = () => {
   ];
 
   const socialLinks = [
-    { icon: Facebook, href: "#", label: "Facebook" },
-    { icon: Twitter, href: "#", label: "Twitter" },
-    { icon: Youtube, href: "#", label: "YouTube" },
+    {
+      icon: FaTelegram,
+      href: "https://t.me/+e3pDyYQQerk3NjFk",
+      label: "Telegram",
+    },
+    {
+      icon: FaGithub,
+      href: "https://github.com/NoshonNetworks/landver",
+      label: "GitHub",
+    },
+    { icon: FaTwitter, href: "https://x.com/landver0", label: "Twitter (X)" },
   ];
 
   return (
-    <footer className="w-full py-8 px-4 mt-16 b] text-[#6e62e5]">
+    <footer className="w-full py-8 px-4 mt-16 text-[#6e62e5]">
       <div className="max-w-6xl mx-auto">
-        <nav className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 mb-6 ">
+        <nav className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 mb-6">
           {links.map((link) => (
             <a
               key={link.name}
@@ -35,8 +43,9 @@ const Footer = () => {
             <a
               key={social.label}
               href={social.href}
-              className=" hover:text-gray-900 transition-colors"
+              className="hover:text-gray-900 transition-colors"
               aria-label={social.label}
+              target="_blank"
             >
               <social.icon className="w-5 h-5" />
             </a>
