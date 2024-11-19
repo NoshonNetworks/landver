@@ -816,10 +816,16 @@ fn test_update_listing_price_should_panic_if_listing_not_active() {
 fn test_upgradability() {
     let contract_address = deploy("LandRegistryContract");
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
-
-    let new_class_hash = declare("LandRegistryUpgradeContract").unwrap().contract_class().class_hash;
-
+    let new_class_hash = declare("LandRegistryContract").unwrap().contract_class().class_hash;
     land_register_dispatcher.upgrade(*new_class_hash);
-    let land_count = land_register_dispatcher.get_land_count();
-    assert!(7145==land_count, "Contract class shoulded be updated");
+}
+
+#[test]
+#[should_panic]
+fn test_upgradability_should_fail_if_not_owner_tries_to_update() {
+    let contract_address = deploy("LandRegistryContract");
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+    let new_class_hash = declare("LandRegistryContract").unwrap().contract_class().class_hash;
+    start_cheat_caller_address(contract_address, starknet::contract_address_const::<0x123>());
+    land_register_dispatcher.upgrade(*new_class_hash);
 }

@@ -77,6 +77,9 @@ pub mod LandNFT {
 
     #[constructor]
     fn constructor(ref self: ContractState, land_registry: ContractAddress, base_uri: ByteArray) {
+        let owner = starknet::get_caller_address();
+        self.ownable.initializer(owner);
+
         self.erc721.initializer("Land NFT", "LAND", base_uri);
         self.land_registry.write(land_registry);
     }
