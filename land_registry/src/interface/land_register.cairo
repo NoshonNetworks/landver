@@ -64,7 +64,7 @@ pub enum ListingStatus {
 
 #[starknet::interface]
 pub trait ILandRegistry<TContractState> {
-    fn upgrade(ref self: TContractState, new_class_hash: starknet::class_hash::ClassHash);
+    fn upgrade(ref self: TContractState, new_class_hash: starknet::class_hash::ClassHash); // // upgrade the contract class
     fn register_land(
         ref self: TContractState, location: Location, area: u256, land_use: LandUse,
     ) -> u256;
