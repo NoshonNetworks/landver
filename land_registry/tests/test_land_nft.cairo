@@ -196,7 +196,7 @@ fn test_unlock_non_existing_token() {
     let base_uri = "https://some.base.uri/";
     let dispatcher = deploy(base_uri);
     start_cheat_caller_address(dispatcher.contract_address, Accounts::land_registry());
-    
+
     dispatcher.unlock(NON_EXISTENT_TOKEN_ID);
 }
 

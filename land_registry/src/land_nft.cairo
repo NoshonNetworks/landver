@@ -25,7 +25,6 @@ pub mod LandNFT {
     use land_registry::interface::land_nft::{BaseURIUpdated, Locked, Unlocked};
 
 
-
     component!(path: ERC721Component, storage: erc721, event: ERC721Event);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
@@ -69,7 +68,7 @@ pub mod LandNFT {
         #[flat]
         OwnableEvent: OwnableComponent::Event, // openzeppelin event
         #[flat]
-        UpgradeableEvent: UpgradeableComponent::Event,  // openzeppelin event
+        UpgradeableEvent: UpgradeableComponent::Event, // openzeppelin event
         BaseURIUpdated: BaseURIUpdated,
         Locked: Locked,
         Unlocked: Unlocked,

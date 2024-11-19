@@ -1,7 +1,7 @@
 #[starknet::contract]
 pub mod LandRegistryContract {
     use OwnableComponent::InternalTrait;
-use starknet::SyscallResultTrait;
+    use starknet::SyscallResultTrait;
     use starknet::{
         get_caller_address, get_contract_address, get_block_timestamp, ContractAddress, syscalls
     };
@@ -23,7 +23,7 @@ use starknet::SyscallResultTrait;
     use openzeppelin::access::ownable::OwnableComponent;
     use openzeppelin::upgrades::UpgradeableComponent;
     use openzeppelin::upgrades::interface::IUpgradeable;
-    
+
     // open zeppellin commponents
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
     component!(path: UpgradeableComponent, storage: upgradeable, event: UpgradeableEvent);
@@ -34,7 +34,7 @@ use starknet::SyscallResultTrait;
     impl OwnableInternalImpl = OwnableComponent::InternalImpl<ContractState>;
     // Upgradeable
     impl UpgradeableInternalImpl = UpgradeableComponent::InternalImpl<ContractState>;
-    
+
 
     #[storage]
     struct Storage {
@@ -42,7 +42,6 @@ use starknet::SyscallResultTrait;
         ownable: OwnableComponent::Storage, // Openzeppelin storage for Ownable component
         #[substorage(v0)]
         upgradeable: UpgradeableComponent::Storage, // Openzeppelin storage for Upgradable component 
-
         lands: Map::<u256, Land>, // Stores all registered lands
         owner_lands: Map::<(ContractAddress, u256), u256>, // Maps owners to their lands
         owner_land_count: Map::<ContractAddress, u256>, // Number of lands per owner
@@ -75,7 +74,7 @@ use starknet::SyscallResultTrait;
         #[flat]
         OwnableEvent: OwnableComponent::Event, // openzeppelin event
         #[flat]
-        UpgradeableEvent: UpgradeableComponent::Event,  // openzeppelin event
+        UpgradeableEvent: UpgradeableComponent::Event, // openzeppelin event
         LandRegistered: LandRegistered,
         LandTransferred: LandTransferred,
         LandVerified: LandVerified,
