@@ -711,7 +711,6 @@ fn test_update_listing_price() {
     let price_history = land_register_dispatcher.get_listing_price_history(listing_id);
 
     // Verify number of updates
-    println!("{} the unmber now is ", price_history.len());
     assert(price_history.len() == 2, 'Wrong number of price updates');
 }
 
@@ -810,4 +809,17 @@ fn test_update_listing_price_should_panic_if_listing_not_active() {
     start_cheat_caller_address(contract_address, owner_address);
     land_register_dispatcher.update_listing_price(listing_id, new_price);
     stop_cheat_caller_address(contract_address);
+}
+
+
+#[test]
+fn test_upgradability() {
+    let contract_address = deploy("LandRegistryContract");
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    let new_class_hash = declare("LandRegistryUpgradeContract").unwrap().contract_class().class_hash;
+
+    land_register_dispatcher.upgrade(*new_class_hash);
+    let land_count = land_register_dispatcher.get_land_count();
+    assert!(7145==land_count, "Contract class shoulded be updated");
 }
