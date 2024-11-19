@@ -7,7 +7,7 @@ import Benefits from "./components/Benefits";
 import NewsLetterCTA from "./components/NewsLetterCTA";
 export default function Home() {
   return (
-    <div className="bg-[#f5f5f5]">
+    <div className="bg-[#f5f5f5] text-[#1f1f1f]">
       <Navbar />
       <Hero />
       <RegisterCTA />
