@@ -665,7 +665,6 @@ fn test_update_listing_price() {
 
     let owner_address = starknet::contract_address_const::<0x123>();
     let inspector_address = starknet::contract_address_const::<0x456>();
-    let new_owner_address = starknet::contract_address_const::<0x789>();
     let old_price = 200;
     let new_price = 400;
 
@@ -695,23 +694,109 @@ fn test_update_listing_price() {
     // Assert the price is set correctly
     assert(listing_details.price == old_price, 'Wrong price set');
 
-   // Update listing and record timestamp
-   start_cheat_caller_address(contract_address, owner_address);
-   land_register_dispatcher.update_listing_price(listing_id, new_price);
-   stop_cheat_caller_address(contract_address);
-   
-   // Assert the price is updated correctly
-   let new_listing_details = land_register_dispatcher.get_listing(listing_id);
-   assert(new_listing_details.price == new_price, 'Wrong updated price');
-   
-   // Verify other listing details remain unchanged
-   assert(new_listing_details.seller == owner_address, 'Wrong seller');
-   assert(new_listing_details.land_id == land_id.try_into().unwrap(), 'Wrong land id');
-   
-   // Verify price history
-   let price_history = land_register_dispatcher.get_listing_price_history(listing_id);
-   
-   // Verify number of updates
-   assert(price_history.len() == 1, 'Wrong number of price updates');
-   
+    // Update listing and record
+    start_cheat_caller_address(contract_address, owner_address);
+    land_register_dispatcher.update_listing_price(listing_id, new_price);
+    stop_cheat_caller_address(contract_address);
+
+    // Assert the price is updated correctly
+    let new_listing_details = land_register_dispatcher.get_listing(listing_id);
+    assert(new_listing_details.price == new_price, 'Wrong updated price');
+
+    // Verify other listing details remain unchanged
+    assert(new_listing_details.seller == owner_address, 'Wrong seller');
+    assert(new_listing_details.land_id == land_id.try_into().unwrap(), 'Wrong land id');
+
+    // Verify price history
+    let price_history = land_register_dispatcher.get_listing_price_history(listing_id);
+
+    // Verify number of updates
+    assert(price_history.len() == 1, 'Wrong number of price updates');
+}
+
+
+#[test]
+#[should_panic(expected: ('Only seller can update'))]
+fn test_update_listing_price_should_panic_if_caller_not_seller() {
+    let contract_address = deploy("LandRegistryContract");
+
+    // Instance of LandRegistryContract
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    start_cheat_max_fee(contract_address, 10000000000000000000);
+
+    let owner_address = starknet::contract_address_const::<0x123>();
+    let inspector_address = starknet::contract_address_const::<0x456>();
+    let not_seller_address = starknet::contract_address_const::<0x789>();
+    let old_price = 200;
+    let new_price = 400;
+
+    // Register land as owner
+    start_cheat_caller_address(contract_address, owner_address);
+    let land_id = land_register_dispatcher
+        .register_land(Location { latitude: 1, longitude: 2 }, 1000, LandUse::Residential);
+    stop_cheat_caller_address(contract_address);
+
+    // Set inspector as owner
+    start_cheat_caller_address(contract_address, owner_address);
+    land_register_dispatcher.set_land_inspector(land_id, inspector_address);
+    stop_cheat_caller_address(contract_address);
+
+    // approve land
+    start_cheat_caller_address(contract_address, inspector_address);
+    land_register_dispatcher.approve_land(land_id);
+    stop_cheat_caller_address(contract_address);
+
+    // create a listing
+    start_cheat_caller_address(contract_address, owner_address);
+    let listing_id = land_register_dispatcher.create_listing(land_id, old_price);
+    stop_cheat_caller_address(contract_address);
+
+    let listing_details = land_register_dispatcher.get_listing(listing_id);
+
+    // Assert the price is set correctly
+    assert(listing_details.price == old_price, 'Wrong price set');
+
+    // Update listing
+    start_cheat_caller_address(contract_address, not_seller_address);
+    land_register_dispatcher.update_listing_price(listing_id, new_price);
+    stop_cheat_caller_address(contract_address);
+}
+
+
+#[test]
+#[should_panic(expected: ('Listing not active'))]
+fn test_update_listing_price_should_panic_if_listing_not_active() {
+    let contract_address = deploy("LandRegistryContract");
+
+    // Instance of LandRegistryContract
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    start_cheat_max_fee(contract_address, 10000000000000000000);
+
+    let owner_address = starknet::contract_address_const::<0x123>();
+    let inspector_address = starknet::contract_address_const::<0x456>();
+    let old_price = 200;
+    let new_price = 400;
+
+    // Register land as owner
+    start_cheat_caller_address(contract_address, owner_address);
+    let land_id = land_register_dispatcher
+        .register_land(Location { latitude: 1, longitude: 2 }, 1000, LandUse::Residential);
+    stop_cheat_caller_address(contract_address);
+
+    // Set inspector as owner
+    start_cheat_caller_address(contract_address, owner_address);
+    land_register_dispatcher.set_land_inspector(land_id, inspector_address);
+    stop_cheat_caller_address(contract_address);
+
+    // approve land
+    start_cheat_caller_address(contract_address, inspector_address);
+    land_register_dispatcher.approve_land(land_id);
+    stop_cheat_caller_address(contract_address);
+
+    // Update listing
+    start_cheat_caller_address(contract_address, owner_address);
+    land_register_dispatcher.update_listing_price(1, new_price);
+    stop_cheat_caller_address(contract_address);
 }
