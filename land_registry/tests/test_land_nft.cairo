@@ -200,3 +200,21 @@ fn test_unlock_non_existing_token() {
     dispatcher.unlock(NON_EXISTENT_TOKEN_ID);
 }
 
+#[test]
+fn test_upgradability() {
+    let base_uri = "https://some.base.uri/";
+    let dispatcher = deploy(base_uri);
+    let new_class_hash = declare("LandNFT").unwrap().contract_class().class_hash;
+    dispatcher.upgrade(*new_class_hash);
+}
+
+#[test]
+#[should_panic]
+fn test_upgradability_should_fail_if_not_owner_tries_to_update() {
+    let base_uri = "https://some.base.uri/";
+    let dispatcher = deploy(base_uri);
+    let new_class_hash = declare("LandNFT").unwrap().contract_class().class_hash;
+    start_cheat_caller_address(dispatcher.contract_address, Accounts::land_registry());
+    dispatcher.upgrade(*new_class_hash);
+}
+
