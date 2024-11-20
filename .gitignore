@@ -6,3 +6,37 @@
 
 .snfoundry_cache/
 target/
+
+## next app git ignore 
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/client_test/node_modules
+/client_test/.pnp
+/client_test/.pnp.*
+/client_test/.yarn/*
+/client_test/!.yarn/patches
+/client_test/!.yarn/plugins
+/client_test/!.yarn/releases
+/client_test/!.yarn/versions
+# testing
+/client_test/coverage
+# next.js
+/client_test/.next/
+/client_test/out/
+# production
+/client_test/build
+# misc
+/client_test/.DS_Store
+/client_test/*.pem
+# debug
+/client_test/npm-debug.log*
+/client_test/yarn-debug.log*
+/client_test/yarn-error.log*
+# env files (can opt-in for committing if needed)
+/client_test/.env*
+# vercel
+/client_test/.vercel
+# typescript
+/client_test/*.tsbuildinfo
+/client_test/next-env.d.ts
