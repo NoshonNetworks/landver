@@ -57,7 +57,7 @@ pub mod LandRegistryContract {
         land_inspector_assignments: Map::<u256, ContractAddress>, // Inspector assignments
         registered_inspectors: Map::<ContractAddress, bool>, // List of registered inspectors
         inspector_count: u256, // Total number of registered inspectors
-        fee_per_square_unit: u256,
+        fee_per_square_unit: u128,
         listings: Map::<u256, Listing>,
         listing_count: u256,
         price_history: Map::<
@@ -95,7 +95,7 @@ pub mod LandRegistryContract {
     fn constructor(
         ref self: ContractState,
         nft_contract_class_hash: starknet::class_hash::ClassHash,
-        initial_fee_rate: u256
+        initial_fee_rate: u128
     ) {
         let owner = get_caller_address();
         self.ownable.initializer(owner);
@@ -393,7 +393,7 @@ pub mod LandRegistryContract {
             self.emit(InspectorRemoved { inspector });
         }
 
-        fn set_fee(ref self: ContractState, fee: u256) {
+        fn set_fee(ref self: ContractState, fee: u128) {
             let caller = get_caller_address();
             assert(self.registered_inspectors.read(caller), Errors::NOT_AUTHORIZED);
             let old_fee = self.fee_per_square_unit.read();
@@ -401,7 +401,7 @@ pub mod LandRegistryContract {
             self.emit(FeeUpdated { old_fee, new_fee: fee });
         }
 
-        fn get_fee(self: @ContractState) -> u256 {
+        fn get_fee(self: @ContractState) -> u128 {
             self.fee_per_square_unit.read()
         }
 
@@ -580,13 +580,13 @@ pub mod LandRegistryContract {
             inspector == caller
         }
 
-        fn get_fee(self: @ContractState, area: u256) -> u256 {
-            area * self.fee_per_square_unit.read()
+        fn get_fee(self: @ContractState, area: u256) -> u128 {
+            area.try_into().unwrap() * self.fee_per_square_unit.read()
         }
 
-        fn calculate_fee(self: @ContractState, area: u256) -> u256 {
+        fn calculate_fee(self: @ContractState, area: u256) -> u128 {
             assert(area > 0, Errors::AREA_NOT_ZERO);
-            area * self.fee_per_square_unit.read()
+            area.try_into().unwrap() * self.fee_per_square_unit.read()
         }
 
         fn _remove_from_active_listings(ref self: ContractState, listing_id: u256) {
