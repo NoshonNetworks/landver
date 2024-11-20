@@ -5,7 +5,7 @@ import type { Connector } from "@starknet-react/core";
 import { useConnect, useDisconnect, useAccount, useContract, useSendTransaction } from "@starknet-react/core";
 
 import { ABI as LandRegistryABI } from "@/abis/LandRegistryAbi";
-import { LandList } from "./components /LandsList";
+import { LandList } from "./components/LandsList";
 
 const walletIdToName = new Map([
   ["argentX", "Argent X"],
