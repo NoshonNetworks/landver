@@ -6,6 +6,7 @@ import { useAccount } from "@starknet-react/core";
 import WalletConnector from "./components/Connector";
 import Modal from "./components/Modal/Modal";
 import Button from "./components/Button/Button";
+import Image from 'next/image'
 const Home = () => {
   const { status, address } = useAccount();
   const [isModalOpen, setModalOpen] = useState(false);
@@ -30,7 +31,9 @@ const Home = () => {
   };
 
   return (
+    
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50">
+      <Image src="/images/logo.svg" alt="landver logo" height={200} width={200}/>
       <h1 className="text-4xl font-bold mb-6">Land Registry</h1>
 
       {status === "connected" ? (
