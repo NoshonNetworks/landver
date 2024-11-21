@@ -1,5 +1,5 @@
 {
-  "name": "student-registry-dapp",
+  "name": "client",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,20 +9,22 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@starknet-react/chains": "^3.0.0",
-    "@starknet-react/core": "^2.8.1",
+    "@starknet-react/chains": "^3.1.0",
+    "@starknet-react/core": "^3.6.0",
     "lucide-react": "^0.460.0",
     "next": "14.2.15",
     "react": "^18",
     "react-dom": "^18",
-    "react-modal": "^3.16.1",
-    "react-spinners": "^0.14.1",
     "starknet": "^6.11.0"
   },
   "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.15",
     "postcss": "^8",
-    "tailwindcss": "^3.4.1"
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
   }
 }
