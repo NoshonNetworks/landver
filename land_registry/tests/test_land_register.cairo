@@ -613,7 +613,7 @@ fn test_cannot_remove_active_inspector() {
 }
 
 #[test]
-fn test_can_get_all_inspectors(){
+fn test_can_get_all_inspectors() {
     let contract_address = deploy("LandRegistryContract");
 
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
@@ -631,7 +631,7 @@ fn test_can_get_all_inspectors(){
     land_register_dispatcher.add_inspector(inspector_address);
 
     let inspectors = land_register_dispatcher.get_all_inspectors();
-    
+
     assert(inspectors == array![inspector_address], 'Should have inspector');
 
     stop_cheat_caller_address(contract_address);

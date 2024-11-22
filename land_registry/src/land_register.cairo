@@ -395,13 +395,13 @@ pub mod LandRegistryContract {
             self.emit(InspectorRemoved { inspector });
         }
 
-        fn get_all_inspectors(self: @ContractState) -> Array<ContractAddress>{
+        fn get_all_inspectors(self: @ContractState) -> Array<ContractAddress> {
             let mut inspectors = array![];
             let inspector_count = self.inspector_count.read();
             let mut i = 0;
-            while i < inspector_count{
+            while i < inspector_count {
                 let inspector = self.all_land_inspectors.read(i);
-                if(self.registered_inspectors.read(inspector)){
+                if (self.registered_inspectors.read(inspector)) {
                     inspectors.append(inspector);
                 }
                 i += 1;
