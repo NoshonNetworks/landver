@@ -879,10 +879,7 @@ fn test_can_create_listing() {
 
     let expected_event = LandRegistryContract::Event::ListingCreated(
         LandRegistryContract::ListingCreated {
-            listing_id,
-            land_id,
-            seller: owner_address,
-            price: listing_price
+            listing_id, land_id, seller: owner_address, price: listing_price
         }
     );
 
