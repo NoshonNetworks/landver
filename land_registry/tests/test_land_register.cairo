@@ -1,13 +1,14 @@
 use snforge_std::{
     declare, ContractClassTrait, DeclareResultTrait, start_cheat_caller_address,
     stop_cheat_caller_address, start_cheat_block_timestamp, stop_cheat_block_timestamp,
-    start_cheat_max_fee,
+    start_cheat_max_fee, spy_events, EventSpyAssertionsTrait
 };
 use starknet::ContractAddress;
 use land_registry::interface::land_register::{
     ILandRegistryDispatcher, ILandRegistryDispatcherTrait
 };
 use land_registry::interface::land_register::{LandUse, Location, LandStatus};
+use land_registry::land_register::LandRegistryContract;
 
 pub mod Accounts {
     use starknet::ContractAddress;
@@ -869,9 +870,23 @@ fn test_can_create_listing() {
     assert_eq!(land_after.status, LandStatus::Approved, "Should be approved after");
     stop_cheat_caller_address(contract_address);
 
+    // Create listing as land owner
+    let mut spy = spy_events();
+
     start_cheat_caller_address(contract_address, owner_address);
     let listing_id = land_register_dispatcher.create_listing(land_id, listing_price);
     let listing = land_register_dispatcher.get_listing(listing_id);
+
+    let expected_event = LandRegistryContract::Event::ListingCreated(
+        LandRegistryContract::ListingCreated {
+            listing_id,
+            land_id,
+            seller: owner_address,
+            price: listing_price
+        }
+    );
+
+    spy.assert_emitted(@array![(contract_address, expected_event)]);
 
     assert(listing.price == listing_price, 'wrong listing price');
     assert(listing.land_id == land_id, 'wrong land id');
