@@ -3,15 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useConnect, useAccount } from "@starknet-react/core";
 import type { Connector } from "@starknet-react/core";
 import FadeLoader from "react-spinners/FadeLoader";
-import { WalletConnectorModal } from "@/components/WalletConnectModal";
 
-
-const walletIdToName = new Map([
-  ["argentX", "Argent X"],
-  ["braavos", "Braavos"],
-  ["argentWebWallet", "Web Wallet"],
-  ["argentMobile", "Argent mobile"],
-]);
  
 export function Providers({ children }: { children: React.ReactNode }) {
 
@@ -20,7 +12,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   const [connecting, setConnecting] = useState(true)
 
-  const [currentModal, setCurrentModal] = useState<"intro"|"connect">("connect")
+  // const [currentModal, setCurrentModal] = useState<"intro"|"connect">("connect")
 
   async function connect(connector: Connector) {
     try {
@@ -70,7 +62,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         )
       }
       { (!connecting&&!!address) && children }
-      { (!connecting&&!address) && (
+      {/* { (!connecting&&!address) && (
         <div className="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-40 flex justify-center items-center" style={{ zIndex:1000 }}>
       
           {
@@ -96,7 +88,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
           }
   
         </div>
-      ) }
+      ) } */}
     </div>
   );
 }

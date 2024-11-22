@@ -1,6 +1,12 @@
 'use client'
 
+import { useLoginStore } from "@/store/loginStore";
+
 export default function Dashboard() {
+
+  const loginStore = useLoginStore()
+  console.log(loginStore.userType)
+
   return (
     <div className="">
       <div className="flex items-center justify-between px-6 pb-4 pt-7">

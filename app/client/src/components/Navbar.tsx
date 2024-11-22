@@ -80,8 +80,9 @@ export const Navbar = () => {
                   onClick={()=>{
                     const localStorage = window.localStorage;
                     localStorage.removeItem("landver-connector")
-                    disconnect()
+                    localStorage.removeItem("user-type")
                     setShowUserOptions(!showUserOptions)
+                    disconnect()
                     router.push("/")
                   }}
                   className="absolute top-[105%] right-0 shadow-sm shadow-gray-500 bg-white p-3 rounded-md"
