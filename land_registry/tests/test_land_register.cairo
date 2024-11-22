@@ -611,6 +611,32 @@ fn test_cannot_remove_active_inspector() {
 
     stop_cheat_caller_address(contract_address);
 }
+
+#[test]
+fn test_can_get_all_inspectors(){
+    let contract_address = deploy("LandRegistryContract");
+
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    start_cheat_max_fee(contract_address, 10000000000000000000);
+
+    // Set up test data
+    let inspector_address = starknet::contract_address_const::<0x456>();
+    let admin_address = starknet::contract_address_const::<0x123>();
+
+    // Add inspector
+    start_cheat_caller_address(contract_address, admin_address);
+
+    // Add the inspector
+    land_register_dispatcher.add_inspector(inspector_address);
+
+    let inspectors = land_register_dispatcher.get_all_inspectors();
+    
+    assert(inspectors == array![inspector_address], 'Should have inspector');
+
+    stop_cheat_caller_address(contract_address);
+}
+
 #[test]
 fn test_can_transfer_land() {
     let contract_address = deploy("LandRegistryContract");

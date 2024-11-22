@@ -46,6 +46,7 @@ pub mod LandRegistryContract {
         owner_lands: Map::<(ContractAddress, u256), u256>, // Maps owners to their lands
         owner_land_count: Map::<ContractAddress, u256>, // Number of lands per owner
         land_inspectors: Map::<u256, ContractAddress>, // Assigned inspector for each land
+        all_land_inspectors: Map::<u256, ContractAddress>, // All inspectors
         lands_assigned_to_inspector: Map::<ContractAddress, u256>, // Number of lands per inspector
         approved_lands: Map::<u256, bool>, // Tracks approved land status
         land_count: u256, // Total number of registered lands
@@ -375,6 +376,7 @@ pub mod LandRegistryContract {
 
             // Register the inspector
             self.registered_inspectors.write(inspector, true);
+            self.all_land_inspectors.write(self.inspector_count.read(), inspector);
             self.inspector_count.write(self.inspector_count.read() + 1);
             self.lands_assigned_to_inspector.write(inspector, 0);
 
@@ -391,6 +393,20 @@ pub mod LandRegistryContract {
             self.inspector_count.write(self.inspector_count.read() - 1);
 
             self.emit(InspectorRemoved { inspector });
+        }
+
+        fn get_all_inspectors(self: @ContractState) -> Array<ContractAddress>{
+            let mut inspectors = array![];
+            let inspector_count = self.inspector_count.read();
+            let mut i = 0;
+            while i < inspector_count{
+                let inspector = self.all_land_inspectors.read(i);
+                if(self.registered_inspectors.read(inspector)){
+                    inspectors.append(inspector);
+                }
+                i += 1;
+            };
+            inspectors
         }
 
         fn set_fee(ref self: ContractState, fee: u128) {
