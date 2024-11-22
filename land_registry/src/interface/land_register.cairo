@@ -6,6 +6,7 @@ use land_registry::utils::utils::{create_land_id};
 // Represents a land parcel with its properties and metadata
 #[derive(Drop, Copy, Serde, starknet::Store)]
 pub struct Land {
+    land_id: u256, // Land id
     owner: ContractAddress, // Address of the current land owner
     location: Location, // Geographic coordinates of the land
     area: u256, // Size of the land parcel
@@ -74,6 +75,7 @@ pub trait ILandRegistry<TContractState> {
     fn get_land(self: @TContractState, land_id: u256) -> Land;
     fn get_land_count(self: @TContractState) -> u256;
     fn get_lands_by_owner(self: @TContractState, owner: ContractAddress) -> Span<u256>;
+    fn get_all_lands(self: @TContractState) -> Span<Land>;
     fn update_land(ref self: TContractState, land_id: u256, area: u256, land_use: LandUse);
     fn approve_land(ref self: TContractState, land_id: u256);
     fn reject_land(ref self: TContractState, land_id: u256);
