@@ -2,7 +2,7 @@ import React from "react";
 
 interface ButtonProps extends React.PropsWithChildren {
   classname?: string;
-  variant?: "default" | "error" | "success" | "gray";
+  variant?: "default" | "error" | "success" | "gray" | "white";
   size?: "small" | "medium" | "large" | "full";
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
@@ -23,13 +23,15 @@ const Button: React.FC<ButtonProps> = ({
   const getVariantStyles = () => {
     switch (variant) {
       case "error":
-        return "bg-red-500 hover:bg-red-600 disabled:bg-red-300";
+        return "bg-red-500 hover:bg-red-600 disabled:bg-red-300 text-white";
       case "success":
-        return "bg-green-500 hover:bg-green-600 disabled:bg-green-300";
+        return "bg-green-500 hover:bg-green-600 disabled:bg-green-300 text-white";
       case "gray":
-        return "bg-gray-500 hover:bg-gray-600 disabled:bg-gray-300";
+        return "bg-gray-500 hover:bg-gray-600 disabled:bg-gray-300 text-white";
+      case "white":
+        return "bg-white hover:bg-gray-100 disabled:bg-gray-300 text-[#6E62E5]";
       default:
-        return "bg-[#6364d5] hover:bg-[#5353c5] disabled:bg-[#a0a0d8]";
+        return "bg-[#6364d5] hover:bg-[#5353c5] disabled:bg-[#a0a0d8] text-white";
     }
   };
 
@@ -54,7 +56,7 @@ const Button: React.FC<ButtonProps> = ({
       disabled={disabled}
       onClick={onClick}
       aria-label={ariaLabel}
-      className={`${getVariantStyles()} ${getSizeStyles()} ${classname} text-white rounded focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+      className={` ${getVariantStyles()} ${getSizeStyles()} ${classname} rounded focus:outline-none focus:ring-2 focus:ring-offset-2 ${
         disabled ? "cursor-not-allowed" : ""
       }`}
     >
