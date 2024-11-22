@@ -10,8 +10,8 @@ pub mod LandRegistryContract {
     };
     use land_registry::interface::land_register::{
         LandRegistered, LandTransferred, LandVerified, LandUpdated, LandInspectorSet,
-        InspectorAdded, InspectorRemoved, ListingCreated, ListingCancelled,
-        ListingPriceUpdated, LandSold
+        InspectorAdded, InspectorRemoved, ListingCreated, ListingCancelled, ListingPriceUpdated,
+        LandSold
     };
     use land_registry::land_nft::{LandNFT};
     use land_registry::interface::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait};
@@ -91,8 +91,7 @@ pub mod LandRegistryContract {
 
     #[constructor]
     fn constructor(
-        ref self: ContractState,
-        nft_contract_class_hash: starknet::class_hash::ClassHash
+        ref self: ContractState, nft_contract_class_hash: starknet::class_hash::ClassHash
     ) {
         let owner = get_caller_address();
         self.ownable.initializer(owner);
