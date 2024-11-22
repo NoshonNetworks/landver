@@ -35,11 +35,9 @@ pub mod Accounts {
 fn deploy(name: ByteArray) -> ContractAddress {
     let nft_class_hash = declare("LandNFT").unwrap().contract_class();
     let nft_contract_class_hash = nft_class_hash.class_hash;
-    let initial_fee_rate: u128 = 1;
     let land_registry_contract = declare(name).unwrap().contract_class();
     let mut call_data = ArrayTrait::<felt252>::new();
     nft_contract_class_hash.serialize(ref call_data);
-    initial_fee_rate.serialize(ref call_data);
     let (contract_address, _) = land_registry_contract.deploy(@call_data).unwrap();
     contract_address
 }
