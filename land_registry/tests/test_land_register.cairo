@@ -829,3 +829,52 @@ fn test_upgradability_should_fail_if_not_owner_tries_to_update() {
     start_cheat_caller_address(contract_address, starknet::contract_address_const::<0x123>());
     land_register_dispatcher.upgrade(*new_class_hash);
 }
+
+#[test]
+fn test_can_create_listing() {
+    let contract_address = deploy("LandRegistryContract");
+
+    // Instance of LandRegistryContract
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    start_cheat_max_fee(contract_address, 10000000000000000000);
+
+    // Set up test data
+    let owner_address = starknet::contract_address_const::<0x123>();
+    let inspector_address = starknet::contract_address_const::<0x456>();
+    let location = Location { latitude: 1, longitude: 2 };
+    let area = 1000;
+    let land_use = LandUse::Residential;
+    let listing_price: u256 = 2000;
+
+    // Register land as owner
+    start_cheat_caller_address(contract_address, owner_address);
+    let land_id = land_register_dispatcher.register_land(location, area, land_use);
+    stop_cheat_caller_address(contract_address);
+
+    // Set inspector as owner address
+    start_cheat_caller_address(contract_address, owner_address);
+    land_register_dispatcher.set_land_inspector(land_id, inspector_address);
+    stop_cheat_caller_address(contract_address);
+
+    // Approve land as inspector
+    start_cheat_caller_address(contract_address, inspector_address);
+    let land_before = land_register_dispatcher.get_land(land_id);
+    assert_eq!(land_before.status, LandStatus::Pending, "Should be pending before approval");
+
+    land_register_dispatcher.approve_land(land_id);
+
+    // Get approved land and verify status
+    let land_after = land_register_dispatcher.get_land(land_id);
+    assert_eq!(land_after.status, LandStatus::Approved, "Should be approved after");
+    stop_cheat_caller_address(contract_address);
+
+    start_cheat_caller_address(contract_address, owner_address);
+    let listing_id = land_register_dispatcher.create_listing(land_id, listing_price);
+    let listing = land_register_dispatcher.get_listing(listing_id);
+
+    assert(listing.price == listing_price, 'wrong listing price');
+    assert(listing.land_id == land_id, 'wrong land id');
+    assert(listing.seller == owner_address, 'wrong listing seller');
+    stop_cheat_caller_address(contract_address);
+}
