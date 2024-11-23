@@ -8,9 +8,26 @@ import { useLandverContract } from "@/hooks/useLandverContract";
 import { useBlockies } from "@/hooks/useBlockies";
 import Image from "next/image";
 
-import { events, RpcProvider, hash, CallData } from 'starknet';
+import { events, RpcProvider, hash, CallData, num } from 'starknet';
 import { SectionHeader } from "@/components/Headers/SectionHeader";
-import { LandList } from "@/components/LandsList";
+
+interface DynamicObject {
+  [key: string]: string; // Allows any string as a key
+}
+
+const EVENTS_KEY_LABEL:DynamicObject = {
+  'LandRegistered':"Land Registered",
+  'LandTransfered':"Land Transfered",
+  'LandVerified':"Land Verified",
+  'LandUpdated':"Land Updated",
+  'LandInspectorSet':"Inspector asigned to land",
+  'InspectorAdded':"Inspector created",
+  'InspectorRemoved':"Inspector removed",
+  'ListingCreated':"New listing created",
+  'ListingCancelled':"Listing cancelled",
+  'ListingPriceUpdated':"Listing price updated",
+  'LandSold':"Land sold",
+}
 
 export default function Dashboard() {
 
@@ -26,6 +43,7 @@ export default function Dashboard() {
   const { contract:landRegisterContract, abi:landRegisterABI } = useLandverContract({ name:"landRegister" })
   const [landsOwned, setLandsOwned] = useState<number|null>(null)
   const [landsAddresses, setLandsAdresses] = useState<string[]|null>(null)
+  const [recentEvents, setRecentEvents] = useState<{ eventName:string, rawEvent: any, parsedEvent:any }[]>([])
   // console.log(landRegisterContract)
 
   useEffect(()=>{
@@ -42,32 +60,67 @@ export default function Dashboard() {
     })()
   }, [address])
 
-  // useEffect(()=>{
-  //   (async()=>{
-  //     try {
-  //       const provider = new RpcProvider({ });
-  //       const lastBlock = await provider.getBlock('latest');
-  //       // const lastBlockNumber = lastBlock.block_number
-  //       // const keyFilter = [[num.toHex(hash.starknetKeccak('EventPanic')), '0x8']];
-  //       const eventsRes = await provider.getEvents({
-  //         address: "0x5a4054a1b1389dcd48b650637977280d32f1ad8b3027bc6c7eb606bf7e28bf5",
-  //         // from_block: { block_number: (lastBlockNumber as number) - 9 },
-  //         // to_block: { block_number: lastBlockNumber as number },
-  //         // keys: keyFilter,
-  //         chunk_size: 10,
-  //       });
+  useEffect(()=>{
+    (async()=>{
+      try {
+        const provider = new RpcProvider({ });
+        const keyFilter = [
+          [
+            num.toHex(hash.starknetKeccak('LandRegistered')), 
+            num.toHex(hash.starknetKeccak('LandTransfered')),
+            num.toHex(hash.starknetKeccak('LandVerified')),
+            num.toHex(hash.starknetKeccak('LandUpdated')),
+            num.toHex(hash.starknetKeccak('LandInspectorSet')),
+            num.toHex(hash.starknetKeccak('InspectorAdded')),
+            num.toHex(hash.starknetKeccak('InspectorRemoved')),
+            num.toHex(hash.starknetKeccak('InspectorRemoved')),
+            num.toHex(hash.starknetKeccak('ListingCreated')),
+            num.toHex(hash.starknetKeccak('ListingCancelled')),
+            num.toHex(hash.starknetKeccak('ListingPriceUpdated')),
+            num.toHex(hash.starknetKeccak('LandSold')),
+          ],
+        ];
 
-  //       const abiEvents = events.getAbiEvents(landRegisterABI);
-  //       const abiStructs = CallData.getAbiStruct(landRegisterABI);
-  //       const abiEnums = CallData.getAbiEnum(landRegisterABI);
-  //       const parsed = events.parseEvents(eventsRes.events, abiEvents, abiStructs, abiEnums);
+        const eventsRes = await provider.getEvents({
+          address: "0x5a4054a1b1389dcd48b650637977280d32f1ad8b3027bc6c7eb606bf7e28bf5",
+          keys: keyFilter,
+          chunk_size: 30,
+        });
 
-  //     } catch (error) {
-  //       console.log(error)
-  //     }
-  //   })()
-  // }, [])
+        // parsing event
+        const abiEvents = events.getAbiEvents(landRegisterABI);
+        const abiStructs = CallData.getAbiStruct(landRegisterABI);
+        const abiEnums = CallData.getAbiEnum(landRegisterABI);
+        const parsed = events.parseEvents(eventsRes.events, abiEvents, abiStructs, abiEnums);
+        
+        const formattedEvents:{ 
+          eventName:string,
+          rawEvent: any, 
+          parsedEvent:any
+        }[] = []
 
+        for (let i = 0; i <eventsRes.events.length; i++) {
+          const rawEvent = eventsRes.events[i]
+          const parsedEvent = parsed[i]
+
+          let fullKey = Object.keys(parsedEvent)[0].split("::");
+          let eventName = fullKey[fullKey.length - 1]
+
+
+          formattedEvents.push({
+            eventName,
+            rawEvent, 
+            parsedEvent
+          })
+        }
+
+        setRecentEvents(formattedEvents)
+
+      } catch (error) {
+        console.log(error)
+      }
+    })()
+  }, [address])
 
   return (
     <div className="">
@@ -79,8 +132,8 @@ export default function Dashboard() {
             <Button variant="white">Discover Now</Button>
           </div>
         </div>
-        <Card value={`${landsOwned}`} landIds={landsAddresses||[]} unit={""} subtitle="Total Owned Land" buttonMessage={"View Details"} hasIconsMap={true} />
-        <Card value={balance} landIds={landsAddresses||[]} unit={balanceData?.symbol||""} subtitle="My Balance" buttonMessage={"Top Up Balance"} hasIconsMap={false} />
+        <Card mainIconColor="green" value={`${landsOwned}`} landIds={landsAddresses||[]} unit={""} subtitle="Total Owned Land" buttonMessage={"View Details"} hasIconsMap={true} />
+        <Card mainIconColor="blue" value={balance} landIds={landsAddresses||[]} unit={balanceData?.symbol||""} subtitle="My Balance" buttonMessage={"Top Up Balance"} hasIconsMap={false} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mt-5 px-6 mb-10 lg:mb-0">
@@ -132,17 +185,19 @@ export default function Dashboard() {
             <SectionHeader title="Recent Activities" titleSize={"xl"} buttonMessage="View all" />
             <div className="h-10"></div>
             {
-              [1,2,3,4,5].map((item, index)=>{
+              recentEvents.map((event, index)=>{
                 return (
                   <div key={"dashboardrecentsactivities1e2"+index} className="flex justify-start items-center gap-2 mt-4">
-                    <div className="w-14 h-14 rounded-md bg-gray-300"></div>
+                    <div className="w-12 h-12 rounded-md bg-gray-300 relative overflow-hidden">
+                      <EventImage eventName={EVENTS_KEY_LABEL[event.eventName]} />
+                    </div>
                     <div className="flex-1">
-                      <p className="font-medium">Land Name or Id</p>
-                      <p className="text-gray-400">Land Approval</p>
-                      <p className="text-[#50CD89] 2xl:hidden block">Approved</p> {/* red #F1416C */}
+                      <p className="font-medium">{ EVENTS_KEY_LABEL[event.eventName]  }</p>
+                      {/* <p className="text-gray-400">Land Approval</p>
+                      <p className="text-[#50CD89] 2xl:hidden block">Approved</p> red #F1416C */}
                     </div>
                     <div className="bg-[#E8FFF3] py-1 px-2 rounded-xl hidden 2xl:block"> {/* red #FFF5F8 */}
-                      <p className="text-[#50CD89]">Approved</p> {/* red #F1416C */}
+                      {/* <p className="text-[#50CD89]">Approved</p> red #F1416C */}
                     </div>
                   </div>
                 )
@@ -163,8 +218,13 @@ const LandImage = ({ landAddress }:{landAddress:string}) => {
   return <Image src={blockiesImageSrc} alt="ether" layout="fill" style={{ objectFit:"cover", objectPosition:"center" }} />
 }
 
+const EventImage = ({ eventName }:{eventName:string}) => {
+  const { blockiesImageSrc } = useBlockies({ address:eventName }) 
+  return <Image src={blockiesImageSrc} alt="ether" layout="fill" style={{ objectFit:"cover", objectPosition:"center" }} />
+}
 
-const Card = ({ value, unit, subtitle, buttonMessage, hasIconsMap, landIds}:{ value:string, unit:string, subtitle:string, buttonMessage:string, hasIconsMap:boolean, landIds:string[] }) => {
+
+const Card = ({ value, unit, subtitle, buttonMessage, hasIconsMap, landIds, mainIconColor}:{ value:string, unit:string, subtitle:string, buttonMessage:string, hasIconsMap:boolean, landIds:string[], mainIconColor:"blue"|"green" }) => {
   
   const landIdsToShow = landIds.length > 6 ? landIds.slice(0,6) : landIds
 
@@ -194,7 +254,16 @@ const Card = ({ value, unit, subtitle, buttonMessage, hasIconsMap, landIds}:{ va
             <div className="border-[#6E62E5] border-2 rounded-md py-2 mt-8">
               <p className="text-[#6E62E5] text-center">{ buttonMessage }</p>
             </div>
-            <div className="absolute top-7 right-4 w-[60px] h-[60px] bg-gray-300 rounded-full"></div>
+            <div className="absolute top-7 right-4 w-[60px] h-[60px] rounded-full flex justify-center items-center" style={{ backgroundColor:mainIconColor==="blue"?"#F2FAFD":"#F4FDF9" }}>
+              <div className="relative w-[40px] h-[40px] rounded-full">
+                {
+                  mainIconColor === "blue"&&<Image src={"/icons/common/stack-green.svg"} alt="ether" layout="fill" style={{ objectFit:"cover", objectPosition:"center" }} />
+                }
+                {
+                  mainIconColor === "green"&&<Image src={"/icons/common/stack-blue.svg"} alt="ether" layout="fill" style={{ objectFit:"cover", objectPosition:"center" }} />
+                }
+              </div>
+            </div>
         </div>
       </div>
   )
