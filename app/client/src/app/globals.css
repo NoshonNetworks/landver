@@ -19,3 +19,28 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+
+.container_scrollable {
+  overflow-y: scroll;
+}
+/* width */
+.container_scrollable::-webkit-scrollbar {
+  width: 5px;
+}
+
+/* Track */
+.container_scrollable::-webkit-scrollbar-track {
+  background: #eaeaea;
+}
+
+/* Handle */
+.container_scrollable::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 5px;
+}
+
+/* Handle on hover */
+.container_scrollable::-webkit-scrollbar-thumb:hover {
+  background: #a4a4a4;
+}

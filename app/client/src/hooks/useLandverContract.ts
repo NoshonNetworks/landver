@@ -19,6 +19,7 @@ export function useLandverContract({ name }: UseLandverContractParams) {
   });
 
   return {
-    landRegisterContract:contract
+    contract:contract,
+    abi: LandRegistryABI
   }
 }
