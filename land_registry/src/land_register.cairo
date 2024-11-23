@@ -608,4 +608,37 @@ pub mod LandRegistryContract {
             }
         }
     }
+
+    fn is_inspector(self: @ContractState, inspector: ContractAddress) -> bool {
+        let count = self.lands_assigned_to_inspector.read(inspector);
+
+        if count > 0 {
+            return true;
+        }
+
+        return false;
+    }
+
+
+    fn get_user_type(self: @ContractState, userAddress: ContractAddress)-> felt252 { 
+        // checking if a user has been registered on 
+        let inspector = self.registered_inspectors.read(userAddress);
+        // Reading the number of number of lands owned by an owner 
+        let owner = self.owner_land_count.read(userAddress);
+        let inspector_role = 'inspector';
+        let owner_role = 'owner';
+
+        if inspector {
+
+            return inspector_role;
+        }
+        else if (owner>0)
+        {
+            return owner_role;
+        }
+        else{
+            return 'Note a user on this plateform';
+        }
+
+    }
 }
