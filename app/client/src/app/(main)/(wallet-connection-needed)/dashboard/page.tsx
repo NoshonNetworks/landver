@@ -10,6 +10,7 @@ import Image from "next/image";
 
 import { events, RpcProvider, hash, CallData } from 'starknet';
 import { SectionHeader } from "@/components/Headers/SectionHeader";
+import { LandList } from "@/components/LandsList";
 
 export default function Dashboard() {
 
@@ -70,7 +71,6 @@ export default function Dashboard() {
 
   return (
     <div className="">
-
       <Header title="Overview" hasCreateButton={true} />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 px-6">
         <div className="w-full bg-[#6E62E5] rounded-xl">
