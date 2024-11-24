@@ -94,6 +94,8 @@ pub trait ILandRegistry<TContractState> {
     fn set_fee(ref self: TContractState, fee: u128);
     fn get_fee(self: @TContractState) -> u128;
 
+    fn get_user_type(self: @TContractState, userAddress: ContractAddress) -> felt252;
+
     // Marketplace function
     fn create_listing(ref self: TContractState, land_id: u256, price: u256) -> u256;
     fn cancel_listing(ref self: TContractState, listing_id: u256);
