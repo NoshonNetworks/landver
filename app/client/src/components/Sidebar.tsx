@@ -10,13 +10,13 @@ import { GiHamburgerMenu } from "react-icons/gi";
 
 const OPTIONS = {
     owner: [
-        { path:"/dashboard", name:"Dashboard", iconDisabled:"dashboard.svg", iconEnabled:"dashboard-selected.svg" },
-        { path:"/verify-land", name:"Verify Land", iconDisabled:"shared.svg", iconEnabled:"shared-selected.svg" },
-        { path:"/verify-user", name:"Verify User", iconDisabled:"user.svg", iconEnabled:"user-selected.svg" },
-        { path:"/transfer-ownership", name:"Transfer Ownership", iconDisabled:"shared.svg", iconEnabled:"shared-selected.svg" },
-        { path:"/reports-and-logs", name:"Reports and Logs", iconDisabled:"shared.svg", iconEnabled:"shared-selected.svg" },
-        { path:"/notifications", name:"Notifications", iconDisabled:"notifications.svg", iconEnabled:"notifications-selected.svg" },
-      ],
+      { path:"/dashboard", name:"Dashboard", iconDisabled:"dashboard.svg", iconEnabled:"dashboard-selected.svg" },
+      { path:"/market-store", name:"Market Store", iconDisabled:"shared.svg", iconEnabled:"shared-selected.svg" },
+      { path:"/my-collections", name:"My Collections", iconDisabled:"shared.svg", iconEnabled:"shared-selected.svg" },
+      { path:"/favorites", name:"Favorites", iconDisabled:"shared.svg", iconEnabled:"shared-selected.svg" },
+      { path:"/notifications", name:"Notifications", iconDisabled:"notifications.svg", iconEnabled:"notifications-selected.svg" },
+      { path:"/wallet", name:"Wallet", iconDisabled:"wallet.svg", iconEnabled:"wallet-selected.svg" },
+    ],
     inspector: [
       { path:"/dashboard", name:"Dashboard", iconDisabled:"dashboard.svg", iconEnabled:"dashboard-selected.svg" },
       { path:"/verify-land", name:"Verify Land", iconDisabled:"shared.svg", iconEnabled:"shared-selected.svg" },
