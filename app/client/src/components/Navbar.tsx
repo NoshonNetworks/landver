@@ -7,6 +7,7 @@ import { useDisconnect, useAccount, useStarkProfile, useBalance } from "@starkne
 import { useBlockies } from "@/hooks/useBlockies";  
 import { WalletConnectorModal } from "./WalletConnectModal";
 import { useRouter } from "next/navigation";
+import { Searchbar } from "./Search/Searchbar";
 
 export const Navbar = () => {
 
@@ -28,11 +29,8 @@ export const Navbar = () => {
 
   return (
     <div className="bg-white py-5 px-5 flex items-center">
-      <div className="relative w-4/6 hidden md:flex">
-        <div className="flex justify-center items-center absolute top-0 bottom-0 left-1 w-[30px]">
-          <Image width={22} height={22} alt="search" src={"/icons/common/search.svg"} className="" />
-        </div>
-        <input value={""} onChange={()=>{}} placeholder="Search..."  className="bg-gray-100 border border-none outline-none text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pl-10 " />
+      <div className="w-4/6 hidden md:block">
+        <Searchbar />
       </div>
       <div className="relative md:hidden flex-shrink-0">
         <div className="flex justify-center items-center w-[30px]">

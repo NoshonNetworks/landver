@@ -1,11 +1,14 @@
 'use client'
-
-import { Header } from "@/components/Headers/Header";
+import { useLoginStore } from "@/store/loginStore";
+import MyCollectionsClientView from "@/views/client/MyCollections";
 
 export default function Dashboard() {
+  const loginStore = useLoginStore()
+
   return (
-    <div className="">
-        <Header title="Collections" hasCreateButton={true} />
-    </div>
+    <>
+      { loginStore.userType=="owner" && <MyCollectionsClientView /> }
+    </>    
   );
 }
+
