@@ -58,7 +58,6 @@ interface LandData {
 
 
 const RegisterLandModal: React.FC<ModalProps> = ({ isOpen, onClose, mode, editData }) => {
-  console.log(editData)
     const { account } = useAccount()
     const { contract:landRegisterContract } = useLandverContract({ name:"landRegister" })
     const [enableSubmit, setEnableSubmit] = useState(false)
@@ -70,7 +69,6 @@ const RegisterLandModal: React.FC<ModalProps> = ({ isOpen, onClose, mode, editDa
         longitude: null
     })
 
-    console.log(landData)
 
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(false)
@@ -92,7 +90,7 @@ const RegisterLandModal: React.FC<ModalProps> = ({ isOpen, onClose, mode, editDa
             await landRegisterContract.connect(account)
             await landRegisterContract.register_land(
                 { latitude:landData.latitude, longitude:landData.longitude }, 
-                num.toBigInt(landData.area as number),
+                landData.area,
                 landUseEnum
             )
             setLoading(false)
@@ -106,19 +104,19 @@ const RegisterLandModal: React.FC<ModalProps> = ({ isOpen, onClose, mode, editDa
 
   const handleEdit = async() => {
     try {
-        if(!editData) return 
+      if(!editData) return 
+      // console.log(Number(editData.landId?.toString()))
+      // return 
         if(!enableSubmit || loading) return 
             setError(false)
             setLoading(true)
 
-            const landUseEnum = LandUse.find(lu => lu.name === landData.landUse)?.enum
 
+            const landUseEnum = LandUse.find(lu => lu.name === landData.landUse)?.enum
             await landRegisterContract.connect(account)
             await landRegisterContract.update_land(
-                // BigInt(Number(editData.landId)),
-                // 3118524527604867874092514350617097858360981349098473208613993420402049833675,
-                num.toBigInt(Number(editData.landId)),
-                num.toBigInt(landData.area as number), 
+                editData.landId,
+                landData.area, 
                 landUseEnum,
             )
             setLoading(false)
