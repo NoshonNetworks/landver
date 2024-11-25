@@ -3,6 +3,9 @@ use starknet::ContractAddress;
 // Interface for Land NFT operations
 #[starknet::interface]
 pub trait ILandNFT<TContractState> {
+    fn upgrade(
+        ref self: TContractState, new_class_hash: starknet::class_hash::ClassHash
+    ); // upgrade the contract class
     // Mints a new NFT representing a land parcel
     fn mint(ref self: TContractState, to: ContractAddress, token_id: u256);
 

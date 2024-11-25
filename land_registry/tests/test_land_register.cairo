@@ -25,7 +25,7 @@ pub mod Accounts {
 fn deploy(name: ByteArray) -> ContractAddress {
     let nft_class_hash = declare("LandNFT").unwrap().contract_class();
     let nft_contract_class_hash = nft_class_hash.class_hash;
-    let initial_fee_rate: u256 = 1;
+    let initial_fee_rate: u128 = 1;
     let land_registry_contract = declare(name).unwrap().contract_class();
     let mut call_data = ArrayTrait::<felt252>::new();
     nft_contract_class_hash.serialize(ref call_data);
@@ -711,7 +711,6 @@ fn test_update_listing_price() {
     let price_history = land_register_dispatcher.get_listing_price_history(listing_id);
 
     // Verify number of updates
-    println!("{} the unmber now is ", price_history.len());
     assert(price_history.len() == 2, 'Wrong number of price updates');
 }
 
@@ -810,4 +809,61 @@ fn test_update_listing_price_should_panic_if_listing_not_active() {
     start_cheat_caller_address(contract_address, owner_address);
     land_register_dispatcher.update_listing_price(listing_id, new_price);
     stop_cheat_caller_address(contract_address);
+}
+
+
+#[test]
+fn test_upgradability() {
+    let contract_address = deploy("LandRegistryContract");
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+    let new_class_hash = declare("LandRegistryContract").unwrap().contract_class().class_hash;
+    land_register_dispatcher.upgrade(*new_class_hash);
+}
+
+#[test]
+#[should_panic]
+fn test_upgradability_should_fail_if_not_owner_tries_to_update() {
+    let contract_address = deploy("LandRegistryContract");
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+    let new_class_hash = declare("LandRegistryContract").unwrap().contract_class().class_hash;
+    start_cheat_caller_address(contract_address, starknet::contract_address_const::<0x123>());
+    land_register_dispatcher.upgrade(*new_class_hash);
+}
+
+#[test]
+fn test_get_user_type() {
+    let contract_address = deploy("LandRegistryContract");
+    // Get an instance of the deployed Counter contract
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    start_cheat_max_fee(contract_address, 10000000000000000000);
+
+    // Set up test data
+    let owner_address = starknet::contract_address_const::<0x123>();
+    let inspector_address = starknet::contract_address_const::<0x456>();
+    let location: Location = Location { latitude: 1, longitude: 2 };
+    let area: u256 = 1000;
+    let land_use = LandUse::Residential;
+
+    // Step 1: Register land with owner_address
+    start_cheat_caller_address(contract_address, owner_address);
+    land_register_dispatcher.register_land(location, area, land_use);
+    stop_cheat_caller_address(contract_address);
+
+    // Step 2: Set inspector for the land
+    start_cheat_caller_address(contract_address, owner_address);
+
+    land_register_dispatcher.add_inspector(inspector_address);
+    stop_cheat_caller_address(contract_address);
+
+    let owner_type = land_register_dispatcher.get_user_type(owner_address);
+    assert(owner_type == 'owner', 'Expect Owner');
+
+    let inspector_type = land_register_dispatcher.get_user_type(inspector_address);
+    assert(inspector_type == 'inspector', 'Expect Inspector');
+
+    // Check a non-existent user
+    let non_existent_address = starknet::contract_address_const::<0x789>();
+    let non_user_type = land_register_dispatcher.get_user_type(non_existent_address);
+    assert(non_user_type == 'None', 'Expecte None');
 }
