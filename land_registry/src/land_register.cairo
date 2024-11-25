@@ -43,6 +43,7 @@ pub mod LandRegistryContract {
         #[substorage(v0)]
         upgradeable: UpgradeableComponent::Storage, // Openzeppelin storage for Upgradable component 
         lands: Map::<u256, Land>, // Stores all registered lands
+        lands_registry: Map::<u256, Land>,
         owner_lands: Map::<(ContractAddress, u256), u256>, // Maps owners to their lands
         owner_land_count: Map::<ContractAddress, u256>, // Number of lands per owner
         land_inspectors: Map::<u256, ContractAddress>, // Assigned inspector for each land
@@ -141,10 +142,11 @@ pub mod LandRegistryContract {
 
             // Create new land record
             let new_land = Land {
+                land_id,
                 owner: caller,
-                location: location,
-                area: area,
-                land_use: land_use,
+                location,
+                area,
+                land_use,
                 status: LandStatus::Pending,
                 inspector: 0.try_into().unwrap(),
                 last_transaction_timestamp: timestamp,
@@ -153,6 +155,7 @@ pub mod LandRegistryContract {
 
             // Update storage with new land information
             self.lands.write(land_id, new_land);
+            self.lands_registry.write(self.land_count.read() + 1, new_land);
             self.land_count.write(self.land_count.read() + 1);
 
             // Update owner's land records
@@ -215,6 +218,19 @@ pub mod LandRegistryContract {
                 i += 1;
             };
             result.span()
+        }
+
+        fn get_all_lands(self: @ContractState) -> Span<Land> {
+            let mut lands = array![];
+            let land_count = self.land_count.read();
+            let mut i: u256 = 1;
+
+            while i < land_count + 1 {
+                let land: Land = self.lands_registry.read(i);
+                lands.append(land);
+                i += 1;
+            };
+            lands.span()
         }
 
         fn update_land(ref self: ContractState, land_id: u256, area: u256, land_use: LandUse) {
