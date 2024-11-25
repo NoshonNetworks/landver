@@ -6,8 +6,19 @@ import Image from "next/image";
 import { DropdownOptions } from "@/components/Options/DropdownOptions";
 import { RangeCalendar } from "@/components/calendar/RangeCalendar";
 
+import { useAccount } from "@starknet-react/core";
+import { useLandverContract } from "@/hooks/useLandverContract";
+import { shortAddress } from "@/utils/AddressFormat";
+
 type ValuePiece = Date | null;
 type Value = [ValuePiece, ValuePiece];
+
+interface LandsCount {
+  total: number, 
+  registered: number,
+  bought:number,
+  unapproved:number
+} 
 
 function formatDate(date:Date){
   const monthNames = [
@@ -20,7 +31,30 @@ function formatDate(date:Date){
   return `${monthNames[monthIndex]} ${dayIndex}`
 }
 
+function formatTimestampToDate(timestamp:number) {
+  const date = new Date(timestamp * 1000); // Convert seconds to milliseconds
+
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2,   
+ '0');
+  const year = date.getFullYear().toString().slice(-2);   
+ // Get the last two digits of the year
+
+  return `${day}/${month}/${year}`;
+}
+
 export default function MyCollectionsClientView() {
+
+  const { address } = useAccount() 
+  const { contract:landRegisterContract } = useLandverContract({ name:"landRegister" })
+  
+  const [lands, setLands] = useState([])
+  const [landsCounts, setLandsCounts] = useState<LandsCount>({
+    total: 0, 
+    registered: 0,
+    bought:0,
+    unapproved:0
+  })
 
   const [indexToShowOptions, setIndexToShowOptions] = useState<null|number>(null)
   const [showStatusFilters, setShowStatusFilters] = useState(false)
@@ -34,16 +68,61 @@ export default function MyCollectionsClientView() {
     setShowDateRangeCalendar(false)
   }, dateRange)
 
+  useEffect(()=>{
+    (async() => {
+      try {
+        if(address) {
+            const addresses = await landRegisterContract.get_lands_by_owner(address)
+            const newLands = []
+            const newLandsCount:LandsCount = {
+              bought:0,
+              registered:0,
+              total: 0,
+              unapproved: 0
+            }
+
+            let index = 0;
+            for await (const address of addresses) {
+                const land = await landRegisterContract.get_land(address)
+                const landStatus = Object.entries(land.status.variant).find(entry => entry[1])
+
+                newLandsCount.total += 1
+                if(landStatus && landStatus[0]==="Bought") newLandsCount.bought += 1
+                if(landStatus && landStatus[0]==="Approved") newLandsCount.registered += 1
+                if(landStatus && landStatus[0]==="Unapproved") newLandsCount.unapproved += 1
+
+                newLands.push({ 
+                  number:index+1, 
+                  id:shortAddress(Number(address).toString()), 
+                  buyerOrLandName: "",
+                  price: null,
+                  date: formatTimestampToDate(Number(land.last_transaction_timestamp)),
+                  status: landStatus ? landStatus[0] : "",
+                  inspector_sliced:`${land.inspector}`.slice(0,4) + "..." + `${land.inspector}`.slice(-4), 
+                })
+                index++;
+            }
+
+            setLands(newLands.reverse() as any)
+            setLandsCounts(newLandsCount)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    })()
+  }, [address])
+
+
   return (
     <div className="">
         
         <Header title="Collections" hasCreateButton={true} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 px-6">
-          <Card title="24" subtitle="Total Lands Owned" />
-          <Card title="24" subtitle="Total Lands Registered" />
-          <Card title="24" subtitle="Total Lands Bought" />
-          <Card title="24" subtitle="Total Lands Unapproved" />
+          <Card iconColor="blue" title={landsCounts.total.toString()} subtitle="Total Lands Owned" />
+          <Card iconColor="yellow" title={landsCounts.registered.toString()} subtitle="Total Lands Registered" />
+          <Card iconColor="orange" title={landsCounts.bought.toString()} subtitle="Total Lands Bought" />
+          <Card iconColor="purple" title={landsCounts.unapproved.toString()} subtitle="Total Lands Unapproved" />
         </div>
 
 
@@ -96,35 +175,40 @@ export default function MyCollectionsClientView() {
                       <div className="flex-1 flex 2xl:justify-center">ACTIONS</div>
                     </div>
                   {
-                    [1,2,3,4,5,6].map((item, index) => {
+                    lands.map((item:any, index) => {
                       return (
                         <div key={"dashboardbestsellerlist1"+index} className="flex flex-col 2xl:flex-row justify-between 2xl:items-center w-full gap-1 border-dashed border-t-2 border-t-gray-300 mt-5 pt-5 font-semibold">
                           <div className="w-[70px] flex gap-1">
                             <p className="2xl:hidden">No: </p>
-                            <p>{ index+1 }</p>
+                            <p>{ item.number }</p>
                           </div>
-                          <div className="flex-1">
+                          <div className="flex-1 flex gap-1">
                             <p className="2xl:hidden">Land ID: </p>
-                            <p>56037-XDER</p>
+                            <p>{ item.id }</p>
                           </div>
                           <div className="flex-1 flex gap-2 items-center">
-                            <div className="hidden 2xl:block w-8 h-8 rounded-full bg-gray-300"></div>
+                            {
+                              item.buyerOrLandName && <div className="hidden 2xl:block w-8 h-8 rounded-full bg-gray-300"></div>
+                            }
                             <p className="2xl:hidden">Buyer/Land Name: </p>
-                            <p>TRESS-123</p>
+                            <p>{ item.buyerOrLandName || "-" }</p>
                           </div>
                           <div className="flex-1 flex gap-2 items-center">
-                            <div className="hidden 2xl:block w-7 h-7 rounded-full bg-gray-300"></div>
+                            {item.price && <div className="hidden 2xl:block w-7 h-7 rounded-full bg-gray-300"></div>}
                             <p className="2xl:hidden">Price: </p>
-                            <p>0.2345</p>
+                            <p>{ item.price || "-" }</p>
                           </div>
                           <div className="flex-1 flex gap-2 items-center">
                             <p className="2xl:hidden">Date: </p>
-                            <p>20/11/24</p>
+                            <p>{ item.date }</p>
                           </div>
                           <div className="flex-1 flex gap-2 items-center">
                             <p className="2xl:hidden">Status: </p>
-                            <div className="bg-[#E8FFF3] py-1 px-2 rounded-xl "> {/* red #FFF5F8 */}
-                              <p className="text-[#50CD89]">Approved</p>{/* red #F1416C */}
+                            <div className={`${item.status==="Approved"&&"bg-[#E8FFF3]"} ${item.status==="Rejected"&&"bg-[#FFF5F8]"} ${item.status==="Pending"&&"bg-[#fff9e2]"} py-1 px-2 rounded-xl`}>
+                              { item.status === "Approved" && <p className="text-[#50CD89]">Approved</p>  }
+                              { item.status === "Pending" && <p className="text-[#c6a727]">Pending</p>  }
+                              { item.status === "Rejected" && <p className="text-[#FFF5F8]">Rejected</p>  }
+                              {/* { item.status === "Pending" &&  } */}
                             </div>
                           </div>
                           <div className="flex-1 flex 2xl:justify-center gap-2 items-center relative">
@@ -157,10 +241,27 @@ export default function MyCollectionsClientView() {
 }
 
 
-function Card({ title, subtitle }:{ title:string, subtitle:string }) {
+function Card({ iconColor, title, subtitle }:{ iconColor:'blue'|'yellow'|'orange'|'purple', title:string, subtitle:string }) {
+
+  const iconBgColors = {
+    blue: "#EFF5FF",
+    yellow:"#FFF7E1",
+    orange: "#FFF4F1",
+    purple: "#F0EFFF"
+  }
+  
+  const iconPaths = {
+    blue: "/icons/common/stack-blue.svg",
+    yellow:"/icons/common/stack-yellow.svg",
+    orange: "/icons/common/stack-orange.svg",
+    purple: "/icons/common/stack-purple.svg"
+  }
+
   return (
     <div className="w-full bg-white rounded-xl flex justify-start items-start px-3 py-4 gap-2">
-      <div className="w-16 h-16 rounded-full bg-gray-200"></div>
+      <div className={`w-16 h-16 rounded-full flex justify-center items-center`} style={{ background:iconBgColors[iconColor] }}>
+        <Image src={iconPaths[iconColor]} alt="stack" width={35} height={35} />
+      </div>
       <div className="">
         <p className="text-2xl text-black font-bold">{ title }</p>
         <p className="text-base text-gray-600">{ subtitle }</p>
