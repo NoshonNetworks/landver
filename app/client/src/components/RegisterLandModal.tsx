@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import { CairoCustomEnum } from "starknet";
+import { CairoCustomEnum, num } from "starknet";
 import { useAccount } from "@starknet-react/core";
 import { useLandverContract } from "@/hooks/useLandverContract";
 import Image from "next/image";
@@ -44,25 +44,34 @@ const LandUse = [
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
+  mode: "create"|"edit";
+  editData?: LandData
 }
 
 interface LandData {
+    landId?: string, 
     area: number|null,
-    landUse: number,
+    landUse: string,
     latitude: number|null,
     longitude: number|null
 }
 
-const RegisterLandModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
+
+const RegisterLandModal: React.FC<ModalProps> = ({ isOpen, onClose, mode, editData }) => {
+  console.log(editData)
     const { account } = useAccount()
     const { contract:landRegisterContract } = useLandverContract({ name:"landRegister" })
     const [enableSubmit, setEnableSubmit] = useState(false)
-    const [landData, setLandData] = useState<LandData>({
+    const [landData, setLandData] = useState<LandData>(
+      {
         area: null,
-        landUse: 0,
+        landUse: "Commercial",
         latitude: null,
         longitude: null
     })
+
+    console.log(landData)
+
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(false)
 
@@ -71,24 +80,20 @@ const RegisterLandModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
       onClose();
     }
   };
-  
-  useEffect(()=>{
-    const { landUse, ...landDataToEvaluate } = landData // landUse is allowed to be 0 and always will have a value. So we exclude it 
-    const enable = Object.values(landDataToEvaluate).every(item => item)
-    setEnableSubmit(enable)
-    setError(false)
-  }, [landData])
 
   const handleSubmit = async() => {
     try {
         if(!enableSubmit || loading) return 
             setError(false)
             setLoading(true)
+
+            const landUseEnum = LandUse.find(lu => lu.name === landData.landUse)?.enum
+
             await landRegisterContract.connect(account)
             await landRegisterContract.register_land(
                 { latitude:landData.latitude, longitude:landData.longitude }, 
-                landData.area, 
-                LandUse[landData.landUse as any].enum
+                num.toBigInt(landData.area as number),
+                landUseEnum
             )
             setLoading(false)
             onClose()
@@ -99,6 +104,40 @@ const RegisterLandModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     }
   }
 
+  const handleEdit = async() => {
+    try {
+        if(!editData) return 
+        if(!enableSubmit || loading) return 
+            setError(false)
+            setLoading(true)
+
+            const landUseEnum = LandUse.find(lu => lu.name === landData.landUse)?.enum
+
+            await landRegisterContract.connect(account)
+            await landRegisterContract.update_land(
+                // BigInt(Number(editData.landId)),
+                // 3118524527604867874092514350617097858360981349098473208613993420402049833675,
+                num.toBigInt(Number(editData.landId)),
+                num.toBigInt(landData.area as number), 
+                landUseEnum,
+            )
+            setLoading(false)
+            onClose()
+    } catch (error) {
+        console.log("error ->", error)
+        setLoading(false)
+        setError(true)
+    }
+  }
+  
+  // Check validity of inputs to enable CREATE_SAVE button
+  useEffect(()=>{
+    const { landUse, ...landDataToEvaluate } = landData // landUse is allowed to be 0 and always will have a value. So we exclude it 
+    const enable = Object.values(landDataToEvaluate).every(item => item)
+    setEnableSubmit(enable)
+    setError(false)
+  }, [landData])
+
   // Reset states when close 
   useEffect(()=>{
     if(!isOpen) {
@@ -106,7 +145,18 @@ const RegisterLandModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             area: 0,
             latitude: 0,
             longitude: 0,
-            landUse: 0
+            landUse: "Commercial"
+        })
+        setError(false)
+        setLoading(false)
+    }
+  },[isOpen])
+
+  // set land data 
+  useEffect(()=>{
+    if(isOpen && editData) {
+        setLandData({
+          ...editData  
         })
         setError(false)
         setLoading(false)
@@ -139,8 +189,15 @@ const RegisterLandModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                     </div>
                 </div>
             </div>
-            <p className="text-xl font-semibold text-center mt-5">Register New Land</p>
-            <p className="text-center text-gray-500">Please enter all details to register your land</p>
+            {
+              mode == "create" && <p className="text-xl font-semibold text-center mt-5">Register New Land</p>
+            }
+            {
+              mode == "edit" && <p className="text-xl font-semibold text-center mt-5">Edit Land Registry</p>
+            }
+            {
+              mode == "create" && <p className="text-center text-gray-500">Please enter all details to register your land</p> 
+            }
             {/* FORM  */}
             <div>
                 <div className="mt-4">
@@ -161,7 +218,7 @@ const RegisterLandModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
                     {
                         LandUse.map((landUse, index) => {
                         return (
-                            <option value={index} key={"unique-land-item-ddfa"+index}>
+                            <option value={landUse.name} key={"unique-land-item-ddfa"+index}>
                             { landUse.name }
                             </option>
                         )
@@ -173,7 +230,12 @@ const RegisterLandModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
 
                 <div className="flex justify-between items-center gap-5 mt-7">
                     <div onClick={() => !loading && onClose()} className="cursor-pointer flex-1 px-5 py-1 text-gray-400 border-gray-300 border rounded-lg"><p className="text-center">Cancel</p></div>
-                    <div onClick={handleSubmit} className={`cursor-pointer flex-1 px-5 py-1 text-white border-transparent ${enableSubmit?"bg-[#7369e0]":"bg-[#E0E0E0]"} border-2 rounded-lg`}><p className="text-center">Submit</p></div>
+                    {
+                      mode === "create" && <div onClick={handleSubmit} className={`cursor-pointer flex-1 px-5 py-1 text-white border-transparent ${enableSubmit?"bg-[#7369e0]":"bg-[#E0E0E0]"} border-2 rounded-lg`}><p className="text-center">Submit</p></div>
+                    }
+                    {
+                      mode === "edit" && <div onClick={handleEdit} className={`cursor-pointer flex-1 px-5 py-1 text-white border-transparent ${enableSubmit?"bg-[#7369e0]":"bg-[#E0E0E0]"} border-2 rounded-lg`}><p className="text-center">Save</p></div>
+                    }
                 </div>
 
                 {

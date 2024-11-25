@@ -19,7 +19,7 @@ export const Header = ({ title, hasCreateButton }:{ title:string, hasCreateButto
             )
         }
       </div>
-      <RegisterLandModal isOpen={showRegisterLandModal} onClose={()=>setShowRegisterLandModal(false)} />
+      <RegisterLandModal mode="create" isOpen={showRegisterLandModal} onClose={()=>setShowRegisterLandModal(false)} />
     </>
   );
 }

@@ -9,6 +9,7 @@ import { RangeCalendar } from "@/components/calendar/RangeCalendar";
 import { useAccount } from "@starknet-react/core";
 import { useLandverContract } from "@/hooks/useLandverContract";
 import { shortAddress } from "@/utils/AddressFormat";
+import RegisterLandModal from "@/components/RegisterLandModal";
 
 type ValuePiece = Date | null;
 type Value = [ValuePiece, ValuePiece];
@@ -43,6 +44,16 @@ function formatTimestampToDate(timestamp:number) {
   return `${day}/${month}/${year}`;
 }
 
+
+interface LandData {
+  landId?: string, 
+  area: number|null,
+  landUse: string,
+  latitude: number|null,
+  longitude: number|null
+}
+
+
 export default function MyCollectionsClientView() {
 
   const { address } = useAccount() 
@@ -55,6 +66,7 @@ export default function MyCollectionsClientView() {
     bought:0,
     unapproved:0
   })
+  const [editData, setEditData] = useState<null|LandData>(null)
 
   const [indexToShowOptions, setIndexToShowOptions] = useState<null|number>(null)
   const [showStatusFilters, setShowStatusFilters] = useState(false)
@@ -85,6 +97,7 @@ export default function MyCollectionsClientView() {
             for await (const address of addresses) {
                 const land = await landRegisterContract.get_land(address)
                 const landStatus = Object.entries(land.status.variant).find(entry => entry[1])
+                const landUse = Object.entries(land.land_use.variant).find(entry => entry[1])
 
                 newLandsCount.total += 1
                 if(landStatus && landStatus[0]==="Bought") newLandsCount.bought += 1
@@ -93,9 +106,13 @@ export default function MyCollectionsClientView() {
 
                 newLands.push({ 
                   number:index+1, 
-                  id:shortAddress(Number(address).toString()), 
+                  id:address, 
                   buyerOrLandName: "",
+                  latitude: land.location.latitude,
+                  logitude: land.location.longitude,
                   price: null,
+                  area:land.area,
+                  landUse:landUse ? landUse[0] : "",
                   date: formatTimestampToDate(Number(land.last_transaction_timestamp)),
                   status: landStatus ? landStatus[0] : "",
                   inspector_sliced:`${land.inspector}`.slice(0,4) + "..." + `${land.inspector}`.slice(-4), 
@@ -184,7 +201,7 @@ export default function MyCollectionsClientView() {
                           </div>
                           <div className="flex-1 flex gap-1">
                             <p className="2xl:hidden">Land ID: </p>
-                            <p>{ item.id }</p>
+                            <p>{ shortAddress(Number(item.id).toString()) }</p>
                           </div>
                           <div className="flex-1 flex gap-2 items-center">
                             {
@@ -215,13 +232,13 @@ export default function MyCollectionsClientView() {
                             <div className="relative cursor-pointer" onClick={()=>setIndexToShowOptions((indexToShowOptions===null || indexToShowOptions!==index) ? index : null)}>
                               <Image className="hidden 2xl:block" src={"/icons/common/options.svg"} alt="ether" width={5} height={5} />
                               <div className="origin-top-right transition-all absolute right-0 top-[105%] bg-white shadow-md shadow-gray-400 rounded-xl px-3 py-2" style={{ transform:`scale(${indexToShowOptions===index?"1":"0"})`, zIndex:10000 }}>
-                                <p className="cursor-pointer font-normal text-gray-500">Edit</p>
+                                <p onClick={()=>setEditData({ area:item.area, landId:item.id, landUse:item.landUse, latitude:item.latitude, longitude:item.logitude })} className="cursor-pointer font-normal text-gray-500">Edit</p>
                                 <p className="cursor-pointer font-normal text-gray-500">View</p>
                                 <p className="cursor-pointer font-normal text-red-500">Delete</p>
                               </div>
                             </div>
                             <p className="2xl:hidden">Actions: </p>
-                            <p className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">Edit</p>
+                            <p onClick={()=>setEditData({ area:item.area, landId:item.id, landUse:item.landUse, latitude:item.latitude, longitude:item.logitude })} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">Edit</p>
                             <p className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">View</p>
                             <p className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-red-500">Delete</p>
                           </div>
@@ -235,7 +252,11 @@ export default function MyCollectionsClientView() {
             </div>
 
           </div>
-        </div>        
+        </div>    
+
+        
+        <RegisterLandModal isOpen={!!editData} onClose={()=>setEditData(null)} mode="edit" editData={editData ?? undefined} />
+
     </div>
   );
 }
