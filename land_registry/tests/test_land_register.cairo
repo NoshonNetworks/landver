@@ -857,22 +857,13 @@ fn test_get_user_type() {
     stop_cheat_caller_address(contract_address);
 
     let owner_type = land_register_dispatcher.get_user_type(owner_address);
-    assert(
-        owner_type == 'owner',
-        'Expect Owner'
-    );
+    assert(owner_type == 'owner', 'Expect Owner');
 
     let inspector_type = land_register_dispatcher.get_user_type(inspector_address);
-    assert(
-        inspector_type == 'inspector',
-        'Expect Inspector'
-    );
+    assert(inspector_type == 'inspector', 'Expect Inspector');
 
     // Check a non-existent user
     let non_existent_address = starknet::contract_address_const::<0x789>();
     let non_user_type = land_register_dispatcher.get_user_type(non_existent_address);
-    assert(
-        non_user_type == 'None',
-        'Expecte None'
-    );
+    assert(non_user_type == 'None', 'Expecte None');
 }

@@ -180,27 +180,21 @@ pub mod LandRegistryContract {
 
             land_id
         }
-        fn get_user_type(self: @ContractState, userAddress: ContractAddress)-> felt252 { 
-      
-        let inspector = self.registered_inspectors.read(userAddress);
-      
-        let owner = self.owner_land_count.read(userAddress);
-        let inspector_role = 'inspector';
-        let owner_role = 'owner';
+        fn get_user_type(self: @ContractState, userAddress: ContractAddress) -> felt252 {
+            let inspector = self.registered_inspectors.read(userAddress);
 
-        if inspector {
+            let owner = self.owner_land_count.read(userAddress);
+            let inspector_role = 'inspector';
+            let owner_role = 'owner';
 
-            return inspector_role;
+            if inspector {
+                return inspector_role;
+            } else if (owner > 0) {
+                return owner_role;
+            } else {
+                return 'None';
+            }
         }
-        else if (owner>0)
-        {
-            return owner_role;
-        }
-        else{
-            return 'None';
-        }
-
-    }
 
         fn get_land(self: @ContractState, land_id: u256) -> Land {
             self.lands.read(land_id)
@@ -639,7 +633,4 @@ pub mod LandRegistryContract {
 
         return false;
     }
-
-
-    
 }
