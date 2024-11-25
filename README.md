@@ -1,10 +1,10 @@
 # LandVer - Land Verification System
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-15-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-15-orange.svg?style=flat-square)](https://github.com/NoshonNetworks/landver/graphs/contributors)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-LandVer is a decentralized land registration and verification protocol, utilizing blockchain technology to provide a secure, transparent, and immutable system for managing land records. The protocol facilitates land transactions and ownership verification across multiple blockchains, beginning with StarkNet.
+[LandVer](https://landver.vercel.app/) is a decentralized land registration and verification protocol, utilizing blockchain technology to provide a secure, transparent, and immutable system for managing land records. The protocol facilitates land transactions and ownership verification across multiple blockchains, beginning with StarkNet.
 
 While initially built on StarkNet, LandVer is designed to be cross-chain compatible, allowing land transactions and records to be securely managed across multiple blockchains. LandVer is one of the many products of Noshon Networks, which aims to bring innovation to the world of real estate.
 
