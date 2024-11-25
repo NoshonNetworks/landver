@@ -180,6 +180,21 @@ pub mod LandRegistryContract {
 
             land_id
         }
+        fn get_user_type(self: @ContractState, userAddress: ContractAddress) -> felt252 {
+            let inspector = self.registered_inspectors.read(userAddress);
+
+            let owner = self.owner_land_count.read(userAddress);
+            let inspector_role = 'inspector';
+            let owner_role = 'owner';
+
+            if inspector {
+                return inspector_role;
+            } else if (owner > 0) {
+                return owner_role;
+            } else {
+                return 'None';
+            }
+        }
 
         fn get_land(self: @ContractState, land_id: u256) -> Land {
             self.lands.read(land_id)
@@ -607,5 +622,15 @@ pub mod LandRegistryContract {
                 i += 1;
             }
         }
+    }
+
+    fn is_inspector(self: @ContractState, inspector: ContractAddress) -> bool {
+        let count = self.lands_assigned_to_inspector.read(inspector);
+
+        if count > 0 {
+            return true;
+        }
+
+        return false;
     }
 }
