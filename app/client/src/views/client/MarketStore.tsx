@@ -10,19 +10,13 @@ import { Button } from "@/components/Button/Button";
 import { MarketCard } from "@/components/Card/MarketCard";
 import { DropdownMenu } from "@/components/DropdownMenu/DropdownMenu";
 
+import { formatDate } from "@/utils/dates";
+
+
 type ValuePiece = Date | null;
 type Value = [ValuePiece, ValuePiece];
 
-function formatDate(date:Date){
-  const monthNames = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-  ];
-  const monthIndex = date.getMonth()
-  const dayIndex = date.getDate()
 
-  return `${monthNames[monthIndex]} ${dayIndex}`
-}
 
 export default function MarketStoreClientView() {
   const router = useRouter()

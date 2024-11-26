@@ -2,22 +2,12 @@
 import React, { useState } from "react";
 import type { Connector as StarknetConnector } from "@starknet-react/core";
 import { useConnect, useDisconnect, useAccount } from "@starknet-react/core";
-import { X } from "lucide-react";
-import Modal from "./Modal/Modal";
 import {Button} from "@/components/Button/Button";
 import { WalletConnectorModal } from "@/components/WalletConnectModal"
 
 
-const walletIdToName = new Map([
-  ["argentX", "Argent X"],
-  ["braavos", "Braavos"],
-  ["argentWebWallet", "Email"],
-  ["argentMobile", "Argent mobile"],
-]);
+import type { WalletConnectorProps } from "@/types/interfaces";
 
-interface WalletConnectorProps {
-  onLoginSuccess?: () => void;
-}
 
 export default function WalletConnector({
   onLoginSuccess,

@@ -6,10 +6,7 @@ import { useLandverContract } from "@/hooks/useLandverContract";
 import Image from "next/image";
 import FadeLoader from "react-spinners/FadeLoader";
 
-interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+import type { ModalProps } from "@/types/interfaces";
 
 const DeleteLandModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
     const { account } = useAccount()

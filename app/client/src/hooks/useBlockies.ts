@@ -1,9 +1,7 @@
 import { useMemo } from "react";
 import * as blockies from "blockies-ts";
 
-interface UseBlockiesParams {
-  address: string | undefined;
-}
+import type { UseBlockiesParams } from "@/types/interfaces";
 
 export function useBlockies({ address }: UseBlockiesParams) {
   const blockiesImageSrc = useMemo(() => {

@@ -1,10 +1,5 @@
 import React from 'react'
-import { Button } from '../Button/Button'
-import { useRouter } from 'next/navigation'
-
-interface TagProps {
-  variant: 'approved'|'unapproved'|'pending'|"rejected"|"bought"
-}
+import type { TagProps } from '@/types/interfaces'
 
 function Tag({ variant }:TagProps) {
 

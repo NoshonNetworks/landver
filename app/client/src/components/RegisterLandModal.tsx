@@ -41,23 +41,11 @@ const LandUse = [
     },
   ] 
 
-interface ModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  mode: "create"|"edit";
-  editData?: LandData
-}
 
-interface LandData {
-    landId?: string, 
-    area: number|null,
-    landUse: string,
-    latitude: number|null,
-    longitude: number|null
-}
+import type { RegisterLandModalProps, LandData } from "@/types/interfaces"
 
 
-const RegisterLandModal: React.FC<ModalProps> = ({ isOpen, onClose, mode, editData }) => {
+const RegisterLandModal: React.FC<RegisterLandModalProps> = ({ isOpen, onClose, mode, editData }) => {
     const { account } = useAccount()
     const { contract:landRegisterContract } = useLandverContract({ name:"landRegister" })
     const [enableSubmit, setEnableSubmit] = useState(false)

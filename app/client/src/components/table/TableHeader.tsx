@@ -1,14 +1,6 @@
 import React from 'react'
+import type { TableHeaderProps } from '@/types/interfaces'
 
-interface HeaderItem {
-  label:string,
-  alignText?:'left'|'center'|'right',
-  fixedWidth?: number
-} 
-
-interface TableHeaderProps {
-  items:HeaderItem[]
-}
 
 const ALIGN_TEXT = {
   "center":'text-center',

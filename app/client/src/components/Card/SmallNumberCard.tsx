@@ -1,11 +1,7 @@
 import React from 'react'
 import Image from 'next/image'
 
-interface SmallNumberCardProps {
-    iconColor:'blue'|'yellow'|'orange'|'purple'|'green', 
-    title:string, 
-    subtitle:string
-}
+import type { SmallNumberCardProps } from '@/types/interfaces'
 
 function SmallNumberCard({ iconColor, title, subtitle }:SmallNumberCardProps) {
     const iconBgColors = {

@@ -1,14 +1,6 @@
 import React from "react";
 
-interface ButtonProps extends React.PropsWithChildren {
-  classname?: string;
-  variant?: "default" | "error" | "success" | "gray" | "white" | "whiteWithBorder";
-  size?: "small" | "medium" | "large" | "full";
-  type?: "button" | "submit" | "reset";
-  disabled?: boolean;
-  onClick?: () => void;
-  "aria-label"?: string;
-}
+import type { ButtonProps } from "@/types/interfaces";
 
 const Button: React.FC<ButtonProps> = ({
   children,

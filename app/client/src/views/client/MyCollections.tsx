@@ -18,6 +18,10 @@ import { TableHeader } from "@/components/table/TableHeader";
 import { TableRow } from "@/components/table/TableRow";
 import { DropdownMenu } from "@/components/DropdownMenu/DropdownMenu";
 import { SmallNumberCard } from "@/components/Card/SmallNumberCard";
+import { formatDate } from "@/utils/dates";
+
+
+import type { LandData } from "@/types/interfaces";
 
 type ValuePiece = Date | null;
 type Value = [ValuePiece, ValuePiece];
@@ -29,16 +33,7 @@ interface LandsCount {
   unapproved:number
 } 
 
-function formatDate(date:Date){
-  const monthNames = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-  ];
-  const monthIndex = date.getMonth()
-  const dayIndex = date.getDate()
 
-  return `${monthNames[monthIndex]} ${dayIndex}`
-}
 
 function formatTimestampToDate(timestamp:number) {
   const date = new Date(timestamp * 1000); // Convert seconds to milliseconds
@@ -53,13 +48,6 @@ function formatTimestampToDate(timestamp:number) {
 }
 
 
-interface LandData {
-  landId?: string, 
-  area: number|null,
-  landUse: string,
-  latitude: number|null,
-  longitude: number|null
-}
 
 
 export default function MyCollectionsClientView() {

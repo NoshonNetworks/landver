@@ -17,50 +17,12 @@ import { Tag } from "@/components/Tag/Tag";
 import { TableHeader } from "@/components/table/TableHeader";
 import { TableRow } from "@/components/table/TableRow";
 import { DropdownMenu } from "@/components/DropdownMenu/DropdownMenu";
-import { SmallNumberCard } from "@/components/Card/SmallNumberCard";
+import type { LandData } from "@/types/interfaces";
+
+import { formatTimestampToDate } from "@/utils/dates";
 
 type ValuePiece = Date | null;
 type Value = [ValuePiece, ValuePiece];
-
-interface LandsCount {
-  total: number, 
-  registered: number,
-  bought:number,
-  unapproved:number
-} 
-
-function formatDate(date:Date){
-  const monthNames = [
-    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-  ];
-  const monthIndex = date.getMonth()
-  const dayIndex = date.getDate()
-
-  return `${monthNames[monthIndex]} ${dayIndex}`
-}
-
-function formatTimestampToDate(timestamp:number) {
-  const date = new Date(timestamp * 1000); // Convert seconds to milliseconds
-
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2,   
- '0');
-  const year = date.getFullYear().toString().slice(-2);   
- // Get the last two digits of the year
-
-  return `${day}/${month}/${year}`;
-}
-
-
-interface LandData {
-  landId?: string, 
-  area: number|null,
-  landUse: string,
-  latitude: number|null,
-  longitude: number|null
-}
-
 
 export function VerifyLandInspectorView() {
 
@@ -78,9 +40,6 @@ export function VerifyLandInspectorView() {
   const [dateRange, setDateRange] = useState<Value>([new Date(),new Date()]);
   const [showDateRangeCalendar, setShowDateRangeCalendar] = useState(false)
   const [showDeleteLandModal, setShowDeleteLandModal] = useState(false)
-
-  const startDate = (dateRange && dateRange[0]) ? formatDate(dateRange[0]) : null
-  const endDate = (dateRange && dateRange[1]) ? formatDate(dateRange[1]) : null
 
   useEffect(()=>{
     setShowDateRangeCalendar(false)

@@ -1,23 +1,6 @@
 import React from 'react'
 
-interface HeaderItem {
-  label:string,
-  alignText?:'left'|'center'|'right',
-  fixedWidth?: number
-} 
-
-
-interface RowItem {
-  value?:string|number,
-  alignText?:'left'|'center'|'right',
-  fixedWidth?: number, 
-  customjsx?: ()=>React.ReactNode
-} 
-
-interface TableRowProps {
-  items:RowItem[], 
-  headers: string[]
-}
+import type { TableRowProps } from '@/types/interfaces'
 
 const ALIGN_TEXT = {
   "center":'text-center',

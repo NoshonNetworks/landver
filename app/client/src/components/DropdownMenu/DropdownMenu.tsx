@@ -1,16 +1,6 @@
 import React from 'react'
 
-interface DropdownMenuItems {
-  label:string,
-  action: () => void,
-  variant?: 'base'|'danger',
-}
-
-interface DropdownMenuProps {
-  position:"bottom-left"|"top-left"|'bottom-right'|"top-right"|"bottom",
-  items: DropdownMenuItems[],
-  show:boolean
-}
+import type { DropdownMenuItems, DropdownMenuProps } from '@/types/interfaces'
 
 const POSITIONS = {
   "bottom-left": "left-0 top-[105%] origin-top-left",

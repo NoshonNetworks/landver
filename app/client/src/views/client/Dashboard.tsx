@@ -14,9 +14,7 @@ import { shortAddress } from "@/utils/AddressFormat";
 import { TableHeader } from "@/components/table/TableHeader";
 import { TableRow } from "@/components/table/TableRow";
 
-interface DynamicObject {
-  [key: string]: string; // Allows any string as a key
-}
+import type { DynamicObject } from "@/types/interfaces";
 
 const EVENTS_KEY_LABEL:DynamicObject = {
   'LandRegistered':"Land Registered",
