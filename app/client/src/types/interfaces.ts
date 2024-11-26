@@ -83,9 +83,26 @@ export interface TagProps {
   }
 
   export interface UseLandverContractParams {
-    name:"landRegister"
+    name:"landRegister",
   }
 
   export interface DynamicObject {
     [key: string]: string; // Allows any string as a key
   }
+
+  export interface Events {
+    eventKey:string, 
+    eventName:string, 
+    rawEvent: any, parsedEvent:any
+  }
+
+  export interface eventFilters {
+    events: string[] // list with the names of the events to search for
+  }
+
+  export interface UseEventsParams {
+    name:"landRegister",
+    triggerRefetch:any[],
+    filters?: eventFilters
+  }
+  

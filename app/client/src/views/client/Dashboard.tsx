@@ -8,13 +8,13 @@ import { useLandverContract } from "@/hooks/useLandverContract";
 import { useBlockies } from "@/hooks/useBlockies";
 import Image from "next/image";
 
-import { events, RpcProvider, hash, CallData, num } from 'starknet';
 import { SectionHeader } from "@/components/Headers/SectionHeader";
 import { shortAddress } from "@/utils/AddressFormat";
 import { TableHeader } from "@/components/table/TableHeader";
 import { TableRow } from "@/components/table/TableRow";
 
 import type { DynamicObject } from "@/types/interfaces";
+import { useEvents } from "@/hooks/useEvents";
 
 const EVENTS_KEY_LABEL:DynamicObject = {
   'LandRegistered':"Land Registered",
@@ -37,15 +37,32 @@ export function DashboardClientView() {
     address: address,
   });
 
-  // const { data:blockNumber } = useBlockNumber()
-
   const balance = balanceData?.formatted?.slice(0,4) || ""
 
   const { contract:landRegisterContract, abi:landRegisterABI } = useLandverContract({ name:"landRegister" })
   const [landsOwned, setLandsOwned] = useState<number|null>(null)
   const [landsAddresses, setLandsAdresses] = useState<string[]|null>(null)
-  const [recentEvents, setRecentEvents] = useState<{ eventKey:string, eventName:string, rawEvent: any, parsedEvent:any }[]>([])
-  // console.log(landRegisterContract)
+  const { events: recentEvents } = useEvents({
+    name:"landRegister",
+    triggerRefetch:[address],
+    filters: {
+      events: [
+        'LandRegistered',
+        'LandTransfered',
+        'LandVerified',
+        'LandUpdated',
+        'LandInspectorSet',
+        'InspectorAdded',
+        'InspectorRemoved',
+        'InspectorRemoved',
+        'ListingCreated',
+        'ListingCancelled',
+        'ListingPriceUpdated',
+        'LandSold',
+        ]
+    }
+  })
+  console.log(recentEvents)
 
   useEffect(()=>{
     (async()=>{
@@ -55,70 +72,6 @@ export function DashboardClientView() {
           setLandsOwned(result.length)
           setLandsAdresses(result)
         }
-      } catch (error) {
-        console.log(error)
-      }
-    })()
-  }, [address])
-
-  useEffect(()=>{
-    (async()=>{
-      try {
-        const provider = new RpcProvider({ });
-        const keyFilter = [
-          [
-            num.toHex(hash.starknetKeccak('LandRegistered')), 
-            num.toHex(hash.starknetKeccak('LandTransfered')),
-            num.toHex(hash.starknetKeccak('LandVerified')),
-            num.toHex(hash.starknetKeccak('LandUpdated')),
-            num.toHex(hash.starknetKeccak('LandInspectorSet')),
-            num.toHex(hash.starknetKeccak('InspectorAdded')),
-            num.toHex(hash.starknetKeccak('InspectorRemoved')),
-            num.toHex(hash.starknetKeccak('InspectorRemoved')),
-            num.toHex(hash.starknetKeccak('ListingCreated')),
-            num.toHex(hash.starknetKeccak('ListingCancelled')),
-            num.toHex(hash.starknetKeccak('ListingPriceUpdated')),
-            num.toHex(hash.starknetKeccak('LandSold')),
-          ],
-        ];
-
-        const eventsRes = await provider.getEvents({
-          address: "0x5a4054a1b1389dcd48b650637977280d32f1ad8b3027bc6c7eb606bf7e28bf5",
-          keys: keyFilter,
-          chunk_size: 30,
-        });
-
-        // parsing event
-        const abiEvents = events.getAbiEvents(landRegisterABI);
-        const abiStructs = CallData.getAbiStruct(landRegisterABI);
-        const abiEnums = CallData.getAbiEnum(landRegisterABI);
-        const parsed = events.parseEvents(eventsRes.events, abiEvents, abiStructs, abiEnums);
-        
-        const formattedEvents:{ 
-          eventKey:string,
-          eventName:string,
-          rawEvent: any, 
-          parsedEvent:any
-        }[] = []
-
-        for (let i = 0; i <eventsRes.events.length; i++) {
-          const rawEvent = eventsRes.events[i]
-          const parsedEvent = parsed[i]
-
-          const fullKeys = Object.keys(parsedEvent)[0].split("::");
-          const eventName = fullKeys[fullKeys.length - 1]
-
-
-          formattedEvents.push({
-            eventKey:Object.keys(parsedEvent)[0],
-            eventName,
-            rawEvent, 
-            parsedEvent
-          })
-        }
-
-        setRecentEvents(formattedEvents)
-
       } catch (error) {
         console.log(error)
       }
