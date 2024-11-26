@@ -7,7 +7,7 @@ use starknet::ContractAddress;
 use land_registry::interface::land_register::{
     ILandRegistryDispatcher, ILandRegistryDispatcherTrait
 };
-use land_registry::interface::land_register::{LandUse, Location, LandStatus};
+use land_registry::interface::land_register::{LandUse, Location, LandStatus, ListingStatus};
 
 pub mod Accounts {
     use starknet::ContractAddress;
@@ -25,11 +25,9 @@ pub mod Accounts {
 fn deploy(name: ByteArray) -> ContractAddress {
     let nft_class_hash = declare("LandNFT").unwrap().contract_class();
     let nft_contract_class_hash = nft_class_hash.class_hash;
-    let initial_fee_rate: u128 = 1;
     let land_registry_contract = declare(name).unwrap().contract_class();
     let mut call_data = ArrayTrait::<felt252>::new();
     nft_contract_class_hash.serialize(ref call_data);
-    initial_fee_rate.serialize(ref call_data);
     let (contract_address, _) = land_registry_contract.deploy(@call_data).unwrap();
     contract_address
 }
@@ -854,4 +852,178 @@ fn test_upgradability_should_fail_if_not_owner_tries_to_update() {
     let new_class_hash = declare("LandRegistryContract").unwrap().contract_class().class_hash;
     start_cheat_caller_address(contract_address, starknet::contract_address_const::<0x123>());
     land_register_dispatcher.upgrade(*new_class_hash);
+}
+
+#[test]
+fn test_get_user_type() {
+    let contract_address = deploy("LandRegistryContract");
+    // Get an instance of the deployed Counter contract
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    start_cheat_max_fee(contract_address, 10000000000000000000);
+
+    // Set up test data
+    let owner_address = starknet::contract_address_const::<0x123>();
+    let inspector_address = starknet::contract_address_const::<0x456>();
+    let location: Location = Location { latitude: 1, longitude: 2 };
+    let area: u256 = 1000;
+    let land_use = LandUse::Residential;
+
+    // Step 1: Register land with owner_address
+    start_cheat_caller_address(contract_address, owner_address);
+    land_register_dispatcher.register_land(location, area, land_use);
+    stop_cheat_caller_address(contract_address);
+
+    // Step 2: Set inspector for the land
+    start_cheat_caller_address(contract_address, owner_address);
+
+    land_register_dispatcher.add_inspector(inspector_address);
+    stop_cheat_caller_address(contract_address);
+
+    let owner_type = land_register_dispatcher.get_user_type(owner_address);
+    assert(owner_type == 'owner', 'Expect Owner');
+
+    let inspector_type = land_register_dispatcher.get_user_type(inspector_address);
+    assert(inspector_type == 'inspector', 'Expect Inspector');
+
+    // Check a non-existent user
+    let non_existent_address = starknet::contract_address_const::<0x789>();
+    let non_user_type = land_register_dispatcher.get_user_type(non_existent_address);
+    assert(non_user_type == 'None', 'Expecte None');
+}
+
+#[test]
+fn test_can_get_listing() {
+    let contract_address = deploy("LandRegistryContract");
+
+    // Instance of LandRegistryContract
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    start_cheat_max_fee(contract_address, 10000000000000000000);
+
+    // Set up test data
+    let owner_address = starknet::contract_address_const::<0x123>();
+    let inspector_address = starknet::contract_address_const::<0x456>();
+    let location: Location = Location { latitude: 12, longitude: 34 };
+    let area: u256 = 1234;
+    let land_use: LandUse = LandUse::Commercial;
+
+    // Start cheat caller address
+    start_cheat_caller_address(contract_address, owner_address);
+    // Register the land
+    let land_id = land_register_dispatcher.register_land(location, area, land_use);
+    stop_cheat_caller_address(contract_address);
+
+    // Set inspector as owner
+    start_cheat_caller_address(contract_address, owner_address);
+    land_register_dispatcher.set_land_inspector(land_id, inspector_address);
+    stop_cheat_caller_address(contract_address);
+
+    // Approve the land
+    start_cheat_caller_address(contract_address, inspector_address);
+    land_register_dispatcher.approve_land(land_id);
+    stop_cheat_caller_address(contract_address);
+
+    // Create listing
+    start_cheat_caller_address(contract_address, owner_address);
+    let listing_price: u256 = 100000;
+    let listing_id = land_register_dispatcher.create_listing(land_id, listing_price);
+    stop_cheat_caller_address(contract_address);
+
+    // Retrieve the listing
+    start_cheat_caller_address(contract_address, owner_address);
+    let retrieved_listing = land_register_dispatcher.get_listing(listing_id);
+    stop_cheat_caller_address(contract_address);
+
+    // Assert retrieved listing details
+    assert(retrieved_listing.land_id == land_id, 'Incorrect land ID');
+    assert(retrieved_listing.seller == owner_address, 'Incorrect seller address');
+    assert(retrieved_listing.price == listing_price, 'Incorrect listing price');
+    assert(retrieved_listing.status == ListingStatus::Active, 'Incorrect listing status');
+
+    stop_cheat_caller_address(contract_address);
+}
+
+#[test]
+fn test_can_get_active_listings() {
+    let contract_address = deploy("LandRegistryContract");
+
+    // Instance of LandRegistryContract
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    start_cheat_max_fee(contract_address, 10000000000000000000);
+
+    // Set up test data
+    let owner_address = starknet::contract_address_const::<0x123>();
+    let inspector_address = starknet::contract_address_const::<0x456>();
+
+    // Register first land
+    let location1: Location = Location { latitude: 12, longitude: 34 };
+    let area1: u256 = 1234;
+    let land_use1: LandUse = LandUse::Commercial;
+
+    // Start cheat caller address for first land
+    start_cheat_caller_address(contract_address, owner_address);
+    let land_id1 = land_register_dispatcher.register_land(location1, area1, land_use1);
+    stop_cheat_caller_address(contract_address);
+
+    // Register second land
+    let location2: Location = Location { latitude: 45, longitude: 67 };
+    let area2: u256 = 5678;
+    let land_use2: LandUse = LandUse::Residential;
+
+    start_cheat_caller_address(contract_address, owner_address);
+    let land_id2 = land_register_dispatcher.register_land(location2, area2, land_use2);
+    stop_cheat_caller_address(contract_address);
+
+    // Set inspector for both lands
+    start_cheat_caller_address(contract_address, owner_address);
+    land_register_dispatcher.set_land_inspector(land_id1, inspector_address);
+    land_register_dispatcher.set_land_inspector(land_id2, inspector_address);
+    stop_cheat_caller_address(contract_address);
+
+    // Approve both lands
+    start_cheat_caller_address(contract_address, inspector_address);
+    land_register_dispatcher.approve_land(land_id1);
+    land_register_dispatcher.approve_land(land_id2);
+    stop_cheat_caller_address(contract_address);
+
+    // Create listings
+    start_cheat_caller_address(contract_address, owner_address);
+    let listing_price1: u256 = 100000;
+    let listing_id1 = land_register_dispatcher.create_listing(land_id1, listing_price1);
+
+    let listing_price2: u256 = 200000;
+    let listing_id2 = land_register_dispatcher.create_listing(land_id2, listing_price2);
+    stop_cheat_caller_address(contract_address);
+
+    // Get active listings
+    start_cheat_caller_address(contract_address, owner_address);
+    let active_listings = land_register_dispatcher.get_active_listings();
+    stop_cheat_caller_address(contract_address);
+
+    // Assert number of listings
+    assert(active_listings.len().into() == 2, 'Incorrect listings');
+
+    // Assert listing matching IDs
+    assert(active_listings.at(0).try_into().unwrap() == @listing_id1, 'First ID incorrect');
+    assert(active_listings.at(1).try_into().unwrap() == @listing_id2, 'Second ID incorrect');
+
+    // Get and verify each listing details
+    let retrieved_listing1 = land_register_dispatcher.get_listing(listing_id1);
+    let retrieved_listing2 = land_register_dispatcher.get_listing(listing_id2);
+
+    // Assert first listing details
+    assert(retrieved_listing1.land_id == land_id1, 'Incorrect land ID 1');
+    assert(retrieved_listing1.seller == owner_address, 'Incorrect seller 1');
+    assert(retrieved_listing1.price == listing_price1, 'Incorrect price 1');
+    assert(retrieved_listing1.status == ListingStatus::Active, 'Incorrect status 1');
+
+    // Assert second listing details
+    assert(retrieved_listing2.land_id == land_id2, 'Incorrect land ID 2');
+    assert(retrieved_listing2.seller == owner_address, 'Incorrect seller 2');
+    assert(retrieved_listing2.price == listing_price2, 'Incorrect price 2');
+    assert(retrieved_listing2.status == ListingStatus::Active, 'Incorrect status 2');
+
+    stop_cheat_caller_address(contract_address);
 }

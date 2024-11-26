@@ -17,7 +17,6 @@ mod Errors {
     const REGISTERED_INSPECTOR: felt252 = 'Inspector already registered';
     const NOT_REGISTERED_INSP: felt252 = 'Inspector not registered';
     const ACTIVE_INSPECTOR: felt252 = 'Inspector is active';
-    const INSUFFICIENT_PAYMENT: felt252 = 'Insufficient registration fee';
     const NOT_AUTHORIZED: felt252 = 'Not authorized';
     const ADDRESS_ZERO: felt252 = 'ADDRESS_ZERO';
     const LAND_NOT_LISTED: felt252 = 'Land not listed';
