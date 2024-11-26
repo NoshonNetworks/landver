@@ -10,6 +10,9 @@ import { useAccount } from "@starknet-react/core";
 import { useLandverContract } from "@/hooks/useLandverContract";
 import { shortAddress } from "@/utils/AddressFormat";
 import RegisterLandModal from "@/components/RegisterLandModal";
+import DeleteLandModal from "@/components/DeleteLandModal";
+
+import { useRouter } from "next/navigation";
 
 type ValuePiece = Date | null;
 type Value = [ValuePiece, ValuePiece];
@@ -56,6 +59,8 @@ interface LandData {
 
 export default function MyCollectionsClientView() {
 
+  const router = useRouter()
+
   const { address } = useAccount() 
   const { contract:landRegisterContract } = useLandverContract({ name:"landRegister" })
   
@@ -72,6 +77,7 @@ export default function MyCollectionsClientView() {
   const [showStatusFilters, setShowStatusFilters] = useState(false)
   const [dateRange, setDateRange] = useState<Value>([new Date(),new Date()]);
   const [showDateRangeCalendar, setShowDateRangeCalendar] = useState(false)
+  const [showDeleteLandModal, setShowDeleteLandModal] = useState(false)
 
   const startDate = (dateRange && dateRange[0]) ? formatDate(dateRange[0]) : null
   const endDate = (dateRange && dateRange[1]) ? formatDate(dateRange[1]) : null
@@ -231,16 +237,43 @@ export default function MyCollectionsClientView() {
                           <div className="flex-1 flex 2xl:justify-center gap-2 items-center relative">
                             <div className="relative cursor-pointer" onClick={()=>setIndexToShowOptions((indexToShowOptions===null || indexToShowOptions!==index) ? index : null)}>
                               <Image className="hidden 2xl:block" src={"/icons/common/options.svg"} alt="ether" width={5} height={5} />
-                              <div className="origin-top-right transition-all absolute right-0 top-[105%] bg-white shadow-md shadow-gray-400 rounded-xl px-3 py-2" style={{ transform:`scale(${indexToShowOptions===index?"1":"0"})`, zIndex:10000 }}>
-                                <p onClick={()=>setEditData({ area:item.area, landId:item.id, landUse:item.landUse, latitude:item.latitude, longitude:item.logitude })} className="cursor-pointer font-normal text-gray-500">Edit</p>
-                                <p className="cursor-pointer font-normal text-gray-500">View</p>
-                                <p className="cursor-pointer font-normal text-red-500">Delete</p>
-                              </div>
+                              {
+                                item.status === "Pending" && (
+                                  <div className="origin-top-right transition-all absolute right-0 top-[105%] bg-white shadow-md shadow-gray-400 rounded-xl px-3 py-2" style={{ transform:`scale(${indexToShowOptions===index?"1":"0"})`, zIndex:10000 }}>
+                                    <p onClick={()=>setEditData({ area:item.area, landId:item.id, landUse:item.landUse, latitude:item.latitude, longitude:item.logitude })} className="cursor-pointer font-normal text-gray-500">Edit</p>
+                                    <p onClick={()=>router.push(`/my-collections/detail/${item.id}`)} className="cursor-pointer font-normal text-gray-500">View</p>
+                                    <p onClick={()=>setShowDeleteLandModal(true)} className="cursor-pointer font-normal text-red-500">Delete</p>
+                                  </div>
+                                )
+                              }
+                              {
+                                item.status !== "Pending" && (
+                                  <div className="origin-top-right transition-all absolute right-0 top-[105%] bg-white shadow-md shadow-gray-400 rounded-xl px-3 py-2" style={{ transform:`scale(${indexToShowOptions===index?"1":"0"})`, zIndex:10000 }}>
+                                    <p onClick={()=>router.push(`/my-collections/detail/${item.id}`)} className="cursor-pointer font-normal text-gray-500">View</p>
+                                    <p className="cursor-pointer font-normal text-gray-500">Transfer</p>
+                                  </div>
+                                )
+                              }
                             </div>
-                            <p className="2xl:hidden">Actions: </p>
-                            <p onClick={()=>setEditData({ area:item.area, landId:item.id, landUse:item.landUse, latitude:item.latitude, longitude:item.logitude })} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">Edit</p>
-                            <p className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">View</p>
-                            <p className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-red-500">Delete</p>
+                            {
+                              item.status === "Pending" && (
+                                <div className="flex gap-2">
+                                  <p className="2xl:hidden">Actions: </p>
+                                  <p onClick={()=>setEditData({ area:item.area, landId:item.id, landUse:item.landUse, latitude:item.latitude, longitude:item.logitude })} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">Edit</p>
+                                  <p onClick={()=>router.push(`/my-collections/detail/${item.id}`)} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">View</p>
+                                  <p onClick={()=>setShowDeleteLandModal(true)} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-red-500">Delete</p>
+                                </div>
+                              )
+                            }
+                            {
+                              item.status !== "Pending" && (
+                                <div className="flex gap-2">
+                                  <p className="2xl:hidden">Actions: </p>
+                                  <p onClick={()=>router.push(`/my-collections/detail/${item.id}`)} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">View</p>
+                                  <p className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">Transfer</p>
+                                </div>
+                              )
+                            }
                           </div>
                         </div>
                       )
@@ -256,6 +289,7 @@ export default function MyCollectionsClientView() {
 
         
         <RegisterLandModal isOpen={!!editData} onClose={()=>setEditData(null)} mode="edit" editData={editData ?? undefined} />
+        <DeleteLandModal isOpen={showDeleteLandModal} onClose={()=>{setShowDeleteLandModal(false)}} />
 
     </div>
   );

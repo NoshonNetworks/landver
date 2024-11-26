@@ -198,14 +198,20 @@ const RegisterLandModal: React.FC<ModalProps> = ({ isOpen, onClose, mode, editDa
             }
             {/* FORM  */}
             <div>
-                <div className="mt-4">
-                    <p>Latitude <span className="text-red-500">*</span></p>
-                    <input type="number" value={landData.latitude||undefined} onChange={(e)=>setLandData({...landData, latitude:Number(e.target.value)})}  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder=""/>
-                </div>
-                <div className="mt-4">
-                    <p>Longitude <span className="text-red-500">*</span></p>
-                    <input type="number" value={landData.longitude||undefined} onChange={(e)=>setLandData({...landData, longitude:Number(e.target.value)})}  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder=""/>
-                </div>
+                {
+                  !editData &&
+                  <div className="mt-4">
+                      <p>Latitude <span className="text-red-500">*</span></p>
+                      <input type="number" value={landData.latitude||undefined} onChange={(e)=>setLandData({...landData, latitude:Number(e.target.value)})}  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder=""/>
+                  </div>
+                }
+                {
+                  !editData && 
+                  <div className="mt-4">
+                      <p>Longitude <span className="text-red-500">*</span></p>
+                      <input type="number" value={landData.longitude||undefined} onChange={(e)=>setLandData({...landData, longitude:Number(e.target.value)})}  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder=""/>
+                  </div>
+                }
                 <div className="mt-4">
                     <p>Area <span className="text-red-500">*</span></p>
                     <input type="number" value={landData.area||undefined} onChange={(e)=>setLandData({...landData, area:Number(e.target.value)})}  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder=""/>
