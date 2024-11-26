@@ -1,13 +1,20 @@
 use snforge_std::{
     declare, ContractClassTrait, DeclareResultTrait, start_cheat_caller_address,
     stop_cheat_caller_address, start_cheat_block_timestamp, stop_cheat_block_timestamp,
-    start_cheat_max_fee, spy_events, EventSpyAssertionsTrait
+    start_cheat_max_fee, stop_cheat_max_fee, spy_events, EventSpyAssertionsTrait
+};
+use land_registry::interface::land_register::{
+    ILandRegistryDispatcher, ILandRegistryDispatcherTrait, Land, LandUse, Location, 
+    LandStatus, ListingStatus, Listing
 };
 use starknet::ContractAddress;
-use land_registry::interface::land_register::{
-    ILandRegistryDispatcher, ILandRegistryDispatcherTrait
-};
-use land_registry::interface::land_register::{LandUse, Location, LandStatus, ListingStatus};
+use array::ArrayTrait;
+use array::SpanTrait;
+use traits::TryInto;
+use option::OptionTrait;
+use core::result::ResultTrait;
+use debug::PrintTrait;
+use box::BoxTrait;
 use land_registry::land_register::LandRegistryContract;
 
 pub mod Accounts {
@@ -640,6 +647,62 @@ fn test_can_transfer_land() {
     assert(land_after.owner == new_owner_address, 'Land not transfered');
 
     stop_cheat_caller_address(contract_address);
+}
+
+#[test]
+fn test_buy_land() {
+    // Deploy contract
+    let contract_address = deploy("LandRegistryContract");
+    let dispatcher = ILandRegistryDispatcher { contract_address };
+
+    // Set up test addresses
+    let seller = starknet::contract_address_const::<0x123>();
+    let buyer = starknet::contract_address_const::<0x456>();
+    let inspector = starknet::contract_address_const::<0x789>();
+
+    // Set high max fee for all operations
+    start_cheat_max_fee(contract_address, 1000000000000000000000000);
+
+    // 1. Register land as seller
+    start_cheat_caller_address(contract_address, seller);
+    let location = Location { latitude: 1, longitude: 2 };
+    let land_id = dispatcher.register_land(
+        location,
+        1000_u256,
+        LandUse::Residential
+    );
+
+    // 2. Add inspector and set for land
+    dispatcher.add_inspector(inspector);
+    dispatcher.set_land_inspector(land_id, inspector);
+    stop_cheat_caller_address(contract_address);
+
+    // 3. Approve land as inspector
+    start_cheat_caller_address(contract_address, inspector);
+    dispatcher.approve_land(land_id);
+    stop_cheat_caller_address(contract_address);
+
+    // 4. Create listing as seller
+    start_cheat_caller_address(contract_address, seller);
+    let price: u256 = 5000_u256;
+    let listing_id = dispatcher.create_listing(land_id, price);
+    stop_cheat_caller_address(contract_address);
+
+    // 5. Buy land as buyer
+    start_cheat_caller_address(contract_address, buyer);
+
+    // Execute purchase
+    dispatcher.buy_land(listing_id);
+
+    // Verify results
+    let listing = dispatcher.get_listing(listing_id);
+    let land = dispatcher.get_land(land_id);
+
+    assert(listing.status == ListingStatus::Sold, 'Listing should be sold');
+    assert(land.owner == buyer, 'Land owner should be buyer');
+
+    stop_cheat_caller_address(contract_address);
+    stop_cheat_max_fee(contract_address);
 }
 
 #[test]
