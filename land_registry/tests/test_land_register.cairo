@@ -39,8 +39,6 @@ fn test_can_register_land() {
     // Get an instance of the deployed Counter contract
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
 
-    start_cheat_max_fee(contract_address, 10000000000000000000);
-
     // Set up test data
     let caller_address = starknet::contract_address_const::<0x123>();
     let location: Location = Location { latitude: 1, longitude: 2 };
@@ -74,9 +72,6 @@ fn test_can_create_land_id() {
 
     // Get an instance of the deployed Counter contract
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
-
-    start_cheat_max_fee(contract_address, 10000000000000000000);
-
     // Set up test data
     let area: u256 = 1000;
     let land_use = LandUse::Residential;
@@ -131,8 +126,6 @@ fn test_can_get_land_count() {
     // Get an instance of the deployed Counter contract
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
 
-    start_cheat_max_fee(contract_address, 10000000000000000000);
-
     // Start cheating the caller address
     start_cheat_caller_address(contract_address, starknet::contract_address_const::<0x123>());
     // Assert land_count is equal to zero before registration
@@ -151,8 +144,6 @@ fn test_can_get_lands_by_owner() {
     let contract_address = deploy("LandRegistryContract");
     // Get an instance of the deployed Counter contract
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
-
-    start_cheat_max_fee(contract_address, 10000000000000000000);
 
     // Set up test data
     let owner_address = starknet::contract_address_const::<0x123>();
@@ -180,8 +171,6 @@ fn test_can_get_is_land_approved() {
     // Get an instance of the deployed Counter contract
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
 
-    start_cheat_max_fee(contract_address, 10000000000000000000);
-
     // Set up test data
     let caller_address = starknet::contract_address_const::<0x123>();
     let location: Location = Location { latitude: 12, longitude: 34 };
@@ -208,8 +197,6 @@ fn test_can_get_pending_approvals() {
     // Get an instance of the deployed Counter contract
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
 
-    start_cheat_max_fee(contract_address, 10000000000000000000);
-
     // Set up test data
     let caller_address = starknet::contract_address_const::<0x123>();
     let location: Location = Location { latitude: 12, longitude: 34 };
@@ -234,8 +221,6 @@ fn test_can_get_land_transaction_history() {
 
     // Get an instance of the deployed Counter contract
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
-
-    start_cheat_max_fee(contract_address, 10000000000000000000);
 
     // Set up test data
     let caller_address = starknet::contract_address_const::<0x123>();
@@ -267,8 +252,6 @@ fn test_set_inspector() {
     // Get an instance of the deployed Counter contract
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
 
-    start_cheat_max_fee(contract_address, 10000000000000000000);
-
     // Set up test data
     let owner_address = starknet::contract_address_const::<0x123>();
     let inspector_address = starknet::contract_address_const::<0x456>();
@@ -296,8 +279,6 @@ fn test_can_approve_land() {
 
     // Instance of LandRegistryContract
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
-
-    start_cheat_max_fee(contract_address, 10000000000000000000);
 
     // Set up test data
     let owner_address = starknet::contract_address_const::<0x123>();
@@ -336,8 +317,6 @@ fn test_can_reject_land() {
     // Instance of LandRegistryContract
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
 
-    start_cheat_max_fee(contract_address, 10000000000000000000);
-
     // Set up test data
     let owner_address = starknet::contract_address_const::<0x123>();
     let inspector_address = starknet::contract_address_const::<0x456>();
@@ -372,8 +351,6 @@ fn test_can_reject_land() {
 fn test_can_reject_land_by_inspector() {
     let contract_address = deploy("LandRegistryContract");
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
-
-    start_cheat_max_fee(contract_address, 10000000000000000000);
 
     // Set up test data
     let owner_address = starknet::contract_address_const::<0x123>();
@@ -416,8 +393,6 @@ fn test_reject_land_by_unauthorized_user() {
     let contract_address = deploy("LandRegistryContract");
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
 
-    start_cheat_max_fee(contract_address, 10000000000000000000);
-
     // Set up test data
     let owner_address = starknet::contract_address_const::<0x123>();
     let unauthorized_address = starknet::contract_address_const::<0x789>();
@@ -440,8 +415,6 @@ fn test_reject_land_by_unauthorized_user() {
 fn test_can_update_land() {
     let contract_address = deploy("LandRegistryContract");
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
-
-    start_cheat_max_fee(contract_address, 10000000000000000000);
 
     // Set up initial test data
     let owner_address = starknet::contract_address_const::<0x123>();
@@ -474,8 +447,6 @@ fn test_update_land_by_unauthorized_user() {
     let contract_address = deploy("LandRegistryContract");
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
 
-    start_cheat_max_fee(contract_address, 10000000000000000000);
-
     // Set up test data
     let owner_address = starknet::contract_address_const::<0x123>();
     let unauthorized_address = starknet::contract_address_const::<0x789>();
@@ -498,8 +469,6 @@ fn test_update_land_by_unauthorized_user() {
 fn test_can_add_inspector() {
     let contract_address = deploy("LandRegistryContract");
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
-
-    start_cheat_max_fee(contract_address, 10000000000000000000);
 
     // Set up test data
     let inspector_address = starknet::contract_address_const::<0x456>();
@@ -587,8 +556,6 @@ fn test_cannot_remove_active_inspector() {
     let contract_address = deploy("LandRegistryContract");
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
 
-    start_cheat_max_fee(contract_address, 10000000000000000000);
-
     // Set up test data
     let owner_address = starknet::contract_address_const::<0x123>();
     let inspector_address = starknet::contract_address_const::<0x456>();
@@ -616,8 +583,6 @@ fn test_can_get_all_inspectors() {
 
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
 
-    start_cheat_max_fee(contract_address, 10000000000000000000);
-
     // Set up test data
     let inspector_address = starknet::contract_address_const::<0x456>();
     let admin_address = starknet::contract_address_const::<0x123>();
@@ -641,8 +606,6 @@ fn test_can_transfer_land() {
 
     // Instance of LandRegistryContract
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
-
-    start_cheat_max_fee(contract_address, 10000000000000000000);
 
     // Set up test data
     let owner_address = starknet::contract_address_const::<0x123>();
@@ -684,8 +647,6 @@ fn test_update_listing_price() {
 
     // Instance of LandRegistryContract
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
-
-    start_cheat_max_fee(contract_address, 10000000000000000000);
 
     let owner_address = starknet::contract_address_const::<0x123>();
     let inspector_address = starknet::contract_address_const::<0x456>();
@@ -747,8 +708,6 @@ fn test_update_listing_price_should_panic_if_caller_not_seller() {
     // Instance of LandRegistryContract
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
 
-    start_cheat_max_fee(contract_address, 10000000000000000000);
-
     let owner_address = starknet::contract_address_const::<0x123>();
     let inspector_address = starknet::contract_address_const::<0x456>();
     let not_seller_address = starknet::contract_address_const::<0x789>();
@@ -795,8 +754,6 @@ fn test_update_listing_price_should_panic_if_listing_not_active() {
 
     // Instance of LandRegistryContract
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
-
-    start_cheat_max_fee(contract_address, 10000000000000000000);
 
     let owner_address = starknet::contract_address_const::<0x123>();
     let inspector_address = starknet::contract_address_const::<0x456>();
@@ -860,8 +817,6 @@ fn test_get_user_type() {
     // Get an instance of the deployed Counter contract
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
 
-    start_cheat_max_fee(contract_address, 10000000000000000000);
-
     // Set up test data
     let owner_address = starknet::contract_address_const::<0x123>();
     let inspector_address = starknet::contract_address_const::<0x456>();
@@ -898,8 +853,6 @@ fn test_can_get_listing() {
 
     // Instance of LandRegistryContract
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
-
-    start_cheat_max_fee(contract_address, 10000000000000000000);
 
     // Set up test data
     let owner_address = starknet::contract_address_const::<0x123>();
@@ -950,8 +903,6 @@ fn test_can_get_active_listings() {
 
     // Instance of LandRegistryContract
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
-
-    start_cheat_max_fee(contract_address, 10000000000000000000);
 
     // Set up test data
     let owner_address = starknet::contract_address_const::<0x123>();
