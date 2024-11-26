@@ -62,7 +62,7 @@ interface LandData {
 }
 
 
-export default function MyCollectionsClientView() {
+export function DashboardInspectorView() {
 
   const router = useRouter()
 
@@ -70,12 +70,7 @@ export default function MyCollectionsClientView() {
   const { contract:landRegisterContract } = useLandverContract({ name:"landRegister" })
   
   const [lands, setLands] = useState([])
-  const [landsCounts, setLandsCounts] = useState<LandsCount>({
-    total: 0, 
-    registered: 0,
-    bought:0,
-    unapproved:0
-  })
+
   const [editData, setEditData] = useState<null|LandData>(null)
 
   const [indexToShowOptions, setIndexToShowOptions] = useState<null|number>(null)
@@ -97,23 +92,12 @@ export default function MyCollectionsClientView() {
         if(address) {
             const addresses = await landRegisterContract.get_lands_by_owner(address)
             const newLands = []
-            const newLandsCount:LandsCount = {
-              bought:0,
-              registered:0,
-              total: 0,
-              unapproved: 0
-            }
 
             let index = 0;
             for await (const address of addresses) {
                 const land = await landRegisterContract.get_land(address)
                 const landStatus = Object.entries(land.status.variant).find(entry => entry[1])
                 const landUse = Object.entries(land.land_use.variant).find(entry => entry[1])
-
-                newLandsCount.total += 1
-                if(landStatus && landStatus[0]==="Bought") newLandsCount.bought += 1
-                if(landStatus && landStatus[0]==="Approved") newLandsCount.registered += 1
-                if(landStatus && landStatus[0]==="Unapproved") newLandsCount.unapproved += 1
 
                 newLands.push({ 
                   number:index+1, 
@@ -132,7 +116,6 @@ export default function MyCollectionsClientView() {
             }
 
             setLands(newLands.reverse() as any)
-            setLandsCounts(newLandsCount)
         }
       } catch (error) {
         console.log(error)
@@ -144,13 +127,13 @@ export default function MyCollectionsClientView() {
   return (
     <div className="">
         
-        <Header title="Collections" hasCreateButton={true} />
+        <Header title="Overview" hasCreateButton={true} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 px-6">
-          <SmallNumberCard iconColor="blue" title={landsCounts.total.toString()} subtitle="Total Lands Owned" />
-          <SmallNumberCard iconColor="yellow" title={landsCounts.registered.toString()} subtitle="Total Lands Registered" />
-          <SmallNumberCard iconColor="orange" title={landsCounts.bought.toString()} subtitle="Total Lands Bought" />
-          <SmallNumberCard iconColor="purple" title={landsCounts.unapproved.toString()} subtitle="Total Lands Unapproved" />
+          <SmallNumberCard iconColor="green" title={"10"} subtitle="Registration Request" />
+          <SmallNumberCard iconColor="green" title={"30"} subtitle="Verified Land/users" />
+          <SmallNumberCard iconColor="green" title={"12"} subtitle="Transfer Request" />
+          <SmallNumberCard iconColor="green" title={"9"} subtitle="Flagged Issues" />
         </div>
 
 
@@ -198,7 +181,7 @@ export default function MyCollectionsClientView() {
                       items={[
                         { label: "NO", fixedWidth:70 },
                         { label: "LAND ID" },
-                        { label: "BUYER/LAND NAME" },
+                        { label: "OWNER'S NAME" },
                         { label: "PRICE" },
                         { label: "DATE" },
                         { label: "STATUS" },
