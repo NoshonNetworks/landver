@@ -140,6 +140,12 @@ pub struct LandUpdated {
 }
 
 #[derive(Drop, Copy, starknet::Event)]
+pub struct FeeUpdated {
+    old_fee: u128,
+    new_fee: u128,
+}
+
+#[derive(Drop, Copy, starknet::Event)]
 pub struct LandInspectorSet {
     land_id: u256,
     inspector: ContractAddress,
