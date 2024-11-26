@@ -8,6 +8,7 @@ import { RangeCalendar } from "@/components/calendar/RangeCalendar";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/Button/Button";
 import { MarketCard } from "@/components/Card/MarketCard";
+import { DropdownMenu } from "@/components/DropdownMenu/DropdownMenu";
 
 type ValuePiece = Date | null;
 type Value = [ValuePiece, ValuePiece];
@@ -48,15 +49,15 @@ export default function MarketStoreClientView() {
                 <div onClick={()=>setShowFilters(!showFilters)} className="cursor-pointer relative rounded-lg bg-gray-100 px-5 py-2 text-center text-gray-500 flex gap-1">
                   <p>Filters</p>
                   <Image src={"icons/common/dropdown-grey.svg"} alt="" width={12} height={12} />
-                  <DropdownOptions
-                    options={[
+                  <DropdownMenu 
+                    items={[
                       { label:"All", action:()=>{} },
                       { label:"Approved", action:()=>{} },
                       { label:"Unapproved", action:()=>{} },
                       { label:"Bought", action:()=>{} },
                     ]}
+                    position="bottom"
                     show={showFilters}
-                    onClose={()=>setShowFilters(false)}
                   />
                 </div>
                 <div onClick={()=>setShowDateRangeCalendar(!showDateRangeCalendar)} className="cursor-pointer relative flex gap-2 rounded-lg bg-gray-100 px-5 py-2 text-center text-gray-500 flex-shrink-0">

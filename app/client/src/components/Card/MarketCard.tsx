@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button } from '../Button/Button'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 function MarketCard({ key, item }:{ key:any, item:number }) {
 
@@ -16,7 +17,7 @@ function MarketCard({ key, item }:{ key:any, item:number }) {
               <p className="text-gray-500">owner</p>
             </div>
             <div className="flex justify-end flex-1 items-center">
-              <p>Heart</p>
+              <Image src={"/icons/common/favorite-filled.svg"} width={22} height={22} alt='' />
             </div>
           </div>
           <div className="py-3">

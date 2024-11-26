@@ -16,6 +16,7 @@ import { useRouter } from "next/navigation";
 import { Tag } from "@/components/Tag/Tag";
 import { TableHeader } from "@/components/table/TableHeader";
 import { TableRow } from "@/components/table/TableRow";
+import { DropdownMenu } from "@/components/DropdownMenu/DropdownMenu";
 
 type ValuePiece = Date | null;
 type Value = [ValuePiece, ValuePiece];
@@ -162,15 +163,15 @@ export default function MyCollectionsClientView() {
                 <div onClick={()=>setShowStatusFilters(!showStatusFilters)} className="cursor-pointer relative rounded-lg bg-gray-100 px-5 py-2 text-center text-gray-500 flex gap-1">
                   <p>status</p>
                   <Image src={"icons/common/dropdown-grey.svg"} alt="" width={12} height={12} />
-                  <DropdownOptions
-                    options={[
+                  <DropdownMenu 
+                    items={[
                       { label:"All", action:()=>{} },
                       { label:"Approved", action:()=>{} },
                       { label:"Unapproved", action:()=>{} },
                       { label:"Bought", action:()=>{} },
                     ]}
+                    position="bottom"
                     show={showStatusFilters}
-                    onClose={()=>setShowStatusFilters(false)}
                   />
                 </div>
                 <div onClick={()=>setShowDateRangeCalendar(!showDateRangeCalendar)} className="cursor-pointer relative flex gap-2 rounded-lg bg-gray-100 px-5 py-2 text-center text-gray-500 flex-shrink-0">
@@ -230,19 +231,27 @@ export default function MyCollectionsClientView() {
                                       <Image className="hidden 2xl:block" src={"/icons/common/options.svg"} alt="ether" width={5} height={5} />
                                       {
                                         item.status === "Pending" && (
-                                          <div className="origin-top-right transition-all absolute right-0 top-[105%] bg-white shadow-md shadow-gray-400 rounded-xl px-3 py-2" style={{ transform:`scale(${indexToShowOptions===index?"1":"0"})`, zIndex:10000 }}>
-                                            <p onClick={()=>setEditData({ area:item.area, landId:item.id, landUse:item.landUse, latitude:item.latitude, longitude:item.logitude })} className="cursor-pointer font-normal text-gray-500">Edit</p>
-                                            <p onClick={()=>router.push(`/my-collections/detail/${item.id}`)} className="cursor-pointer font-normal text-gray-500">View</p>
-                                            <p onClick={()=>setShowDeleteLandModal(true)} className="cursor-pointer font-normal text-red-500">Delete</p>
-                                          </div>
+                                          <DropdownMenu 
+                                            items={[
+                                              { label: "Edit", action:()=>setEditData({ area:item.area, landId:item.id, landUse:item.landUse, latitude:item.latitude, longitude:item.logitude }) },
+                                              { label: "View", action:()=>router.push(`/my-collections/detail/${item.id}`) },
+                                              { variant:"danger", label: "Delete", action: ()=>setShowDeleteLandModal(true) },
+                                            ]}
+                                            position="bottom-right"
+                                            show={indexToShowOptions===index}
+                                          />
                                         )
                                       }
                                       {
                                         item.status !== "Pending" && (
-                                          <div className="origin-top-right transition-all absolute right-0 top-[105%] bg-white shadow-md shadow-gray-400 rounded-xl px-3 py-2" style={{ transform:`scale(${indexToShowOptions===index?"1":"0"})`, zIndex:10000 }}>
-                                            <p onClick={()=>router.push(`/my-collections/detail/${item.id}`)} className="cursor-pointer font-normal text-gray-500">View</p>
-                                            <p className="cursor-pointer font-normal text-gray-500">Transfer</p>
-                                          </div>
+                                          <DropdownMenu 
+                                            items={[
+                                              { label: "View", action:()=>router.push(`/my-collections/detail/${item.id}`) },
+                                              { label: "Transfer", action:()=>{} },
+                                            ]}
+                                            position="bottom-right"
+                                            show={indexToShowOptions===index}
+                                          />
                                         )
                                       }
                                     </div>

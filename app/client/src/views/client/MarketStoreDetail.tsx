@@ -30,7 +30,7 @@ export function MarketStoreDetailClientView() {
                       <p className="text-gray-500">owner</p>
                     </div>
                     <div className="flex justify-end flex-1 items-center">
-                      <p>Heart</p>
+                      <Image src={"/icons/common/favorite-filled.svg"} width={22} height={22} alt='' />
                     </div>
                   </div>
 
