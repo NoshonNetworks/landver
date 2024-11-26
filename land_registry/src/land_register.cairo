@@ -523,53 +523,54 @@ pub mod LandRegistryContract {
         fn buy_land(ref self: ContractState, listing_id: u256) {
             let mut listing = self.listings.read(listing_id);
             let buyer = get_caller_address();
-        
+
             assert(listing.status == ListingStatus::Active, Errors::LISTING_NOT_ACTIVE);
             assert(buyer != listing.seller, Errors::SELLER_CANT_BUY_OWN);
-        
+
             // Verify payment
             let payment = starknet::info::get_tx_info().unbox().max_fee.into();
             assert(payment >= listing.price, Errors::INSUFFICIENT_PAYMENT_TO_BUY_LAND);
-        
+
             // Get land details
             let mut land = self.lands.read(listing.land_id);
             let old_owner = land.owner;
-        
+
             // Update listing status
             listing.status = ListingStatus::Sold;
             listing.updated_at = get_block_timestamp();
             self.listings.write(listing_id, listing);
-        
+
             // Remove from active listings
             self._remove_from_active_listings(listing_id);
-        
+
             // Update owner records
             let old_owner_count = self.owner_land_count.read(old_owner);
             self.owner_land_count.write(old_owner, old_owner_count - 1);
-        
+
             let new_owner_count = self.owner_land_count.read(buyer);
             self.owner_lands.write((buyer, new_owner_count), listing.land_id);
             self.owner_land_count.write(buyer, new_owner_count + 1);
-        
+
             // Update land ownership
             land.owner = buyer;
             self.lands.write(listing.land_id, land);
-        
+
             // Handle NFT
             let nft_contract = self.nft_contract.read();
             let nft_dispatcher = ILandNFTDispatcher { contract_address: nft_contract };
             nft_dispatcher.unlock(listing.land_id);
             nft_dispatcher.transfer(old_owner, buyer, listing.land_id);
-        
-            self.emit(
-                LandSold {
-                    listing_id,
-                    land_id: listing.land_id,
-                    seller: old_owner,
-                    buyer,
-                    price: listing.price
-                }
-            );
+
+            self
+                .emit(
+                    LandSold {
+                        listing_id,
+                        land_id: listing.land_id,
+                        seller: old_owner,
+                        buyer,
+                        price: listing.price
+                    }
+                );
         }
 
         fn get_listing(self: @ContractState, listing_id: u256) -> Listing {

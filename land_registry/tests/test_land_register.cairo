@@ -4,8 +4,8 @@ use snforge_std::{
     start_cheat_max_fee, stop_cheat_max_fee, spy_events, EventSpyAssertionsTrait
 };
 use land_registry::interface::land_register::{
-    ILandRegistryDispatcher, ILandRegistryDispatcherTrait, Land, LandUse, Location, 
-    LandStatus, ListingStatus, Listing
+    ILandRegistryDispatcher, ILandRegistryDispatcherTrait, Land, LandUse, Location, LandStatus,
+    ListingStatus, Listing
 };
 use starknet::ContractAddress;
 use array::ArrayTrait;
@@ -666,11 +666,7 @@ fn test_buy_land() {
     // 1. Register land as seller
     start_cheat_caller_address(contract_address, seller);
     let location = Location { latitude: 1, longitude: 2 };
-    let land_id = dispatcher.register_land(
-        location,
-        1000_u256,
-        LandUse::Residential
-    );
+    let land_id = dispatcher.register_land(location, 1000_u256, LandUse::Residential);
 
     // 2. Add inspector and set for land
     dispatcher.add_inspector(inspector);
