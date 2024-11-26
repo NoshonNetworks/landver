@@ -11,6 +11,8 @@ import Image from "next/image";
 import { events, RpcProvider, hash, CallData, num } from 'starknet';
 import { SectionHeader } from "@/components/Headers/SectionHeader";
 import { shortAddress } from "@/utils/AddressFormat";
+import { TableHeader } from "@/components/table/TableHeader";
+import { TableRow } from "@/components/table/TableRow";
 
 interface DynamicObject {
   [key: string]: string; // Allows any string as a key
@@ -144,40 +146,30 @@ export function DashboardClientView() {
         <div className="w-full bg-white rounded-xl lg:col-span-2 p-4 container_scrollable">
           <div className="h-96">
             <SectionHeader title="Best Seller" titleSize={"xl"} buttonMessage="View all" />
-            <div className="hidden 2xl:flex justify-start items-center w-full gap-1 mt-5 pt-5 text-gray-400 font-semibold text-base">
-              <div className="w-[70px]">NO</div>
-              <div className="flex-1">Land ID</div>
-              <div className="flex-1">BUYER/LAND NAME</div>
-              <div className="flex-1">PRICE</div>
-              <div className="text-right flex-1">DATE</div>
-            </div>
+          
+            <TableHeader 
+              items={[
+                { label:"NO", fixedWidth:70, },
+                { label:"Land ID" },
+                { label:"BUYER/LAND NAME" },
+                { label:"PRICE" },
+                { label:"DATE", alignText:"right" },
+              ]}
+              />            
+
           {
             [1,2,3,4,5,6].map((item, index) => {
               return (
-                <div key={"dashboardbestsellerlist1"+index} className="flex flex-col 2xl:flex-row justify-start 2xl:items-center w-full gap-1 border-dashed border-t-2 border-t-gray-300 mt-5 pt-5 font-semibold">
-                  <div className="w-[70px] flex gap-1">
-                    <p className="2xl:hidden">No: </p>
-                    <p>{ index+1 }</p>
-                  </div>
-                  <div className="flex-1">
-                    <p className="2xl:hidden">Land ID: </p>
-                    <p>56037-XDER</p>
-                  </div>
-                  <div className="flex-1 flex gap-2 items-center">
-                    <div className="hidden 2xl:block w-8 h-8 rounded-full bg-gray-300"></div>
-                    <p className="2xl:hidden">Buyer/Land Name: </p>
-                    <p>TRESS-123</p>
-                  </div>
-                  <div className="flex-1 flex gap-2 items-center">
-                    <div className="hidden 2xl:block w-7 h-7 rounded-full bg-gray-300"></div>
-                    <p className="2xl:hidden">Price: </p>
-                    <p>0.2345</p>
-                  </div>
-                  <div className="flex 2xl:block 2xl:text-right flex-1 2xl:text-gray-400 gap-2">
-                    <p className="2xl:hidden">Date: </p>
-                    <p>20/11/24</p>
-                    </div>
-                </div>
+                <TableRow 
+                  items={[
+                    { value:index+1, fixedWidth:70, },
+                    { value:"56037-XDER" },
+                    { value:"TRSS-123" },
+                    { value:"0.2345" },
+                    { value:"20/11/24", alignText:"right" },
+                  ]}
+                  headers={["NO", "LAND ID", "BUYER/LAND NAME", "PRICE", "DATE"]}
+                />
               )
             })
           }

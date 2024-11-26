@@ -14,6 +14,8 @@ import DeleteLandModal from "@/components/DeleteLandModal";
 
 import { useRouter } from "next/navigation";
 import { Tag } from "@/components/Tag/Tag";
+import { TableHeader } from "@/components/table/TableHeader";
+import { TableRow } from "@/components/table/TableRow";
 
 type ValuePiece = Date | null;
 type Value = [ValuePiece, ValuePiece];
@@ -189,96 +191,87 @@ export default function MyCollectionsClientView() {
             <div className="py-4">
               <div className="bg-white rounded-xl container_scrollable px-6">
                 <div className="h-[450px]">
-                    <div className="hidden 2xl:flex justify-between items-center w-full gap-1 mt-5 pt-5 text-gray-400 font-semibold text-base">
-                      <div className="w-[70px]">NO</div>
-                      <div className="flex-1">Land ID</div>
-                      <div className="flex-1">BUYER/LAND NAME</div>
-                      <div className="flex-1">PRICE</div>
-                      <div className="flex-1">DATE</div>
-                      <div className="flex-1">STATUS</div>
-                      <div className="flex-1 flex 2xl:justify-center">ACTIONS</div>
-                    </div>
-                  {
-                    lands.map((item:any, index) => {
-                      return (
-                        <div key={"dashboardbestsellerlist1"+index} className="flex flex-col 2xl:flex-row justify-between 2xl:items-center w-full gap-1 border-dashed border-t-2 border-t-gray-300 mt-5 pt-5 font-semibold">
-                          <div className="w-[70px] flex gap-1">
-                            <p className="2xl:hidden">No: </p>
-                            <p>{ item.number }</p>
-                          </div>
-                          <div className="flex-1 flex gap-1">
-                            <p className="2xl:hidden">Land ID: </p>
-                            <p>{ shortAddress(Number(item.id).toString()) }</p>
-                          </div>
-                          <div className="flex-1 flex gap-2 items-center">
-                            {
-                              item.buyerOrLandName && <div className="hidden 2xl:block w-8 h-8 rounded-full bg-gray-300"></div>
-                            }
-                            <p className="2xl:hidden">Buyer/Land Name: </p>
-                            <p>{ item.buyerOrLandName || "-" }</p>
-                          </div>
-                          <div className="flex-1 flex gap-2 items-center">
-                            {item.price && <div className="hidden 2xl:block w-7 h-7 rounded-full bg-gray-300"></div>}
-                            <p className="2xl:hidden">Price: </p>
-                            <p>{ item.price || "-" }</p>
-                          </div>
-                          <div className="flex-1 flex gap-2 items-center">
-                            <p className="2xl:hidden">Date: </p>
-                            <p>{ item.date }</p>
-                          </div>
-                          <div className="flex-1 flex gap-2 items-center">
-                            <p className="2xl:hidden">Status: </p>
-                              
-                            { item.status === "Approved" && <Tag variant="approved" />  }
-                            { item.status === "Pending" && <Tag variant="pending" />  }
-                            { item.status === "Rejected" && <Tag variant="rejected" /> }
-                          
-                          </div>
-                          <div className="flex-1 flex 2xl:justify-center gap-2 items-center relative">
-                            <div className="relative cursor-pointer" onClick={()=>setIndexToShowOptions((indexToShowOptions===null || indexToShowOptions!==index) ? index : null)}>
-                              <Image className="hidden 2xl:block" src={"/icons/common/options.svg"} alt="ether" width={5} height={5} />
-                              {
-                                item.status === "Pending" && (
-                                  <div className="origin-top-right transition-all absolute right-0 top-[105%] bg-white shadow-md shadow-gray-400 rounded-xl px-3 py-2" style={{ transform:`scale(${indexToShowOptions===index?"1":"0"})`, zIndex:10000 }}>
-                                    <p onClick={()=>setEditData({ area:item.area, landId:item.id, landUse:item.landUse, latitude:item.latitude, longitude:item.logitude })} className="cursor-pointer font-normal text-gray-500">Edit</p>
-                                    <p onClick={()=>router.push(`/my-collections/detail/${item.id}`)} className="cursor-pointer font-normal text-gray-500">View</p>
-                                    <p onClick={()=>setShowDeleteLandModal(true)} className="cursor-pointer font-normal text-red-500">Delete</p>
+
+                    <TableHeader
+                      items={[
+                        { label: "NO", fixedWidth:70 },
+                        { label: "LAND ID" },
+                        { label: "BUYER/LAND NAME" },
+                        { label: "PRICE" },
+                        { label: "DATE" },
+                        { label: "STATUS" },
+                        { label: "ACTIONS", alignText:"center" },
+                      ]}
+                    />
+                    {
+                      lands.map((item:any, index) => {
+                        return (
+                          <TableRow
+                            items={[
+                              { value:index+1, fixedWidth:70, },
+                              { value:"56037-XDER" },
+                              { value:"TRSS-123" },
+                              { value:"0.2345" },
+                              { value:"11/12/24" },
+                              { 
+                                customjsx: () => (
+                                  <div className="flex-1 flex gap-2 items-center">
+                                    { item.status === "Approved" && <Tag variant="approved" />  }
+                                    { item.status === "Pending" && <Tag variant="pending" />  }
+                                    { item.status === "Rejected" && <Tag variant="rejected" /> }
+                                  
                                   </div>
                                 )
-                              }
-                              {
-                                item.status !== "Pending" && (
-                                  <div className="origin-top-right transition-all absolute right-0 top-[105%] bg-white shadow-md shadow-gray-400 rounded-xl px-3 py-2" style={{ transform:`scale(${indexToShowOptions===index?"1":"0"})`, zIndex:10000 }}>
-                                    <p onClick={()=>router.push(`/my-collections/detail/${item.id}`)} className="cursor-pointer font-normal text-gray-500">View</p>
-                                    <p className="cursor-pointer font-normal text-gray-500">Transfer</p>
+                              },
+                              { 
+                                customjsx: () => (
+                                  <div className="flex justify-center items-center">
+                                    <div className="relative cursor-pointer flex" onClick={()=>setIndexToShowOptions((indexToShowOptions===null || indexToShowOptions!==index) ? index : null)}>
+                                      <Image className="hidden 2xl:block" src={"/icons/common/options.svg"} alt="ether" width={5} height={5} />
+                                      {
+                                        item.status === "Pending" && (
+                                          <div className="origin-top-right transition-all absolute right-0 top-[105%] bg-white shadow-md shadow-gray-400 rounded-xl px-3 py-2" style={{ transform:`scale(${indexToShowOptions===index?"1":"0"})`, zIndex:10000 }}>
+                                            <p onClick={()=>setEditData({ area:item.area, landId:item.id, landUse:item.landUse, latitude:item.latitude, longitude:item.logitude })} className="cursor-pointer font-normal text-gray-500">Edit</p>
+                                            <p onClick={()=>router.push(`/my-collections/detail/${item.id}`)} className="cursor-pointer font-normal text-gray-500">View</p>
+                                            <p onClick={()=>setShowDeleteLandModal(true)} className="cursor-pointer font-normal text-red-500">Delete</p>
+                                          </div>
+                                        )
+                                      }
+                                      {
+                                        item.status !== "Pending" && (
+                                          <div className="origin-top-right transition-all absolute right-0 top-[105%] bg-white shadow-md shadow-gray-400 rounded-xl px-3 py-2" style={{ transform:`scale(${indexToShowOptions===index?"1":"0"})`, zIndex:10000 }}>
+                                            <p onClick={()=>router.push(`/my-collections/detail/${item.id}`)} className="cursor-pointer font-normal text-gray-500">View</p>
+                                            <p className="cursor-pointer font-normal text-gray-500">Transfer</p>
+                                          </div>
+                                        )
+                                      }
+                                    </div>
+                                    {
+                                      item.status === "Pending" && (
+                                        <div className="flex gap-2">
+                                          <p onClick={()=>setEditData({ area:item.area, landId:item.id, landUse:item.landUse, latitude:item.latitude, longitude:item.logitude })} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">Edit</p>
+                                          <p onClick={()=>router.push(`/my-collections/detail/${item.id}`)} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">View</p>
+                                          <p onClick={()=>setShowDeleteLandModal(true)} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-red-500">Delete</p>
+                                        </div>
+                                      )
+                                    }
+                                    {
+                                      item.status !== "Pending" && (
+                                        <div className="flex gap-2">
+                                          <p onClick={()=>router.push(`/my-collections/detail/${item.id}`)} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">View</p>
+                                          <p className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">Transfer</p>
+                                        </div>
+                                      )
+                                    }
                                   </div>
                                 )
-                              }
-                            </div>
-                            {
-                              item.status === "Pending" && (
-                                <div className="flex gap-2">
-                                  <p className="2xl:hidden">Actions: </p>
-                                  <p onClick={()=>setEditData({ area:item.area, landId:item.id, landUse:item.landUse, latitude:item.latitude, longitude:item.logitude })} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">Edit</p>
-                                  <p onClick={()=>router.push(`/my-collections/detail/${item.id}`)} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">View</p>
-                                  <p onClick={()=>setShowDeleteLandModal(true)} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-red-500">Delete</p>
-                                </div>
-                              )
-                            }
-                            {
-                              item.status !== "Pending" && (
-                                <div className="flex gap-2">
-                                  <p className="2xl:hidden">Actions: </p>
-                                  <p onClick={()=>router.push(`/my-collections/detail/${item.id}`)} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">View</p>
-                                  <p className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">Transfer</p>
-                                </div>
-                              )
-                            }
-                          </div>
-                        </div>
-                      )
-                    })
-                  }
+                              },
+                            ]}
+                            headers={[ "NO", "LAND ID", "BUYER/LAND NAME", "PRICE", "DATE", "STATUS", "ACTIONS" ]}
+                          />
+                        )
+                      })
+                    }
                   <div className="h-24" />
                 </div>
               </div>
