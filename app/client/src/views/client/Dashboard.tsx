@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import Button from "@/components/Button/Button";
+import {Button} from "@/components/Button/Button";
 import { Header } from "@/components/Headers/Header";
 import { useAccount, useBalance, useBlock, useBlockNumber, useProvider, useExplorer } from "@starknet-react/core";
 import { useLandverContract } from "@/hooks/useLandverContract";
@@ -256,9 +256,10 @@ const Card = ({ value, unit, subtitle, buttonMessage, hasIconsMap, landIds, main
                 })
               }
             </div>
-            <div className="border-[#6E62E5] border-2 rounded-md py-2 mt-8">
-              <p className="text-[#6E62E5] text-center">{ buttonMessage }</p>
-            </div>
+
+            <Button variant="whiteWithBorder" >
+              { buttonMessage }
+            </Button>
             <div className="absolute top-7 right-4 w-[60px] h-[60px] rounded-full flex justify-center items-center" style={{ backgroundColor:mainIconColor==="blue"?"#F2FAFD":"#F4FDF9" }}>
               <div className="relative w-[40px] h-[40px] rounded-full">
                 {

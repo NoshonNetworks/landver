@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import RegisterLandModal from "../RegisterLandModal";
+import { Button } from "../Button/Button";
 
 export const Header = ({ title, hasCreateButton, hasTransferButton }:{ title:string, hasCreateButton?:boolean, hasTransferButton?:boolean }={title:"", hasCreateButton:false, hasTransferButton:false}) => {
 
@@ -13,16 +14,16 @@ export const Header = ({ title, hasCreateButton, hasTransferButton }:{ title:str
         <p className="text-3xl font-semibold">{ title }</p>
         {
             hasCreateButton && (
-                <div onClick={()=>setShowRegisterLandModal(true)} className="text-white cursor-pointer hover:scale-95 transition-all bg-gradient-to-r from-[#7369e0] via-[#6E62E5] to-[#6457ed] hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg px-5 py-2.5 text-center me-2 mb-2 ">
+                <Button onClick={()=>setShowRegisterLandModal(true)}>
                   Register New Land
-                </div> 
+                </Button>
             )
         }
         {
             hasTransferButton && (
-                <div onClick={()=>setShowRegisterLandModal(true)} className="text-white cursor-pointer hover:scale-95 transition-all bg-gradient-to-r from-[#7369e0] via-[#6E62E5] to-[#6457ed] hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg px-5 py-2.5 text-center me-2 mb-2 ">
+                <Button>
                   Transfer
-                </div> 
+                </Button>
             )
         }
       </div>

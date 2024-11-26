@@ -2,7 +2,7 @@ import React from "react";
 
 interface ButtonProps extends React.PropsWithChildren {
   classname?: string;
-  variant?: "default" | "error" | "success" | "gray" | "white";
+  variant?: "default" | "error" | "success" | "gray" | "white" | "whiteWithBorder";
   size?: "small" | "medium" | "large" | "full";
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
@@ -30,6 +30,8 @@ const Button: React.FC<ButtonProps> = ({
         return "bg-gray-500 hover:bg-gray-600 disabled:bg-gray-300 text-white";
       case "white":
         return "bg-white hover:bg-gray-100 disabled:bg-gray-300 text-[#6E62E5]";
+      case "whiteWithBorder":
+        return "bg-white border-[#6E62E5] border-2 hover:bg-[#F0EFFC] disabled:bg-gray-300 text-[#6E62E5]";
       default:
         return "bg-[#6364d5] hover:bg-[#5353c5] disabled:bg-[#a0a0d8] text-white";
     }
@@ -56,7 +58,8 @@ const Button: React.FC<ButtonProps> = ({
       disabled={disabled}
       onClick={onClick}
       aria-label={ariaLabel}
-      className={` ${getVariantStyles()} ${getSizeStyles()} ${classname} rounded focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+      // className="text-white cursor-pointer hover:scale-95 transition-all bg-gradient-to-r from-[#7369e0] via-[#6E62E5] to-[#6457ed] hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg px-5 py-2.5 text-center me-2 mb-2 "
+      className={` ${getVariantStyles()} ${getSizeStyles()} ${classname} rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 ${
         disabled ? "cursor-not-allowed" : ""
       }`}
     >
@@ -65,4 +68,4 @@ const Button: React.FC<ButtonProps> = ({
   );
 };
 
-export default Button;
+export {Button};

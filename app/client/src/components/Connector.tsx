@@ -4,7 +4,7 @@ import type { Connector as StarknetConnector } from "@starknet-react/core";
 import { useConnect, useDisconnect, useAccount } from "@starknet-react/core";
 import { X } from "lucide-react";
 import Modal from "./Modal/Modal";
-import Button from "@/components/Button/Button";
+import {Button} from "@/components/Button/Button";
 import { WalletConnectorModal } from "@/components/WalletConnectModal"
 
 

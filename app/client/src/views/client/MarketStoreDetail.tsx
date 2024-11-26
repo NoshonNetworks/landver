@@ -3,6 +3,7 @@ import { Header } from "@/components/Headers/Header";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import { SectionHeader } from "@/components/Headers/SectionHeader";
+import { Button } from "@/components/Button/Button";
 
 export function MarketStoreDetailClientView() {
 
@@ -51,9 +52,7 @@ export function MarketStoreDetailClientView() {
                       <p className="text-2xl font-bold">0.25 ETH</p>
                     </div>
                     <div className="cursor-pointer flex justify-end flex-1 items-center">
-                      <div className="text-white cursor-pointer hover:scale-95 transition-all bg-gradient-to-r from-[#7369e0] via-[#6E62E5] to-[#6457ed] hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg px-8 py-2.5 text-center mb-2 ">
-                        Buy Land
-                      </div> 
+                      <Button>Buy Land</Button>
                     </div>
                   </div>
                 </div>
@@ -74,7 +73,7 @@ export function MarketStoreDetailClientView() {
                           <div className="flex py-1 ">
                             <div className="rounded-full w-12 h-12 bg-gray-200"></div>
                             <div>
-                              <p className="text-base font-bold">Tress-30</p>
+                              <p className="text-base font-bold">TRESS-30</p>
                               <p className="text-gray-500">owner</p>
                             </div>
                             <div className="flex justify-end flex-1 items-center">
@@ -94,7 +93,9 @@ export function MarketStoreDetailClientView() {
                               <p className="text-base font-bold">0.25 ETH</p>
                             </div>
                             <div className="cursor-pointer flex justify-end flex-1 items-center">
-                              <p>View Details</p>
+                              <Button variant="whiteWithBorder">
+                                View Details
+                              </Button>
                             </div>
                           </div>
 

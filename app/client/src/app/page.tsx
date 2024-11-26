@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useAccount } from "@starknet-react/core";
 import WalletConnector from "@/components/Connector";
 import Modal from "@/components/Modal/Modal";
-import Button from "@/components/Button/Button";
+import {Button} from "@/components/Button/Button";
 import Image from 'next/image'
 import { useLoginStore } from "@/store/loginStore";
 
