@@ -67,7 +67,7 @@ pub mod LandRegistryContract {
         price_update_count: Map::<u256, u256>, // listing_id -> number of price updates
         active_listings: Map::<u256, u256>, // index -> listing_id
         active_listing_count: u256,
-        fee_per_square_unit:u128,
+        fee_per_square_unit: u128,
     }
 
     #[event]
