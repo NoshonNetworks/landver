@@ -10,8 +10,8 @@ pub mod LandRegistryContract {
     };
     use land_registry::interface::land_register::{
         LandRegistered, LandTransferred, LandVerified, LandUpdated, LandInspectorSet,
-        InspectorAdded, InspectorRemoved, FeeUpdated, ListingCreated, ListingCancelled,
-        ListingPriceUpdated, LandSold
+        InspectorAdded, InspectorRemoved, ListingCreated, ListingCancelled, ListingPriceUpdated,
+        LandSold
     };
     use land_registry::land_nft::{LandNFT};
     use land_registry::interface::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait};
@@ -58,7 +58,6 @@ pub mod LandRegistryContract {
         land_inspector_assignments: Map::<u256, ContractAddress>, // Inspector assignments
         registered_inspectors: Map::<ContractAddress, bool>, // List of registered inspectors
         inspector_count: u256, // Total number of registered inspectors
-        fee_per_square_unit: u128,
         listings: Map::<u256, Listing>,
         listing_count: u256,
         price_history: Map::<
@@ -83,7 +82,6 @@ pub mod LandRegistryContract {
         LandInspectorSet: LandInspectorSet,
         InspectorAdded: InspectorAdded,
         InspectorRemoved: InspectorRemoved,
-        FeeUpdated: FeeUpdated,
         ListingCreated: ListingCreated,
         ListingCancelled: ListingCancelled,
         ListingPriceUpdated: ListingPriceUpdated,
@@ -94,9 +92,7 @@ pub mod LandRegistryContract {
 
     #[constructor]
     fn constructor(
-        ref self: ContractState,
-        nft_contract_class_hash: starknet::class_hash::ClassHash,
-        initial_fee_rate: u128
+        ref self: ContractState, nft_contract_class_hash: starknet::class_hash::ClassHash
     ) {
         let owner = get_caller_address();
         self.ownable.initializer(owner);
@@ -105,7 +101,6 @@ pub mod LandRegistryContract {
 
         // Deploy the NFT contract and store its address
 
-        self.fee_per_square_unit.write(initial_fee_rate);
         let land_register_contract_address = get_contract_address();
         let base_uri: ByteArray = "https://example.base.uri/";
         let mut call_data = ArrayTrait::<felt252>::new();
@@ -131,9 +126,6 @@ pub mod LandRegistryContract {
             ref self: ContractState, location: Location, area: u256, land_use: LandUse,
         ) -> u256 {
             let caller = get_caller_address();
-            let registration_fee = InternalFunctions::get_fee(@self, area);
-            let payment = starknet::info::get_tx_info().unbox().max_fee.into();
-            assert(payment >= registration_fee, Errors::INSUFFICIENT_PAYMENT);
 
             let timestamp = get_block_timestamp();
             // Generate unique land ID based on owner, timestamp and location
@@ -149,8 +141,7 @@ pub mod LandRegistryContract {
                 land_use,
                 status: LandStatus::Pending,
                 inspector: 0.try_into().unwrap(),
-                last_transaction_timestamp: timestamp,
-                fee: registration_fee,
+                last_transaction_timestamp: timestamp
             };
 
             // Update storage with new land information
@@ -424,18 +415,6 @@ pub mod LandRegistryContract {
             self.emit(InspectorRemoved { inspector });
         }
 
-        fn set_fee(ref self: ContractState, fee: u128) {
-            let caller = get_caller_address();
-            assert(self.registered_inspectors.read(caller), Errors::NOT_AUTHORIZED);
-            let old_fee = self.fee_per_square_unit.read();
-            self.fee_per_square_unit.write(fee);
-            self.emit(FeeUpdated { old_fee, new_fee: fee });
-        }
-
-        fn get_fee(self: @ContractState) -> u128 {
-            self.fee_per_square_unit.read()
-        }
-
         fn create_listing(ref self: ContractState, land_id: u256, price: u256) -> u256 {
             let caller = get_caller_address();
 
@@ -609,15 +588,6 @@ pub mod LandRegistryContract {
             let caller = get_caller_address();
             let inspector = self.land_inspectors.read(land_id);
             inspector == caller
-        }
-
-        fn get_fee(self: @ContractState, area: u256) -> u128 {
-            area.try_into().unwrap() * self.fee_per_square_unit.read()
-        }
-
-        fn calculate_fee(self: @ContractState, area: u256) -> u128 {
-            assert(area > 0, Errors::AREA_NOT_ZERO);
-            area.try_into().unwrap() * self.fee_per_square_unit.read()
         }
 
         fn _remove_from_active_listings(ref self: ContractState, listing_id: u256) {
