@@ -6,7 +6,7 @@ import { shortAddress } from '@/utils/AddressFormat'
 import { useBlockies } from '@/hooks/useBlockies'
 
 interface EventCardProps {
-  event: Event,
+  event: Event<unknown>,
   index: number
 }
 

@@ -14,6 +14,7 @@ import { TableRow } from "@/components/table/TableRow";
 
 import { useEvents } from "@/hooks/useEvents";
 import { EventCard } from "@/components/Card/EventCard";
+import { SoldEvent, Event } from "@/types/interfaces";
 
 
 
@@ -50,6 +51,79 @@ export function DashboardClientView() {
     }
   })
 
+  //   const { events: soldEvents } = useEvents({
+  //   name:"landRegister",
+  //   triggerRefetch:false, // this could be an state that toggles false-true and refetch event
+  //   filters: {
+  //     events: [
+  //       'LandSold',
+  //       ]
+  //   }
+  // })
+    // here is the mock while we can create sold events to fetch
+    const soldEvents: Event<SoldEvent>[] = [
+      {
+        eventKey: "",
+        eventName: "",
+        parsedEvent:{
+          buyer: "TRSS-123",
+          seller:"0x2222",
+          land_id:"56037-XDER",
+          listing_id:1,
+          price:0.2345,
+        },
+        rawEvent:{
+          from_address:""
+        }
+      },      
+      {
+        eventKey: "",
+        eventName: "",
+        parsedEvent:{
+          buyer: "TRSS-123",
+          seller:"0x2222",
+          land_id:"56037-XDER",
+          listing_id:1,
+          price:0.2345,
+        },
+        rawEvent:{
+          from_address:""
+        }
+      },      
+      {
+        eventKey: "",
+        eventName: "",
+        parsedEvent:{
+          buyer: "TRSS-123",
+          seller:"0x2222",
+          land_id:"56037-XDER",
+          listing_id:1,
+          price:0.2345,
+        },
+        rawEvent:{
+          from_address:""
+        }
+      },      
+      {
+        eventKey: "",
+        eventName: "",
+        parsedEvent:{
+          buyer: "TRSS-123",
+          seller:"0x2222",
+          land_id:"56037-XDER",
+          listing_id:1,
+          price:0.2345,
+        },
+        rawEvent:{
+          from_address:""
+        }
+      },      
+    ] 
+
+
+ 
+ 
+
   useEffect(()=>{
     (async()=>{
       try {
@@ -63,7 +137,6 @@ export function DashboardClientView() {
       }
     })()
   }, [address])
-
 
   return (
     <div className="">
@@ -95,16 +168,16 @@ export function DashboardClientView() {
               />            
 
           {
-            [1,2,3,4,5,6].map((item, index) => {
+            soldEvents.map((item, index) => {
               return (
                 <TableRow 
                   key={"uniquetablerowkeu"+index}
                   items={[
                     { value:index+1, fixedWidth:70, },
-                    { value:"56037-XDER" },
-                    { value:"TRSS-123" },
-                    { value:"0.2345" },
-                    { value:"20/11/24", alignText:"right" },
+                    { value:item.parsedEvent.land_id },
+                    { value:item.parsedEvent.buyer },
+                    { value:item.parsedEvent.price },
+                    { value:"-", alignText:"right" },
                   ]}
                   headers={["NO", "LAND ID", "BUYER/LAND NAME", "PRICE", "DATE"]}
                 />

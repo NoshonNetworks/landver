@@ -18,9 +18,9 @@ function TableHeader({ items }:TableHeaderProps) {
               key={"item"+item.label+"TableHeader"+index} 
               className={`
                 ${ !item.fixedWidth && `flex-1` }
-                ${ item.fixedWidth && `w-[${item.fixedWidth}px]` }
                 ${ ALIGN_TEXT[item.alignText || "left"] } 
                 `}
+                style={{ width:item.fixedWidth??"auto" }}
             >
               { item.label }
             </div>

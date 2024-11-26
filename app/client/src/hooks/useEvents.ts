@@ -11,7 +11,7 @@ const contracts = {
 
 export function useEvents({ name, triggerRefetch, filters }: UseEventsParams) { 
 
-    const [events, setEvents] = useState<Event[]>([])
+    const [events, setEvents] = useState<Event<unknown>[]>([])
     
     useEffect(()=>{
         (async()=>{
@@ -40,7 +40,7 @@ export function useEvents({ name, triggerRefetch, filters }: UseEventsParams) {
             const abiEnums = CallData.getAbiEnum(contracts[name].abi);
             const parsed = starknetEvents.parseEvents(eventsRes.events, abiEvents, abiStructs, abiEnums);
             
-            const formattedEvents:Event[] = []
+            const formattedEvents:Event<unknown>[] = []
     
             for (let i:number = 0; i <eventsRes.events.length; i++) {
               const rawEvent = eventsRes.events[i]
@@ -53,7 +53,7 @@ export function useEvents({ name, triggerRefetch, filters }: UseEventsParams) {
                 eventKey:Object.keys(parsedEvent)[0],
                 eventName,
                 rawEvent, 
-                parsedEvent
+                parsedEvent: parsedEvent[Object.keys(parsedEvent)[0]]
               })
             }
     

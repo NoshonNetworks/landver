@@ -18,10 +18,10 @@ function TableRow({ items, headers }:TableRowProps) {
               key={"item"+item.value+"TableHeader"+index} 
               className={`
                 ${ !item.fixedWidth && `flex-1` }
-                ${ item.fixedWidth && `w-[${item.fixedWidth}px]` }
                 ${ ALIGN_TEXT[item.alignText || "left"] } 
                 flex items-center 2xl:block gap-2
                 `}
+                style={{ width:item.fixedWidth??"auto" }}
             >
               <p className='2xl:hidden'>{headers[index]}: </p>
               <p>
