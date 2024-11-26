@@ -2,6 +2,7 @@
 import { Header } from "@/components/Headers/Header";
 import { useParams } from "next/navigation";
 import Image from "next/image";
+import { Tag } from "@/components/Tag/Tag";
 
 export default function DetailClientView() {
 
@@ -15,12 +16,12 @@ export default function DetailClientView() {
             <div className="rounded-lg xl:col-span-1 min-h-[250px] bg-white flex flex-col py-3 gap-3 px-4">
                 <div className="flex justify-between items-center px-4">
                     <p className="text-gray-600">status</p>
-                    <div>Approved</div>
+                    <Tag variant="approved" />
                 </div>
                 <div className="h-[1px] bg-gray-200"></div>
                 <div className="flex justify-between items-center px-4">
                     <p className="text-gray-600">Land ID</p>
-                    <div>Approved</div>
+                    <div>TRISS-30</div>
                 </div>
                 <div className="h-[1px] bg-gray-200"></div>
                 <div className="flex justify-between items-center px-4">
@@ -45,7 +46,7 @@ export default function DetailClientView() {
                 <div className="h-[1px] bg-gray-200"></div>
                 <div className="flex justify-between items-center px-4">
                     <p className="text-gray-600">Date</p>
-                    <div>Approved</div>
+                    <div>10/11/24</div>
                 </div>
             </div>
             <div className="rounded-lg xl:col-span-2 min-h-[250px] bg-white"></div>
@@ -94,12 +95,7 @@ export default function DetailClientView() {
                           <div className="flex-1 flex gap-2 items-center">
                             <p className="2xl:hidden">Status: </p>
                             {/* <div className={`${item.status==="Approved"&&"bg-[#E8FFF3]"} ${item.status==="Rejected"&&"bg-[#FFF5F8]"} ${item.status==="Pending"&&"bg-[#fff9e2]"} py-1 px-2 rounded-xl`}> */}
-                            <div className={`bg-[#E8FFF3] py-1 px-2 rounded-xl`}>
-                              { <p className="text-[#50CD89]">Approved</p>  }
-                              {/* { item.status === "Pending" && <p className="text-[#c6a727]">Pending</p>  }
-                              { item.status === "Rejected" && <p className="text-[#FFF5F8]">Rejected</p>  } */}
-                              {/* { item.status === "Pending" &&  } */}
-                            </div>
+                            <Tag variant="approved" />
                           </div>
                           
                         </div>

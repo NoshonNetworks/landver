@@ -13,6 +13,7 @@ import RegisterLandModal from "@/components/RegisterLandModal";
 import DeleteLandModal from "@/components/DeleteLandModal";
 
 import { useRouter } from "next/navigation";
+import { Tag } from "@/components/Tag/Tag";
 
 type ValuePiece = Date | null;
 type Value = [ValuePiece, ValuePiece];
@@ -227,12 +228,11 @@ export default function MyCollectionsClientView() {
                           </div>
                           <div className="flex-1 flex gap-2 items-center">
                             <p className="2xl:hidden">Status: </p>
-                            <div className={`${item.status==="Approved"&&"bg-[#E8FFF3]"} ${item.status==="Rejected"&&"bg-[#FFF5F8]"} ${item.status==="Pending"&&"bg-[#fff9e2]"} py-1 px-2 rounded-xl`}>
-                              { item.status === "Approved" && <p className="text-[#50CD89]">Approved</p>  }
-                              { item.status === "Pending" && <p className="text-[#c6a727]">Pending</p>  }
-                              { item.status === "Rejected" && <p className="text-[#FFF5F8]">Rejected</p>  }
-                              {/* { item.status === "Pending" &&  } */}
-                            </div>
+                              
+                            { item.status === "Approved" && <Tag variant="approved" />  }
+                            { item.status === "Pending" && <Tag variant="pending" />  }
+                            { item.status === "Rejected" && <Tag variant="rejected" /> }
+                          
                           </div>
                           <div className="flex-1 flex 2xl:justify-center gap-2 items-center relative">
                             <div className="relative cursor-pointer" onClick={()=>setIndexToShowOptions((indexToShowOptions===null || indexToShowOptions!==index) ? index : null)}>
