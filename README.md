@@ -20,7 +20,6 @@ The project is divided into the following components:
 - `scripts/`: JavaScript tools for automation and utility tasks
 - `sdk/`: JavaScript for interacting with the smart contracts and API
 
-## Documentation: https://docs.google.com/document/d/1-mT9mu28aDZcQfv4XnbWCzTcVPn-FM-_WuUKb1QdIw0/edit?usp=sharing
 
 # Development
  
