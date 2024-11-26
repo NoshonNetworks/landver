@@ -11,7 +11,7 @@ pub mod LandRegistryContract {
     use land_registry::interface::land_register::{
         LandRegistered, LandTransferred, LandVerified, LandUpdated, LandInspectorSet,
         InspectorAdded, InspectorRemoved, ListingCreated, ListingCancelled, ListingPriceUpdated,
-        LandSold, FeeUpdated
+        LandSold
     };
     use land_registry::land_nft::{LandNFT};
     use land_registry::interface::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait};
@@ -67,7 +67,6 @@ pub mod LandRegistryContract {
         price_update_count: Map::<u256, u256>, // listing_id -> number of price updates
         active_listings: Map::<u256, u256>, // index -> listing_id
         active_listing_count: u256,
-        fee_per_square_unit: u128,
     }
 
     #[event]
@@ -88,7 +87,6 @@ pub mod LandRegistryContract {
         ListingCancelled: ListingCancelled,
         ListingPriceUpdated: ListingPriceUpdated,
         LandSold: LandSold,
-        FeeUpdated: FeeUpdated,
     }
 
     // Constructor initializes the contract with NFT functionality
@@ -431,18 +429,6 @@ pub mod LandRegistryContract {
                 i += 1;
             };
             inspectors
-        }
-
-        fn set_fee(ref self: ContractState, fee: u128) {
-            let caller = get_caller_address();
-            assert(self.registered_inspectors.read(caller), Errors::NOT_AUTHORIZED);
-            let old_fee = self.fee_per_square_unit.read();
-            self.fee_per_square_unit.write(fee);
-            self.emit(FeeUpdated { old_fee, new_fee: fee });
-        }
-
-        fn get_fee(self: @ContractState) -> u128 {
-            self.fee_per_square_unit.read()
         }
 
         fn create_listing(ref self: ContractState, land_id: u256, price: u256) -> u256 {

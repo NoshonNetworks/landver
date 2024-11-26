@@ -94,9 +94,6 @@ pub trait ILandRegistry<TContractState> {
     fn remove_inspector(ref self: TContractState, inspector: ContractAddress);
     fn get_all_inspectors(self: @TContractState) -> Array<ContractAddress>;
 
-    fn set_fee(ref self: TContractState, fee: u128);
-    fn get_fee(self: @TContractState) -> u128;
-
     fn get_user_type(self: @TContractState, userAddress: ContractAddress) -> felt252;
 
 
@@ -139,11 +136,6 @@ pub struct LandUpdated {
     area: u256
 }
 
-#[derive(Drop, Copy, starknet::Event)]
-pub struct FeeUpdated {
-    old_fee: u128,
-    new_fee: u128,
-}
 
 #[derive(Drop, Copy, starknet::Event)]
 pub struct LandInspectorSet {
