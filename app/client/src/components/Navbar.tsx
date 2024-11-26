@@ -65,11 +65,11 @@ export const Navbar = () => {
             <div className="relative cursor-pointer hover:scale-95 transition-all">
               <div className="bg-gray-200 rounded-full overflow-hidden h-8 w-8 md:h-12 md:w-12 relative">
                 {
-                  profileImage && <Image onClick={()=>{setShowUserOptions(!showUserOptions)}} src={profileImage} alt="ether" layout="fill" style={{ objectFit:"cover", objectPosition:"center" }} />
+                  profileImage && <Image onClick={()=>{setShowUserOptions(!showUserOptions)}} src={profileImage} alt="ether" fill style={{ objectFit:"cover", objectPosition:"center" }} />
                 }
               </div>
               <div onClick={()=>{setShowUserOptions(!showUserOptions)}} className="absolute top-4 -right-1 w-4 h-4 md:top-6 md:-right-2 md:w-5 md:h-5">
-                  <Image src={"/icons/common/dropdown-arrow-purple-bubble.svg"} alt="ether" layout="fill" style={{ objectFit:"cover", objectPosition:"center" }} />
+                  <Image src={"/icons/common/dropdown-arrow-purple-bubble.svg"} alt="ether" fill style={{ objectFit:"cover", objectPosition:"center" }} />
               </div>
               
               {

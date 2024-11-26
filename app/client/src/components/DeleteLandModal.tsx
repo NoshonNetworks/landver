@@ -36,7 +36,7 @@ const DeleteLandModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
             <div className="w-16 h-16 rounded-full relative bg-[#F9F5FF] flex justify-center items-center">
                 <div className="w-12 h-12 rounded-full mx-auto relative bg-[#F4EBFF] flex justify-center items-center">
                     <div className="w-9 h-9 rounded-full mx-auto relative">
-                        <Image src={"/icons/sidebar/shared-selected.svg"} alt="ether" layout="fill" style={{ objectFit:"cover", objectPosition:"center" }} />
+                        <Image src={"/icons/sidebar/shared-selected.svg"} alt="ether" fill style={{ objectFit:"cover", objectPosition:"center" }} />
                     </div>
                 </div>
             </div>

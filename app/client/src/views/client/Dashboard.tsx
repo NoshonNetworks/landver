@@ -9,26 +9,13 @@ import { useBlockies } from "@/hooks/useBlockies";
 import Image from "next/image";
 
 import { SectionHeader } from "@/components/Headers/SectionHeader";
-import { shortAddress } from "@/utils/AddressFormat";
 import { TableHeader } from "@/components/table/TableHeader";
 import { TableRow } from "@/components/table/TableRow";
 
-import type { DynamicObject } from "@/types/interfaces";
 import { useEvents } from "@/hooks/useEvents";
+import { EventCard } from "@/components/Card/EventCard";
 
-const EVENTS_KEY_LABEL:DynamicObject = {
-  'LandRegistered':"Land Registered",
-  'LandTransfered':"Land Transfered",
-  'LandVerified':"Land Verified",
-  'LandUpdated':"Land Updated",
-  'LandInspectorSet':"Inspector asigned to land",
-  'InspectorAdded':"Inspector created",
-  'InspectorRemoved':"Inspector removed",
-  'ListingCreated':"New listing created",
-  'ListingCancelled':"Listing cancelled",
-  'ListingPriceUpdated':"Listing price updated",
-  'LandSold':"Land sold",
-}
+
 
 export function DashboardClientView() {
 
@@ -62,7 +49,6 @@ export function DashboardClientView() {
         ]
     }
   })
-  console.log(recentEvents)
 
   useEffect(()=>{
     (async()=>{
@@ -135,20 +121,7 @@ export function DashboardClientView() {
             {
               recentEvents.map((event, index)=>{
                 return (
-                  <div key={"dashboardrecentsactivities1e2"+index} className="flex justify-start items-start gap-2 mt-4 cursor-default">
-                    <div className="w-12 h-12 rounded-md bg-gray-300 relative overflow-hidden">
-                      <EventImage eventName={EVENTS_KEY_LABEL[event.eventName]} />
-                    </div>
-                    <div className="flex-1">
-                      <p className="font-semibold">{ EVENTS_KEY_LABEL[event.eventName]  }</p>
-                      <p className="">From: { shortAddress(event.rawEvent.from_address)  }</p>
-                      {/* <p className="text-gray-400">Land Approval</p>
-                      <p className="text-[#50CD89] 2xl:hidden block">Approved</p> red #F1416C */}
-                    </div>
-                    <div className="bg-[#E8FFF3] py-1 px-2 rounded-xl hidden 2xl:block"> {/* red #FFF5F8 */}
-                      {/* <p className="text-[#50CD89]">Approved</p> red #F1416C */}
-                    </div>
-                  </div>
+                  <EventCard event={event} index={index} key={"dashboardrecentsactivities1e2"+index} />
                 )
               })
             }
@@ -164,12 +137,7 @@ export function DashboardClientView() {
 
 const LandImage = ({ landAddress }:{landAddress:string}) => {
   const { blockiesImageSrc } = useBlockies({ address:landAddress }) 
-  return <Image src={blockiesImageSrc} alt="ether" layout="fill" style={{ objectFit:"cover", objectPosition:"center" }} />
-}
-
-const EventImage = ({ eventName }:{eventName:string}) => {
-  const { blockiesImageSrc } = useBlockies({ address:eventName }) 
-  return <Image src={blockiesImageSrc} alt="ether" layout="fill" style={{ objectFit:"cover", objectPosition:"center" }} />
+  return <Image src={blockiesImageSrc} alt="ether" fill style={{ objectFit:"cover", objectPosition:"center" }} />
 }
 
 
@@ -207,10 +175,10 @@ const Card = ({ value, unit, subtitle, buttonMessage, hasIconsMap, landIds, main
             <div className="absolute top-7 right-4 w-[60px] h-[60px] rounded-full flex justify-center items-center" style={{ backgroundColor:mainIconColor==="blue"?"#F2FAFD":"#F4FDF9" }}>
               <div className="relative w-[40px] h-[40px] rounded-full">
                 {
-                  mainIconColor === "blue"&&<Image src={"/icons/common/stack-green.svg"} alt="ether" layout="fill" style={{ objectFit:"cover", objectPosition:"center" }} />
+                  mainIconColor === "blue"&&<Image src={"/icons/common/stack-green.svg"} alt="ether" fill style={{ objectFit:"cover", objectPosition:"center" }} />
                 }
                 {
-                  mainIconColor === "green"&&<Image src={"/icons/common/stack-blue.svg"} alt="ether" layout="fill" style={{ objectFit:"cover", objectPosition:"center" }} />
+                  mainIconColor === "green"&&<Image src={"/icons/common/stack-blue.svg"} alt="ether" fill style={{ objectFit:"cover", objectPosition:"center" }} />
                 }
               </div>
             </div>
