@@ -118,8 +118,7 @@ const RegisterLandModal: React.FC<RegisterLandModalProps> = ({ isOpen, onClose, 
   
   // Check validity of inputs to enable CREATE_SAVE button
   useEffect(()=>{
-    const { landUse, ...landDataToEvaluate } = landData // landUse is allowed to be 0 and always will have a value. So we exclude it 
-    const enable = Object.values(landDataToEvaluate).every(item => item)
+    const enable = Object.values(landData).every(item => item) 
     setEnableSubmit(enable)
     setError(false)
   }, [landData])
@@ -206,7 +205,7 @@ const RegisterLandModal: React.FC<RegisterLandModalProps> = ({ isOpen, onClose, 
                 </div>
                 <div className="mt-4">
                     <p>Land Use <span className="text-red-500">*</span></p>
-                    <select value={landData.landUse} onChange={(e)=>setLandData({ ...landData, landUse:e.target.value as any })} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                    <select value={landData.landUse} onChange={(e)=>setLandData({ ...landData, landUse:e.target.value })} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                     {
                         LandUse.map((landUse, index) => {
                         return (

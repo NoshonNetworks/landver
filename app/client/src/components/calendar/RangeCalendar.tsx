@@ -1,11 +1,10 @@
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import type { Dispatch, SetStateAction } from 'react';
 
+import type { CalendarValue } from '@/types/types';
 
-type ValuePiece = Date | null;
-type Value = ValuePiece | [ValuePiece, ValuePiece];
-
-export function RangeCalendar({ value, onChange }: { value:Value, onChange:any}) {
+export function RangeCalendar({ value, onChange }: { value:CalendarValue, onChange:Dispatch<SetStateAction<CalendarValue>>}) {
 
   return (
     <div>

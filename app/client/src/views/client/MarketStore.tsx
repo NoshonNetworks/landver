@@ -8,11 +8,7 @@ import { MarketCard } from "@/components/Card/MarketCard";
 import { DropdownMenu } from "@/components/DropdownMenu/DropdownMenu";
 
 import { formatDate } from "@/utils/dates";
-
-
-type ValuePiece = Date | null;
-type Value = [ValuePiece, ValuePiece];
-
+import type { CalendarValue } from '@/types/types';
 
 
 export default function MarketStoreClientView() {
@@ -20,9 +16,9 @@ export default function MarketStoreClientView() {
   const [showFilters, setShowFilters] = useState(false)
   const [showDateRangeCalendar, setShowDateRangeCalendar] = useState(false)
 
-  const [dateRange, setDateRange] = useState<Value>([new Date(),new Date()]);
-  const startDate = (dateRange && dateRange[0]) ? formatDate(dateRange[0]) : null
-  const endDate = (dateRange && dateRange[1]) ? formatDate(dateRange[1]) : null
+  const [dateRange, setDateRange] = useState<CalendarValue>([new Date(),new Date()]);
+  const startDate = ((dateRange && !(dateRange instanceof Date)) && dateRange[0]) ? formatDate(dateRange[0]) : null
+  const endDate = ((dateRange && !(dateRange instanceof Date)) && dateRange[1]) ? formatDate(dateRange[1]) : null
 
   return (
     <div className="">

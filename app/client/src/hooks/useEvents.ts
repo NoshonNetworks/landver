@@ -1,9 +1,8 @@
 import { useEffect, useState } from "react";
 import { num, hash, RpcProvider, events as starknetEvents, CallData } from "starknet";
-import { useContract, useAccount } from "@starknet-react/core";
 import { ABI as LandRegistryABI } from "@/abis/LandRegistryAbi";
 
-import type { UseEventsParams, Events } from "@/types/interfaces"; 
+import type { UseEventsParams, Event } from "@/types/interfaces"; 
 
 const contracts = {
   landRegister: { address:"0x5a4054a1b1389dcd48b650637977280d32f1ad8b3027bc6c7eb606bf7e28bf5", abi: LandRegistryABI }
@@ -12,16 +11,12 @@ const contracts = {
 
 export function useEvents({ name, triggerRefetch, filters }: UseEventsParams) { 
 
-    const [events, setEvents] = useState<Events[]>([])
+    const [events, setEvents] = useState<Event[]>([])
     
     useEffect(()=>{
         (async()=>{
           try {
             const provider = new RpcProvider({ });
-            const lastBlock = await provider.getBlock('latest');
-
-            
-
             // num.toHex(hash.starknetKeccak('LandRegistered')), 
             const eventFilters = filters?.events.map(event => num.toHex(hash.starknetKeccak(event))) || []
 
@@ -45,20 +40,14 @@ export function useEvents({ name, triggerRefetch, filters }: UseEventsParams) {
             const abiEnums = CallData.getAbiEnum(contracts[name].abi);
             const parsed = starknetEvents.parseEvents(eventsRes.events, abiEvents, abiStructs, abiEnums);
             
-            const formattedEvents:{ 
-              eventKey:string,
-              eventName:string,
-              rawEvent: any, 
-              parsedEvent:any
-            }[] = []
+            const formattedEvents:Event[] = []
     
-            for (let i = 0; i <eventsRes.events.length; i++) {
+            for (let i:number = 0; i <eventsRes.events.length; i++) {
               const rawEvent = eventsRes.events[i]
               const parsedEvent = parsed[i]
     
               const fullKeys = Object.keys(parsedEvent)[0].split("::");
               const eventName = fullKeys[fullKeys.length - 1]
-    
     
               formattedEvents.push({
                 eventKey:Object.keys(parsedEvent)[0],
@@ -74,7 +63,7 @@ export function useEvents({ name, triggerRefetch, filters }: UseEventsParams) {
             console.log(error)
           }
         })()
-      }, [...triggerRefetch])
+      }, [triggerRefetch])
       
   return {
     events,    

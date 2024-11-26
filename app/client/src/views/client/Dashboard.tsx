@@ -26,12 +26,12 @@ export function DashboardClientView() {
 
   const balance = balanceData?.formatted?.slice(0,4) || ""
 
-  const { contract:landRegisterContract, abi:landRegisterABI } = useLandverContract({ name:"landRegister" })
+  const { contract:landRegisterContract } = useLandverContract({ name:"landRegister" })
   const [landsOwned, setLandsOwned] = useState<number|null>(null)
   const [landsAddresses, setLandsAdresses] = useState<string[]|null>(null)
   const { events: recentEvents } = useEvents({
     name:"landRegister",
-    triggerRefetch:[address],
+    triggerRefetch:false, // this could be an state that toggles false-true and refetch event
     filters: {
       events: [
         'LandRegistered',

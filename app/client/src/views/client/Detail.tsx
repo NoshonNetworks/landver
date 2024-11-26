@@ -66,7 +66,7 @@ export default function DetailClientView() {
                     />
                     
                   {
-                    [1,2,3,4,5].map((item:any, index) => {
+                    [1,2,3,4,5].map((item:number, index) => {
                       return (
                         <TableRow 
                             key={"unqikeuproptablerow"+index}

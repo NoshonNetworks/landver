@@ -1,12 +1,12 @@
 import React from 'react'
 import Image from 'next/image'
 
-import type { DynamicObject, SmallNumberCardProps } from '@/types/interfaces'
+import type { DynamicObject, Event } from '@/types/interfaces'
 import { shortAddress } from '@/utils/AddressFormat'
 import { useBlockies } from '@/hooks/useBlockies'
 
 interface EventCardProps {
-  event:any,
+  event: Event,
   index: number
 }
 
@@ -29,7 +29,7 @@ function EventCard({ event }:EventCardProps) {
       return (
         <div className="flex justify-start items-start gap-2 mt-4 cursor-default">
           <div className="w-12 h-12 rounded-md bg-gray-300 relative overflow-hidden">
-            <EventImage eventName={EVENTS_KEY_LABEL[event.eventName]} />
+            <EventImage eventName={EVENTS_KEY_LABEL[event.eventName as string]} />
           </div>
           <div className="flex-1">
             <p className="font-semibold">{ EVENTS_KEY_LABEL[event.eventName]  }</p>

@@ -21,6 +21,20 @@ import { formatTimestampToDate } from "@/utils/dates";
 type ValuePiece = Date | null;
 type Value = [ValuePiece, ValuePiece];
 
+interface Land {
+  number:number, 
+  id:string, 
+  buyerOrLandName: "",
+  latitude: number,
+  logitude: number,
+  price: number|null,
+  area:number,
+  landUse:[string, unknown] | undefined | string,
+  date: string,
+  status: [string, unknown] | undefined | string,
+  inspector_sliced: string,
+}
+
 export function VerifyLandInspectorView() {
 
   const router = useRouter()
@@ -28,7 +42,7 @@ export function VerifyLandInspectorView() {
   const { address } = useAccount() 
   const { contract:landRegisterContract } = useLandverContract({ name:"landRegister" })
   
-  const [lands, setLands] = useState([])
+  const [lands, setLands] = useState<Land[]>([])
 
   const [editData, setEditData] = useState<null|LandData>(null)
 
@@ -47,7 +61,7 @@ export function VerifyLandInspectorView() {
       try {
         if(address) {
             const addresses = await landRegisterContract.get_lands_by_owner(address)
-            const newLands = []
+            const newLands:Land[] = []
 
             let index = 0;
             for await (const address of addresses) {
@@ -71,7 +85,7 @@ export function VerifyLandInspectorView() {
                 index++;
             }
 
-            setLands(newLands.reverse() as any)
+            setLands(newLands.reverse())
         }
       } catch (error) {
         console.log(error)
@@ -106,17 +120,6 @@ export function VerifyLandInspectorView() {
                     show={showStatusFilters}
                   />
                 </div>
-                {/* <div onClick={()=>setShowDateRangeCalendar(!showDateRangeCalendar)} className="cursor-pointer relative flex gap-2 rounded-lg bg-gray-100 px-5 py-2 text-center text-gray-500 flex-shrink-0">
-                  <Image src={"icons/common/calendar-gray.svg"} alt="" width={14} height={14} />
-                  <p>{startDate} - {endDate}</p>
-                  {
-                    showDateRangeCalendar && (
-                        <div className="absolute top-[110%] right-0" style={{ zIndex:10000 }} onClick={(e)=>e.stopPropagation()}>
-                          <RangeCalendar value={dateRange} onChange={setDateRange} />
-                        </div>
-                    )
-                  }
-                </div> */}
               </div>          
             </div>
 
@@ -138,7 +141,7 @@ export function VerifyLandInspectorView() {
                       ]}
                     />
                     {
-                      lands.map((item:any, index) => {
+                      lands.map((item:Land, index) => {
                         return (
                           <TableRow
                             key={"unqiuetablerowafa"+index}
@@ -168,7 +171,7 @@ export function VerifyLandInspectorView() {
                                         item.status === "Pending" && (
                                           <DropdownMenu 
                                             items={[
-                                              { label: "Edit", action:()=>setEditData({ area:item.area, landId:item.id, landUse:item.landUse, latitude:item.latitude, longitude:item.logitude }) },
+                                              { label: "Edit", action:()=>setEditData({ area:item.area, landId:item.id, landUse:item.landUse as string, latitude:item.latitude, longitude:item.logitude }) },
                                               { label: "View", action:()=>router.push(`/my-collections/detail/${item.id}`) },
                                               { variant:"danger", label: "Delete", action: ()=>setShowDeleteLandModal(true) },
                                             ]}
@@ -193,7 +196,7 @@ export function VerifyLandInspectorView() {
                                     {
                                       item.status === "Pending" && (
                                         <div className="flex gap-2">
-                                          <p onClick={()=>setEditData({ area:item.area, landId:item.id, landUse:item.landUse, latitude:item.latitude, longitude:item.logitude })} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">Edit</p>
+                                          <p onClick={()=>setEditData({ area:item.area, landId:item.id, landUse:item.landUse as string, latitude:item.latitude, longitude:item.logitude })} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">Edit</p>
                                           <p onClick={()=>router.push(`/my-collections/detail/${item.id}`)} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">View</p>
                                           <p onClick={()=>setShowDeleteLandModal(true)} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-red-500">Delete</p>
                                         </div>

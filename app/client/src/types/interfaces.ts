@@ -90,10 +90,15 @@ export interface TagProps {
     [key: string]: string; // Allows any string as a key
   }
 
-  export interface Events {
-    eventKey:string, 
-    eventName:string, 
-    rawEvent: any, parsedEvent:any
+  export interface Event {
+    eventKey:string, // Name of event in contract, example: LandRegistered, LandUpdated, etc
+    eventName:string, // Human friendly event name, example: Land Registered, Land Updated, etc
+    rawEvent: { // Event before parsing, just like comes from Event fetching (some properties omitted due to not use)
+      from_address: string,
+    }, 
+    parsedEvent: {
+      [key: string]: unknown; // Optional additional properties
+    } // Event after parsing it usign starknet.js (some properties omitted due to not use)
   }
 
   export interface eventFilters {
@@ -102,7 +107,8 @@ export interface TagProps {
 
   export interface UseEventsParams {
     name:"landRegister",
-    triggerRefetch:any[],
+    triggerRefetch:boolean,
     filters?: eventFilters
   }
+  
   
