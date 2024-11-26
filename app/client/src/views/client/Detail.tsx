@@ -1,14 +1,10 @@
 'use client'
 import { Header } from "@/components/Headers/Header";
-import { useParams } from "next/navigation";
-import Image from "next/image";
 import { Tag } from "@/components/Tag/Tag";
 import { TableHeader } from "@/components/table/TableHeader";
 import { TableRow } from "@/components/table/TableRow";
 
 export default function DetailClientView() {
-
-  const params = useParams()
 
   return (
     <>
@@ -73,6 +69,7 @@ export default function DetailClientView() {
                     [1,2,3,4,5].map((item:any, index) => {
                       return (
                         <TableRow 
+                            key={"unqikeuproptablerow"+index}
                             headers={["NO", "FROM", "TO", "PRICE", "DATE", "STATUS"]}
                             items={[
                               { value: index, fixedWidth:70 },

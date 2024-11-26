@@ -3,12 +3,10 @@ import { useState, useEffect } from "react";
 import { Header } from "@/components/Headers/Header";
 import { Searchbar } from "@/components/Search/Searchbar";
 import Image from "next/image";
-import { DropdownOptions } from "@/components/Options/DropdownOptions";
 import { RangeCalendar } from "@/components/calendar/RangeCalendar";
 
 import { useAccount } from "@starknet-react/core";
 import { useLandverContract } from "@/hooks/useLandverContract";
-import { shortAddress } from "@/utils/AddressFormat";
 import RegisterLandModal from "@/components/RegisterLandModal";
 import DeleteLandModal from "@/components/DeleteLandModal";
 
@@ -175,6 +173,7 @@ export function DashboardInspectorView() {
                       lands.map((item:any, index) => {
                         return (
                           <TableRow
+                            key={"uniqueKeyPropsaadahsboardinspec"+index}
                             items={[
                               { value:index+1, fixedWidth:70, },
                               { value:"56037-XDER" },

@@ -1,8 +1,5 @@
 'use client'
 
-import { useState } from "react";
-import RegisterLandModal from "../RegisterLandModal";
-
 export const DropdownOptions = ({ show, onClose, options }:{ show:boolean, onClose:()=>void, options: { label:string, action:()=>void }[] }) => {
 
   return (

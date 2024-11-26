@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import type { Connector as StarknetConnector } from "@starknet-react/core";
-import { useConnect, useDisconnect, useAccount } from "@starknet-react/core";
+import { useDisconnect, useAccount } from "@starknet-react/core";
 import {Button} from "@/components/Button/Button";
 import { WalletConnectorModal } from "@/components/WalletConnectModal"
 
@@ -10,22 +9,10 @@ import type { WalletConnectorProps } from "@/types/interfaces";
 
 
 export default function WalletConnector({
-  onLoginSuccess,
 }: WalletConnectorProps) {
-  const { connectors, connectAsync } = useConnect();
   const { disconnectAsync } = useDisconnect();
   const { address, status } = useAccount();
   const [showModal, setShowModal] = useState(false);
-
-  async function connect(connector: StarknetConnector) {
-    try {
-      await connectAsync({ connector });
-      setShowModal(false);
-      if (onLoginSuccess) onLoginSuccess();
-    } catch (error) {
-      console.error(error);
-    }
-  }
 
   async function disconnect() {
     try {

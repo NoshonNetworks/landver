@@ -1,19 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { X } from "lucide-react";
-import { CairoCustomEnum, num } from "starknet";
-import { useAccount } from "@starknet-react/core";
-import { useLandverContract } from "@/hooks/useLandverContract";
 import Image from "next/image";
-import FadeLoader from "react-spinners/FadeLoader";
 
 import type { ModalProps } from "@/types/interfaces";
 
 const DeleteLandModal: React.FC<ModalProps> = ({ isOpen, onClose }) => {
-    const { account } = useAccount()
-    const { contract:landRegisterContract } = useLandverContract({ name:"landRegister" })
 
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState(false)
+    const [loading,] = useState(false)
 
   const handleBackgroundClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {

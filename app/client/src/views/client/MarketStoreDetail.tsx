@@ -1,6 +1,5 @@
 'use client'
 import { Header } from "@/components/Headers/Header";
-import { useParams } from "next/navigation";
 import Image from "next/image";
 import { SectionHeader } from "@/components/Headers/SectionHeader";
 import { Button } from "@/components/Button/Button";
@@ -8,7 +7,6 @@ import { MarketCard } from "@/components/Card/MarketCard";
 
 export function MarketStoreDetailClientView() {
 
-  const params = useParams()
 
   return (
     <>
@@ -66,7 +64,7 @@ export function MarketStoreDetailClientView() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pt-5">
                 {
-                  [1,2,3,4].map((item, index)=>{
+                  [1,2,3,4].map((item)=>{
                     return (
                       <MarketCard key={"uniquecardkeymarketstoredetailclientdfa"+item} item={item} />
                     )

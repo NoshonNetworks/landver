@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import { CairoCustomEnum, num } from "starknet";
+import { CairoCustomEnum,} from "starknet";
 import { useAccount } from "@starknet-react/core";
 import { useLandverContract } from "@/hooks/useLandverContract";
 import Image from "next/image";

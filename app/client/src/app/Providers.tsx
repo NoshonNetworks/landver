@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
 
-import FadeLoader from "react-spinners/FadeLoader";
 
 import { useLoginStore } from "@/store/loginStore";
  

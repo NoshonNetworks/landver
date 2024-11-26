@@ -1,6 +1,6 @@
 import React from 'react'
 
-import type { DropdownMenuItems, DropdownMenuProps } from '@/types/interfaces'
+import type { DropdownMenuProps } from '@/types/interfaces'
 
 const POSITIONS = {
   "bottom-left": "left-0 top-[105%] origin-top-left",
@@ -21,7 +21,7 @@ function DropdownMenu({position, items, show }:DropdownMenuProps) {
       {
         items.map((item, index) => {
           return (
-            <p onClick={()=>item.action()} className={`cursor-pointer font-normal ${item.variant?VARIANTS[item.variant]:"text-gray-500"}`}>{ item.label }</p>
+            <p key={'dditemmenu'+index} onClick={()=>item.action()} className={`cursor-pointer font-normal ${item.variant?VARIANTS[item.variant]:"text-gray-500"}`}>{ item.label }</p>
           )
         })
       }

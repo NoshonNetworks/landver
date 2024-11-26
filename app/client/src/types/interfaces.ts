@@ -71,7 +71,7 @@ export interface TableHeaderProps {
   
   export interface TableRowProps {
     items:RowItem[], 
-    headers: string[]
+    headers: string[],
   }
 
 export interface TagProps {

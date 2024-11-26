@@ -2,22 +2,13 @@
 import React, { useEffect, useState } from "react";
 import { useConnect, useAccount } from "@starknet-react/core";
 import type { Connector } from "@starknet-react/core";
-import FadeLoader from "react-spinners/FadeLoader";
 
-
-const walletIdToName = new Map([
-  ["argentX", "Argent X"],
-  ["braavos", "Braavos"],
-  ["argentWebWallet", "Web Wallet"],
-  ["argentMobile", "Argent mobile"],
-]);
- 
 export function Providers({ children }: { children: React.ReactNode }) {
 
   const { connectors, connectAsync } = useConnect({  });
   const { address, status, connector } = useAccount();
 
-  const [_connecting, setConnecting] = useState(true)
+  const [, setConnecting] = useState(true)
 
   async function connect(connector: Connector) {
     try {

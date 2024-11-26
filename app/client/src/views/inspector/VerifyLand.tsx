@@ -3,12 +3,9 @@ import { useState, useEffect } from "react";
 import { Header } from "@/components/Headers/Header";
 import { Searchbar } from "@/components/Search/Searchbar";
 import Image from "next/image";
-import { DropdownOptions } from "@/components/Options/DropdownOptions";
-import { RangeCalendar } from "@/components/calendar/RangeCalendar";
 
 import { useAccount } from "@starknet-react/core";
 import { useLandverContract } from "@/hooks/useLandverContract";
-import { shortAddress } from "@/utils/AddressFormat";
 import RegisterLandModal from "@/components/RegisterLandModal";
 import DeleteLandModal from "@/components/DeleteLandModal";
 
@@ -37,8 +34,8 @@ export function VerifyLandInspectorView() {
 
   const [indexToShowOptions, setIndexToShowOptions] = useState<null|number>(null)
   const [showStatusFilters, setShowStatusFilters] = useState(false)
-  const [dateRange, setDateRange] = useState<Value>([new Date(),new Date()]);
-  const [showDateRangeCalendar, setShowDateRangeCalendar] = useState(false)
+  const [dateRange] = useState<Value>([new Date(),new Date()]);
+  const [, setShowDateRangeCalendar] = useState(false)
   const [showDeleteLandModal, setShowDeleteLandModal] = useState(false)
 
   useEffect(()=>{
@@ -144,6 +141,7 @@ export function VerifyLandInspectorView() {
                       lands.map((item:any, index) => {
                         return (
                           <TableRow
+                            key={"unqiuetablerowafa"+index}
                             items={[
                               { value:index+1, fixedWidth:70, },
                               { value:"56037-XDER" },

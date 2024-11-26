@@ -1,6 +1,4 @@
-import { useMemo } from "react";
-import * as blockies from "blockies-ts";
-import { useContract, useAccount } from "@starknet-react/core";
+import { useContract } from "@starknet-react/core";
 import { ABI as LandRegistryABI } from "@/abis/LandRegistryAbi";
 
 import type { UseLandverContractParams } from "@/types/interfaces"; 

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import {Button} from "@/components/Button/Button";
 import { Header } from "@/components/Headers/Header";
-import { useAccount, useBalance, useBlock, useBlockNumber, useProvider, useExplorer } from "@starknet-react/core";
+import { useAccount, useBalance } from "@starknet-react/core";
 import { useLandverContract } from "@/hooks/useLandverContract";
 import { useBlockies } from "@/hooks/useBlockies";
 import Image from "next/image";
@@ -105,8 +105,8 @@ export function DashboardClientView() {
           const rawEvent = eventsRes.events[i]
           const parsedEvent = parsed[i]
 
-          let fullKeys = Object.keys(parsedEvent)[0].split("::");
-          let eventName = fullKeys[fullKeys.length - 1]
+          const fullKeys = Object.keys(parsedEvent)[0].split("::");
+          const eventName = fullKeys[fullKeys.length - 1]
 
 
           formattedEvents.push({
@@ -159,6 +159,7 @@ export function DashboardClientView() {
             [1,2,3,4,5,6].map((item, index) => {
               return (
                 <TableRow 
+                  key={"uniquetablerowkeu"+index}
                   items={[
                     { value:index+1, fixedWidth:70, },
                     { value:"56037-XDER" },

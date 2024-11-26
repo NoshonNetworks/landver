@@ -3,12 +3,12 @@ import { Button } from '../Button/Button'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 
-function MarketCard({ key, item }:{ key:any, item:number }) {
+function MarketCard({ key, item }:{ key:string, item:number }) {
 
     const router = useRouter()
 
   return (
-    <div className="min-h-[300px] w-full px-0 sm:px-5 lg:px-0 xl:px-3">
+    <div key={key} className="min-h-[300px] w-full px-0 sm:px-5 lg:px-0 xl:px-3">
         <div className="bg-white h-full rounded-lg w-full border border-gray-200 px-2 py-2">
           <div className="flex py-1 ">
             <div className="rounded-full w-12 h-12 bg-gray-200"></div>

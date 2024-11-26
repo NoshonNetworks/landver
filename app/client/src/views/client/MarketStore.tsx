@@ -1,12 +1,9 @@
 'use client'
 import { useState } from "react";
 import { Header } from "@/components/Headers/Header";
-import { DropdownOptions } from "@/components/Options/DropdownOptions";
 import { Searchbar } from "@/components/Search/Searchbar";
 import Image from "next/image";
 import { RangeCalendar } from "@/components/calendar/RangeCalendar";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/Button/Button";
 import { MarketCard } from "@/components/Card/MarketCard";
 import { DropdownMenu } from "@/components/DropdownMenu/DropdownMenu";
 
@@ -19,7 +16,6 @@ type Value = [ValuePiece, ValuePiece];
 
 
 export default function MarketStoreClientView() {
-  const router = useRouter()
 
   const [showFilters, setShowFilters] = useState(false)
   const [showDateRangeCalendar, setShowDateRangeCalendar] = useState(false)
@@ -70,7 +66,7 @@ export default function MarketStoreClientView() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pt-5">
               {
-                [1,2,3,4,5,6,7,8,9].map((item, index)=>{
+                [1,2,3,4,5,6,7,8,9].map((item)=>{
                   return (
                     <MarketCard key={"uniquecardkeymarketstoreclient"+item} item={item} />
                   )
