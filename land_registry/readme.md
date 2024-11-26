@@ -1,6 +1,6 @@
 # Land Registry Smart Contract System
 
-This project implements a land registry system using smart contracts on the StarkNet platform.
+This project implements a land registry system using smart contracts on the Starknet platform.
 
 ## Components
 
