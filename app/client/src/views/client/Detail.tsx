@@ -3,8 +3,36 @@ import { Header } from "@/components/Headers/Header";
 import { Tag } from "@/components/Tag/Tag";
 import { TableHeader } from "@/components/table/TableHeader";
 import { TableRow } from "@/components/table/TableRow";
+import { useLandverContract } from "@/hooks/useLandverContract";
+import { Land, StatusEnum } from "@/types/interfaces";
+import { shortAddress } from "@/utils/AddressFormat";
+import { formatTimestampToDate } from "@/utils/dates";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function DetailClientView() {
+
+  const { landId } = useParams()
+  const { contract:registerContract } = useLandverContract({ name:"landRegister" })
+  const [loading, setLoading] = useState(false)
+  const [land, setLand] = useState<null|Land>(null)
+
+  useEffect(()=>{
+    (async()=>{
+      try {
+        setLoading(true)
+        const landResponse:Land = await registerContract.get_land(landId)
+        setLand(landResponse)
+        setLoading(false)
+      } catch (error) {
+        setLoading(false)
+        console.log(error)
+      }
+    })()
+  }, [])
+
+  const statusTag:"approved" | "unapproved" | "pending" | "rejected" | "bought" = Object.entries(land?.status.variant ?? {}).find(entry=>entry[1])?.[0]?.toLowerCase() as "approved" | "unapproved" | "pending" | "rejected" | "bought"
+  const landUse = Object.entries(land?.land_use.variant??{}).find(entry=>entry[1])?.[0]
 
   return (
     <>
@@ -14,37 +42,40 @@ export default function DetailClientView() {
             <div className="rounded-lg xl:col-span-1 min-h-[250px] bg-white flex flex-col py-3 gap-3 px-4">
                 <div className="flex justify-between items-center px-4">
                     <p className="text-gray-600">status</p>
-                    <Tag variant="approved" />
+                    <Tag variant={statusTag} />
                 </div>
                 <div className="h-[1px] bg-gray-200"></div>
                 <div className="flex justify-between items-center px-4">
                     <p className="text-gray-600">Land ID</p>
-                    <div>TRISS-30</div>
+                    <div>{ shortAddress(landId as string) }</div>
                 </div>
                 <div className="h-[1px] bg-gray-200"></div>
                 <div className="flex justify-between items-center px-4">
                     <p className="text-gray-600">Location</p>
-                    <div>Location</div>
+                    <div className="flex flex-col items-end">
+                      <div>Latitude: { land?.location.latitude.toString() }</div>
+                      <div>Longitude: { land?.location.longitude.toString() }</div>
+                    </div>
                 </div>
                 <div className="h-[1px] bg-gray-200"></div>
                 <div className="flex justify-between items-center px-4">
                     <p className="text-gray-600">Land Area</p>
-                    <div>Land Area</div>
+                    <div>{ land?.area.toString() }</div>
                 </div>
                 <div className="h-[1px] bg-gray-200"></div>
                 <div className="flex justify-between items-center px-4">
                     <p className="text-gray-600">Land Use</p>
-                    <div>Land Use</div>
+                    <div>{ landUse }</div>
                 </div>
                 <div className="h-[1px] bg-gray-200"></div>
                 <div className="flex justify-between items-center px-4">
                     <p className="text-gray-600">Price</p>
-                    <div>Price</div>
+                    <div>{ land?.fee.toString() } ETH</div>
                 </div>
                 <div className="h-[1px] bg-gray-200"></div>
                 <div className="flex justify-between items-center px-4">
                     <p className="text-gray-600">Date</p>
-                    <div>10/11/24</div>
+                    <div>{ formatTimestampToDate(Number(land?.last_transaction_timestamp)) }</div>
                 </div>
             </div>
             <div className="rounded-lg xl:col-span-2 min-h-[250px] bg-white"></div>
@@ -54,6 +85,8 @@ export default function DetailClientView() {
             <div className="rounded-lg min-h-[250px] bg-white flex flex-col py-3 gap-3 px-4">
               <div className="bg-white rounded-xl container_scrollable px-6">
                 <div className="h-[450px]">
+                    <p className="text-xl font-bold">Transaction History</p>
+
                     <TableHeader 
                       items={[
                         { label:"NO", fixedWidth:70 },

@@ -14,6 +14,7 @@ export interface RegisterLandModalProps {
     editData?: LandData
   }
   
+// used on forms to edit/create a land
 export interface LandData {
     landId?: string, 
     area: number|null,
@@ -21,6 +22,67 @@ export interface LandData {
     latitude: number|null,
     longitude: number|null
 }
+
+export interface Land {
+  owner: string,
+  location: {
+      latitude: number,
+      longitude: number
+  },
+  area: number,
+  land_use: {
+    variant: LandUseEnum
+  },
+  status: {
+    variant: StatusEnum,
+  },
+  last_transaction_timestamp: string,
+  inspector: string,
+  fee: number
+}
+
+export type LandUseEnum = LandUseCommerial|LandUseIndustrial|LandUseRecreational|LandUseResidential|LandUseAgricultural|LandUseInstitucional|LandUseUnclassified|LandUseMixedUse
+
+export interface LandUseCommerial {
+  Commercial: {}
+}
+export interface LandUseIndustrial {
+  Industrial: {}
+}
+export interface LandUseRecreational {
+  Recreational: {}
+}
+export interface LandUseResidential {
+  Residential: {}
+}
+export interface LandUseAgricultural {
+  Agricultural: {}
+}
+export interface LandUseInstitucional {
+  Institucional: {}
+}
+export interface LandUseUnclassified {
+  Unclassified: {}
+}
+export interface LandUseMixedUse {
+  MixedUse:{}
+} 
+
+export type StatusEnum = StatusApproved|StatusUnapproved|StatusBought|StatusPending
+
+export interface StatusApproved {
+  Approved:{}
+}
+export interface StatusUnapproved {
+  Unapproved:{}
+}
+export interface StatusBought {
+  Bought:{}
+}
+export interface StatusPending {
+  Pending:{}
+}
+
 
 export interface Listing {
   "land_id": string,
