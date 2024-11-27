@@ -1,4 +1,6 @@
- Detailed explanation of each functionality in the `LandNFT` module, along with its purpose, description, and parameters.
+# land_nft Contract
+The land_nft contract implements the core functionalities for representing land parcels as NFTs, adhering to the ERC721 standard. It manages the creation, transfer, and metadata of these unique tokens while integrating additional features like locking mechanisms to restrict certain operations. This contract ensures that each land NFT is uniquely identifiable and fully compliant with established token standards, offering flexibility for use cases such as property transactions and decentralized applications.
+ Here is a detailed explanation of each functionality in the `LandNFT` module, along with its purpose, description, and parameters.
 
 
 ### **`constructor`**

@@ -1,4 +1,8 @@
-Detailed explanation of each functionality in the `land_registry` module, along with its purpose, description, and parameters.
+## land_registry Contract
+The land_registry contract serves as the backbone of the land management system. It governs the ownership and administrative actions associated with land parcels, acting as the central authority for minting and transferring land NFTs. This contract enforces rules to ensure the integrity of the land ownership system while allowing seamless interaction with other smart contracts. By integrating advanced error handling and efficient functionality, it provides a secure and reliable framework for decentralized land management.
+
+
+Here is a detailed explanation of each functionality in the `land_registry` module, along with its purpose, description, and parameters.
 
 ### **`register_land`**
 - **Purpose**: Registers a new parcel of land.
