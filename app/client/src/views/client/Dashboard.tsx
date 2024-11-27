@@ -14,7 +14,7 @@ import { TableRow } from "@/components/table/TableRow";
 
 import { useEvents } from "@/hooks/useEvents";
 import { EventCard } from "@/components/Card/EventCard";
-import { SoldEvent, Event, ParsedEventsEnum } from "@/types/interfaces";
+import { LandSoldEvent, Event, ParsedEventsEnum } from "@/types/interfaces";
 import Loading from "@/components/Loading/Loading";
 import { ErrorModal } from "@/components/Modal/ErrorModal";
 
@@ -63,7 +63,7 @@ export function DashboardClientView() {
   //   }
   // })
     // here is the mock while we can create sold events to fetch
-    const soldEvents: Event<SoldEvent>[] = [
+    const soldEvents: Event<LandSoldEvent>[] = [
       {
         eventKey: "",
         eventName: "",
