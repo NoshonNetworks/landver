@@ -15,6 +15,8 @@ import { TableRow } from "@/components/table/TableRow";
 import { useEvents } from "@/hooks/useEvents";
 import { EventCard } from "@/components/Card/EventCard";
 import { SoldEvent, Event, ParsedEventsEnum } from "@/types/interfaces";
+import Loading from "@/components/Loading/Loading";
+import { ErrorModal } from "@/components/Modal/ErrorModal";
 
 
 
@@ -30,7 +32,7 @@ export function DashboardClientView() {
   const { contract:landRegisterContract } = useLandverContract({ name:"landRegister" })
   const [landsOwned, setLandsOwned] = useState<number|null>(null)
   const [landsAddresses, setLandsAdresses] = useState<string[]|null>(null)
-  const { events: recentEvents } = useEvents<ParsedEventsEnum>({
+  const { events: recentEvents, isLoading:eventsLoading } = useEvents<ParsedEventsEnum>({
     name:"landRegister",
     triggerRefetch:false, // this could be an state that toggles false-true and refetch event
     filters: {
@@ -190,9 +192,12 @@ export function DashboardClientView() {
         <div className="w-full bg-white rounded-xl p-4 container_scrollable">
           <div className="h-96">
             <SectionHeader title="Recent Activities" titleSize={"xl"} buttonMessage="View all" />
-            <div className="h-10"></div>
+            <div className="h-5"></div>
             {
-              recentEvents.map((event, index)=>{
+              eventsLoading && <Loading height={100} />
+            }
+            {
+              !eventsLoading && recentEvents.map((event, index)=>{
                 return (
                   <EventCard event={event} index={index} key={"dashboardrecentsactivities1e2"+index} />
                 )

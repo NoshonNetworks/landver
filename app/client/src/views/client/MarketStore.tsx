@@ -12,6 +12,7 @@ import type { CalendarValue } from '@/types/types';
 import { useEvents } from "@/hooks/useEvents";
 import { ListingCreatedEvent } from "@/types/interfaces";
 import { useAccount } from "@starknet-react/core";
+import Loading from "@/components/Loading/Loading";
 
 export default function MarketStoreClientView() {
 
@@ -24,7 +25,7 @@ export default function MarketStoreClientView() {
   const startDate = ((dateRange && !(dateRange instanceof Date)) && dateRange[0]) ? formatDate(dateRange[0]) : null
   const endDate = ((dateRange && !(dateRange instanceof Date)) && dateRange[1]) ? formatDate(dateRange[1]) : null
 
-  const { events: listingEvents } = useEvents<ListingCreatedEvent>({
+  const { events: listingEvents, isLoading:loadingEvents } = useEvents<ListingCreatedEvent>({
     name:"landRegister",
     triggerRefetch:!!address, // this could be an state that toggles false-true and refetch event
     filters: {
@@ -76,9 +77,12 @@ export default function MarketStoreClientView() {
               </div>          
             </div>
 
+            {
+                loadingEvents && <Loading height={200} />
+            }
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pt-5">
               {
-                listingEvents.map((item, index)=>{
+                !loadingEvents && listingEvents.map((item, index)=>{
                   return (
                     <MarketCard key={"uniquecardkeymarketstoreclient"+item.eventKey+index} item={item} favs={favs} setFavs={setFavs} />
                   )

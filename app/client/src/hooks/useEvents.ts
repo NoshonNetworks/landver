@@ -12,10 +12,12 @@ const contracts = {
 export function useEvents<ParsedEvent extends ParsedEventsEnum>({ name, triggerRefetch, filters }: UseEventsParams) { 
 
     const [events, setEvents] = useState<Event<ParsedEvent>[]>([])
+    const [loading, setLoading] = useState(false)
     
     useEffect(()=>{
         (async()=>{
           try {
+            setLoading(true)
             const provider = new RpcProvider({ });
             // num.toHex(hash.starknetKeccak('LandRegistered')), 
             const eventFilters = filters?.events.map(event => num.toHex(hash.starknetKeccak(event))) || []
@@ -26,8 +28,6 @@ export function useEvents<ParsedEvent extends ParsedEventsEnum>({ name, triggerR
               ],
             ];
 
-            
-    
             const eventsRes = await provider.getEvents({
               address: "0x5a4054a1b1389dcd48b650637977280d32f1ad8b3027bc6c7eb606bf7e28bf5",
               keys: keyFilter,
@@ -57,14 +57,16 @@ export function useEvents<ParsedEvent extends ParsedEventsEnum>({ name, triggerR
               })
             }
             setEvents(formattedEvents)
-    
+            setLoading(false)
           } catch (error) {
+            setLoading(false)
             console.log("error on events hook",error)
           }
         })()
       }, [triggerRefetch])
       
   return {
-    events,    
+    events, 
+    isLoading:loading 
   }
 }

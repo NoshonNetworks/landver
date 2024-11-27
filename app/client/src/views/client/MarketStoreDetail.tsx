@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { shortAddress } from "@/utils/AddressFormat";
 import { formatTimestampToDate } from "@/utils/dates";
+import Loading from "@/components/Loading/Loading";
 
 
 
@@ -24,7 +25,7 @@ export function MarketStoreDetailClientView() {
 
   const { address } = useAccount()
   const { contract:LandRegistryContract } = useLandverContract({ name:"landRegister" })
-  const { events: listingEvents } = useEvents<ListingCreatedEvent>({
+  const { events: listingEvents, isLoading:loadingEvents } = useEvents<ListingCreatedEvent>({
     name:"landRegister",
     triggerRefetch:!!address, // this could be an state that toggles false-true and refetch event
     filters: {
@@ -108,9 +109,13 @@ export function MarketStoreDetailClientView() {
             <div className="px-3">
               <SectionHeader title="best Seller" buttonMessage="View All" />
 
+              {
+                loadingEvents && <Loading height={200} />
+              }
+
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pt-5">
                 {
-                  listingEvents.map((item, index)=>{
+                  !loadingEvents && listingEvents.map((item, index)=>{
                     return (
                       <MarketCard key={"uniquecardkeymarketstoredetailclientdfa"+item.eventKey+index} item={item} />
                     )
