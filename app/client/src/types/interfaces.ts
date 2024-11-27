@@ -22,6 +22,15 @@ export interface LandData {
     longitude: number|null
 }
 
+export interface Listing {
+  "land_id": string,
+  "seller": string,
+  "price": number,
+  "status": unknown,
+  "created_at": string, // timestamp in seconds
+  "updated_at": string, //timestamp in seconds
+}
+
 export interface ButtonProps extends React.PropsWithChildren {
     classname?: string;
     variant?: "default" | "error" | "success" | "gray" | "white" | "whiteWithBorder";
@@ -90,7 +99,7 @@ export interface TagProps {
     [key: string]: string; // Allows any string as a key
   }
 
-  export interface Event<parsedEvent> {
+  export interface Event<parsedEvent extends ParsedEventsEnum> {
     eventKey:string, // Name of event in contract, example: LandRegistered, LandUpdated, etc
     eventName:string, // Human friendly event name, example: Land Registered, Land Updated, etc
     rawEvent: { // Event before parsing, just like comes from Event fetching (some properties omitted due to not use)
@@ -108,14 +117,22 @@ export interface TagProps {
     triggerRefetch:boolean,
     filters?: eventFilters
   }
+
+  export type ParsedEventsEnum = SoldEvent|ListingCreatedEvent
   
   // Especific parsed events
-  // TO DO: replace Event.parsedEvent: unknown with this events
   export interface SoldEvent {
         listing_id: number,
         land_id: string|number,
         seller: string,
         buyer: string,
+        price: number
+  }
+  
+  export interface ListingCreatedEvent {
+        listing_id: number,
+        land_id: string|number,
+        seller: string,
         price: number
   }
   

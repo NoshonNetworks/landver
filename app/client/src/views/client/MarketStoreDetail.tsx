@@ -4,9 +4,55 @@ import Image from "next/image";
 import { SectionHeader } from "@/components/Headers/SectionHeader";
 import { Button } from "@/components/Button/Button";
 import { MarketCard } from "@/components/Card/MarketCard";
+import { Listing, ListingCreatedEvent } from "@/types/interfaces";
+import { useEvents } from "@/hooks/useEvents";
+import { useAccount } from "@starknet-react/core";
+import { useLandverContract } from "@/hooks/useLandverContract";
+import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
+import { shortAddress } from "@/utils/AddressFormat";
+import { formatTimestampToDate } from "@/utils/dates";
+
+
 
 export function MarketStoreDetailClientView() {
 
+  const { listingId } = useParams()
+  const { account } = useAccount()
+
+  const [listing, setListing] = useState<null|Listing>(null)
+
+  const { address } = useAccount()
+  const { contract:LandRegistryContract } = useLandverContract({ name:"landRegister" })
+  const { events: listingEvents } = useEvents<ListingCreatedEvent>({
+    name:"landRegister",
+    triggerRefetch:!!address, // this could be an state that toggles false-true and refetch event
+    filters: {
+      events: [
+        'ListingCreated',
+        ]
+    }
+  })
+
+  useEffect(()=>{
+    (async()=>{
+      try {
+        const listingResponse:Listing = await LandRegistryContract.get_listing(listingId)
+        setListing(listingResponse)
+      } catch (error) {
+        console.log(error)
+      }
+    })()
+  }, [])
+
+  const handleBuy = async() => {
+    try {
+      await LandRegistryContract.connect(account)
+      await LandRegistryContract.buy_land(listingId)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   return (
     <>
@@ -24,7 +70,7 @@ export function MarketStoreDetailClientView() {
                   <div className="flex py-1 ">
                     <div className="rounded-full w-12 h-12 bg-gray-200"></div>
                     <div>
-                      <p className="text-base font-bold">Tress-30</p>
+                      <p className="text-base font-bold">{ shortAddress(listing?.seller.toString()) }</p>
                       <p className="text-gray-500">owner</p>
                     </div>
                     <div className="flex justify-end flex-1 items-center">
@@ -35,12 +81,12 @@ export function MarketStoreDetailClientView() {
                   <div className="rounded-lg xl:col-span-1 bg-white flex flex-col py-3 gap-3 ">
                     <div className="flex justify-between items-center ">
                         <p className="text-gray-500 font-bold">Date</p>
-                        <div>11/10/2024</div>
+                        <div>{ formatTimestampToDate(Number(listing?.created_at)) }</div>
                     </div>
                     <div className="h-[1px] bg-gray-200"></div>
                     <div className="flex justify-between items-center ">
-                        <p className="text-gray-500 font-bold">Land Name</p>
-                        <div>TRIX-333</div>
+                        <p className="text-gray-500 font-bold">Land Name/Land Id</p>
+                        <div>{ shortAddress(listing?.land_id.toString()) }</div>
                     </div>
                     <div className="h-[1px] bg-gray-200"></div>
                 </div>
@@ -48,10 +94,10 @@ export function MarketStoreDetailClientView() {
                 <div className="flex py-1">
                     <div>
                       <p className="text-gray-500 text-base">price</p>
-                      <p className="text-2xl font-bold">0.25 ETH</p>
+                      <p className="text-2xl font-bold">{ listing?.price.toString() } ETH</p>
                     </div>
                     <div className="cursor-pointer flex justify-end flex-1 items-center">
-                      <Button>Buy Land</Button>
+                      <Button onClick={()=>handleBuy()}>Buy Land</Button>
                     </div>
                   </div>
                 </div>
@@ -64,9 +110,9 @@ export function MarketStoreDetailClientView() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pt-5">
                 {
-                  [1,2,3,4].map((item)=>{
+                  listingEvents.map((item, index)=>{
                     return (
-                      <MarketCard key={"uniquecardkeymarketstoredetailclientdfa"+item} item={item} />
+                      <MarketCard key={"uniquecardkeymarketstoredetailclientdfa"+item.eventKey+index} item={item} />
                     )
                   })
                 }

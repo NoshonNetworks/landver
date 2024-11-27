@@ -14,7 +14,7 @@ import { TableRow } from "@/components/table/TableRow";
 
 import { useEvents } from "@/hooks/useEvents";
 import { EventCard } from "@/components/Card/EventCard";
-import { SoldEvent, Event } from "@/types/interfaces";
+import { SoldEvent, Event, ParsedEventsEnum } from "@/types/interfaces";
 
 
 
@@ -30,7 +30,7 @@ export function DashboardClientView() {
   const { contract:landRegisterContract } = useLandverContract({ name:"landRegister" })
   const [landsOwned, setLandsOwned] = useState<number|null>(null)
   const [landsAddresses, setLandsAdresses] = useState<string[]|null>(null)
-  const { events: recentEvents } = useEvents({
+  const { events: recentEvents } = useEvents<ParsedEventsEnum>({
     name:"landRegister",
     triggerRefetch:false, // this could be an state that toggles false-true and refetch event
     filters: {

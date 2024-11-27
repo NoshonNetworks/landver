@@ -2,16 +2,16 @@ import { useEffect, useState } from "react";
 import { num, hash, RpcProvider, events as starknetEvents, CallData } from "starknet";
 import { ABI as LandRegistryABI } from "@/abis/LandRegistryAbi";
 
-import type { UseEventsParams, Event } from "@/types/interfaces"; 
+import type { UseEventsParams, Event, ParsedEventsEnum } from "@/types/interfaces"; 
 
 const contracts = {
   landRegister: { address:"0x5a4054a1b1389dcd48b650637977280d32f1ad8b3027bc6c7eb606bf7e28bf5", abi: LandRegistryABI }
 }
 
 
-export function useEvents({ name, triggerRefetch, filters }: UseEventsParams) { 
+export function useEvents<ParsedEvent extends ParsedEventsEnum>({ name, triggerRefetch, filters }: UseEventsParams) { 
 
-    const [events, setEvents] = useState<Event<unknown>[]>([])
+    const [events, setEvents] = useState<Event<ParsedEvent>[]>([])
     
     useEffect(()=>{
         (async()=>{
@@ -40,7 +40,7 @@ export function useEvents({ name, triggerRefetch, filters }: UseEventsParams) {
             const abiEnums = CallData.getAbiEnum(contracts[name].abi);
             const parsed = starknetEvents.parseEvents(eventsRes.events, abiEvents, abiStructs, abiEnums);
             
-            const formattedEvents:Event<unknown>[] = []
+            const formattedEvents:Event<ParsedEvent>[] = []
     
             for (let i:number = 0; i <eventsRes.events.length; i++) {
               const rawEvent = eventsRes.events[i]
@@ -53,14 +53,13 @@ export function useEvents({ name, triggerRefetch, filters }: UseEventsParams) {
                 eventKey:Object.keys(parsedEvent)[0],
                 eventName,
                 rawEvent, 
-                parsedEvent: parsedEvent[Object.keys(parsedEvent)[0]]
+                parsedEvent: parsedEvent[Object.keys(parsedEvent)[0]] as unknown as ParsedEvent // first to unknows because we dont know what event type is on the item
               })
             }
-    
             setEvents(formattedEvents)
     
           } catch (error) {
-            console.log(error)
+            console.log("error on events hook",error)
           }
         })()
       }, [triggerRefetch])

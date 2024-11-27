@@ -9,9 +9,13 @@ import { DropdownMenu } from "@/components/DropdownMenu/DropdownMenu";
 
 import { formatDate } from "@/utils/dates";
 import type { CalendarValue } from '@/types/types';
-
+import { useEvents } from "@/hooks/useEvents";
+import { ListingCreatedEvent } from "@/types/interfaces";
+import { useAccount } from "@starknet-react/core";
 
 export default function MarketStoreClientView() {
+
+  const { address } = useAccount()
 
   const [showFilters, setShowFilters] = useState(false)
   const [showDateRangeCalendar, setShowDateRangeCalendar] = useState(false)
@@ -19,6 +23,18 @@ export default function MarketStoreClientView() {
   const [dateRange, setDateRange] = useState<CalendarValue>([new Date(),new Date()]);
   const startDate = ((dateRange && !(dateRange instanceof Date)) && dateRange[0]) ? formatDate(dateRange[0]) : null
   const endDate = ((dateRange && !(dateRange instanceof Date)) && dateRange[1]) ? formatDate(dateRange[1]) : null
+
+  const { events: listingEvents } = useEvents<ListingCreatedEvent>({
+    name:"landRegister",
+    triggerRefetch:!!address, // this could be an state that toggles false-true and refetch event
+    filters: {
+      events: [
+        'ListingCreated',
+        ]
+    }
+  })
+
+  const [favs, setFavs] = useState<string[]>([])
 
   return (
     <div className="">
@@ -62,9 +78,9 @@ export default function MarketStoreClientView() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 pt-5">
               {
-                [1,2,3,4,5,6,7,8,9].map((item)=>{
+                listingEvents.map((item, index)=>{
                   return (
-                    <MarketCard key={"uniquecardkeymarketstoreclient"+item} item={item} />
+                    <MarketCard key={"uniquecardkeymarketstoreclient"+item.eventKey+index} item={item} favs={favs} setFavs={setFavs} />
                   )
                 })
               }
