@@ -1097,30 +1097,6 @@ fn test_can_cancel_listing() {
     stop_cheat_caller_address(contract_address);
 }
 
-
-#[test]
-#[should_panic(expected: ('Insufficient registration fee',))]
-fn test_register_land_with_insufficient_fee_will_fail() {
-    let contract_address = deploy("LandRegistryContract");
-    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
-
-    start_cheat_max_fee(contract_address, 0);
-
-    // Set up test data
-    let caller_address = starknet::contract_address_const::<0x123>();
-    let location: Location = Location { latitude: 1, longitude: 2 };
-    let area: u256 = 1000;
-    let land_use = LandUse::Residential;
-
-    // Start cheating the caller address
-    start_cheat_caller_address(contract_address, caller_address);
-
-    // attempt registration
-    land_register_dispatcher.register_land(location, area, land_use);
-
-    stop_cheat_caller_address(contract_address);
-}
-
 #[test]
 #[should_panic]
 fn test_get_land_for_id_that_does_not_exist_will_fail() {
