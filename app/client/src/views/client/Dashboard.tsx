@@ -16,8 +16,6 @@ import { useEvents } from "@/hooks/useEvents";
 import { EventCard } from "@/components/Card/EventCard";
 import { LandSoldEvent, Event, ParsedEventsEnum } from "@/types/interfaces";
 import Loading from "@/components/Loading/Loading";
-import { ErrorModal } from "@/components/Modal/ErrorModal";
-
 
 
 export function DashboardClientView() {

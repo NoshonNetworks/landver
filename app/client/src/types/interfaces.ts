@@ -44,43 +44,43 @@ export interface Land {
 export type LandUseEnum = LandUseCommerial|LandUseIndustrial|LandUseRecreational|LandUseResidential|LandUseAgricultural|LandUseInstitucional|LandUseUnclassified|LandUseMixedUse
 
 export interface LandUseCommerial {
-  Commercial: {}
+  Commercial: object
 }
 export interface LandUseIndustrial {
-  Industrial: {}
+  Industrial: object
 }
 export interface LandUseRecreational {
-  Recreational: {}
+  Recreational: object
 }
 export interface LandUseResidential {
-  Residential: {}
+  Residential: object
 }
 export interface LandUseAgricultural {
-  Agricultural: {}
+  Agricultural: object
 }
 export interface LandUseInstitucional {
-  Institucional: {}
+  Institucional: object
 }
 export interface LandUseUnclassified {
-  Unclassified: {}
+  Unclassified: object
 }
 export interface LandUseMixedUse {
-  MixedUse:{}
+  MixedUse:object
 } 
 
 export type StatusEnum = StatusApproved|StatusUnapproved|StatusBought|StatusPending
 
 export interface StatusApproved {
-  Approved:{}
+  Approved:object
 }
 export interface StatusUnapproved {
-  Unapproved:{}
+  Unapproved:object
 }
 export interface StatusBought {
-  Bought:{}
+  Bought:object
 }
 export interface StatusPending {
-  Pending:{}
+  Pending:object
 }
 
 
