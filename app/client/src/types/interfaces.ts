@@ -180,7 +180,7 @@ export interface TagProps {
     filters?: eventFilters
   }
 
-  export type ParsedEventsEnum = SoldEvent|ListingCreatedEvent
+  export type ParsedEventsEnum = SoldEvent|ListingCreatedEvent|LandRegisteredEvent|LandTransferredEvent|LandVerifiedEvent|LandUpdatedEvent|LandInspectorSetEvent|InspectorAddedEvent|InspectorRemovedEvent|FeeUpdatedEvent|ListingCancelledEvent|ListingCreatedEvent|LandSoldEvent
   
   // Especific parsed events
   export interface SoldEvent {
@@ -198,4 +198,66 @@ export interface TagProps {
         price: number
   }
   
+  export interface LandRegisteredEvent {
+    land_id: number,
+    owner: number,
+    location: {
+      latitude: number,
+      longitude: number
+    },
+    area: number,
+    land_use: LandUseEnum,
+  }
+
+  export interface LandTransferredEvent {
+    land_id: number,
+    owner: number,
+    from_owner: string,
+    to_owner: string,
+  }
+
+  export interface LandVerifiedEvent {
+    land_id: number,
+  }
+
+  export interface LandUpdatedEvent {
+    land_id: number,
+    land_use: LandUseEnum,
+    area: number,
+  }
+
+  export interface LandInspectorSetEvent {
+    land_id: number,
+    inspector:string,
+  }
   
+  export interface InspectorAddedEvent {
+    inspector:string,
+  }
+
+  export interface InspectorRemovedEvent {
+    inspector:string,
+  }
+  
+  export interface FeeUpdatedEvent {
+    old_fee: number,
+    new_fee: number,
+  }
+  
+  export interface ListingCancelledEvent {
+    listing_id: number,
+  }
+  
+  export interface ListingPriceUpdatedEvent {
+    listing_id: number,
+    old_fee: number,
+    new_fee: number,
+  }
+
+  export interface LandSoldEvent {
+    listing_id: number,
+    land_id: number,
+    seller: string,
+    buyer: string, 
+    price: number
+  }
