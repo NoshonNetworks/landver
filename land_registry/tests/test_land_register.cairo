@@ -8,6 +8,7 @@ use land_registry::interface::land_register::{
     ILandRegistryDispatcher, ILandRegistryDispatcherTrait
 };
 use land_registry::interface::land_register::{LandUse, Location, LandStatus};
+use land_registry::interface::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait};
 
 pub mod Accounts {
     use starknet::ContractAddress;
@@ -411,7 +412,6 @@ fn test_can_reject_land_by_inspector() {
     stop_cheat_caller_address(contract_address);
 }
 
-
 #[test]
 #[should_panic(expected: ('Only inspector/owner can reject',))]
 fn test_reject_land_by_unauthorized_user() {
@@ -472,7 +472,7 @@ fn test_can_update_land() {
 
 #[test]
 #[should_panic(expected: ('Only owner can update land',))]
-fn test_update_land_by_unauthorized_user() {
+fn test_update_land_by_unauthorized_user_will_fail() {
     let contract_address = deploy("LandRegistryContract");
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
 
@@ -611,6 +611,7 @@ fn test_cannot_remove_active_inspector() {
 
     stop_cheat_caller_address(contract_address);
 }
+
 #[test]
 fn test_can_transfer_land() {
     let contract_address = deploy("LandRegistryContract");
@@ -714,7 +715,6 @@ fn test_update_listing_price() {
     assert(price_history.len() == 2, 'Wrong number of price updates');
 }
 
-
 #[test]
 #[should_panic(expected: ('Only seller can update',))]
 fn test_update_listing_price_should_panic_if_caller_not_seller() {
@@ -763,7 +763,6 @@ fn test_update_listing_price_should_panic_if_caller_not_seller() {
     stop_cheat_caller_address(contract_address);
 }
 
-
 #[test]
 #[should_panic(expected: ('Listing not active',))]
 fn test_update_listing_price_should_panic_if_listing_not_active() {
@@ -810,7 +809,6 @@ fn test_update_listing_price_should_panic_if_listing_not_active() {
     land_register_dispatcher.update_listing_price(listing_id, new_price);
     stop_cheat_caller_address(contract_address);
 }
-
 
 #[test]
 fn test_upgradability() {
@@ -867,3 +865,188 @@ fn test_get_user_type() {
     let non_user_type = land_register_dispatcher.get_user_type(non_existent_address);
     assert(non_user_type == 'None', 'Expecte None');
 }
+
+#[test]
+#[should_panic(expected: ('Insufficient registration fee',))]
+fn test_register_land_with_insufficient_fee_will_fail() {
+    let contract_address = deploy("LandRegistryContract");
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    start_cheat_max_fee(contract_address, 0);
+
+    // Set up test data
+    let caller_address = starknet::contract_address_const::<0x123>();
+    let location: Location = Location { latitude: 1, longitude: 2 };
+    let area: u256 = 1000;
+    let land_use = LandUse::Residential;
+
+    // Start cheating the caller address
+    start_cheat_caller_address(contract_address, caller_address);
+
+    // attempt registration
+    land_register_dispatcher.register_land(location, area, land_use);
+
+    stop_cheat_caller_address(contract_address);
+}
+
+#[test]
+#[should_panic]
+fn test_get_land_for_id_that_does_not_exist_will_fail() {
+    // Deploy the Land Registry Contract
+    let contract_address = deploy("LandRegistryContract");
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    // Set a maximum fee for transactions
+    start_cheat_max_fee(contract_address, 100000000000000);
+
+    // Start cheating the caller address
+    let caller_address = starknet::contract_address_const::<0x123>();
+    start_cheat_caller_address(contract_address, caller_address);
+
+    // Attempt to retrieve a non-existent land record
+    land_register_dispatcher.get_land(5);
+
+    // Stop cheating the caller address
+    stop_cheat_caller_address(contract_address);
+}
+
+#[test]
+fn test_get_land_status() {
+    let contract_address = deploy("LandRegistryContract");
+
+    // Instance of LandRegistryContract
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    start_cheat_max_fee(contract_address, 10000000000000000000);
+
+    // Set up test data
+    let owner_address = starknet::contract_address_const::<0x123>();
+    let inspector_address = starknet::contract_address_const::<0x456>();
+    let location = Location { latitude: 1, longitude: 2 };
+    let area = 1000;
+    let land_use = LandUse::Residential;
+
+    // Register land
+    start_cheat_caller_address(contract_address, owner_address);
+    let land_id = land_register_dispatcher.register_land(location, area, land_use);
+    stop_cheat_caller_address(contract_address);
+
+    // Set inspector as owner address
+    start_cheat_caller_address(contract_address, owner_address);
+    land_register_dispatcher.set_land_inspector(land_id, inspector_address);
+    stop_cheat_caller_address(contract_address);
+
+    // Approve land as inspector
+    start_cheat_caller_address(contract_address, inspector_address);
+    let status_before = land_register_dispatcher.get_land_status(land_id);
+    assert_eq!(status_before, LandStatus::Pending, "Should be pending before approval");
+
+    land_register_dispatcher.approve_land(land_id);
+
+    // Get approved land and verify status
+    let status_after = land_register_dispatcher.get_land_status(land_id);
+    assert_eq!(status_after, LandStatus::Approved, "Should be approved after");
+    stop_cheat_caller_address(contract_address);
+}
+
+#[test]
+fn test_set_land_inspector() {
+    let contract_address = deploy("LandRegistryContract");
+
+    // Instance of LandRegistryContract
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    start_cheat_max_fee(contract_address, 10000000000000000000);
+
+    // Set up test data
+    let owner_address = starknet::contract_address_const::<0x123>();
+    let inspector_address = starknet::contract_address_const::<0x456>();
+    let location = Location { latitude: 10, longitude: 20 };
+    let area = 500;
+    let land_use = LandUse::Residential;
+
+    // Register land
+    start_cheat_caller_address(contract_address, owner_address);
+    let land_id = land_register_dispatcher.register_land(location, area, land_use);
+    stop_cheat_caller_address(contract_address);
+
+    // Assign inspector to the land
+    start_cheat_caller_address(contract_address, owner_address);
+    land_register_dispatcher.set_land_inspector(land_id, inspector_address);
+    stop_cheat_caller_address(contract_address);
+
+    // Verify that the inspector is correctly assigned
+    let assigned_inspector = land_register_dispatcher.get_land_inspector(land_id);
+    assert_eq!(
+        assigned_inspector,
+        inspector_address,
+        "Inspector address should match the assigned address"
+    );
+
+    stop_cheat_caller_address(contract_address);
+}
+
+// #[test]
+// fn test_buy_land() {
+//     let contract_address = deploy("LandRegistryContract");
+
+//     // Instance of LandRegistryContract
+//     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+//     start_cheat_max_fee(contract_address, 10000000000000000000);
+
+//     // Set up test data
+//     let seller_address = starknet::contract_address_const::<0x123>();
+//     let buyer_address = starknet::contract_address_const::<0x456>();
+//     let nft_contract_address = starknet::contract_address_const::<0x789>();
+//     let location = Location { latitude: 10, longitude: 20 };
+//     let area = 500;
+//     let land_use = LandUse::Commercial;
+//     let price = 1000;
+
+//     // Deploy NFT contract and set it
+//     start_cheat_caller_address(contract_address, seller_address);
+//     land_register_dispatcher.set_nft_contract(nft_contract_address);
+//     stop_cheat_caller_address(contract_address);
+
+//     // Register and list land
+//     start_cheat_caller_address(contract_address, seller_address);
+//     let land_id = land_register_dispatcher.register_land(location, area, land_use);
+//     let listing_id = land_register_dispatcher.list_land_for_sale(land_id, price);
+//     stop_cheat_caller_address(contract_address);
+
+//     // Simulate buyer's purchase
+//     start_cheat_caller_address(contract_address, buyer_address);
+//     start_cheat_max_fee(contract_address, price);
+
+//     land_register_dispatcher.buy_land(listing_id);
+
+//     // Verify listing status is updated
+//     let listing_details = land_register_dispatcher.get_listing_details(listing_id);
+//     assert_eq!(
+//         listing_details.status,
+//         ListingStatus::Sold,
+//         "Listing status should be updated to Sold"
+//     );
+
+//     // Verify ownership transfer
+//     let new_owner = land_register_dispatcher.get_land_owner(land_id);
+//     assert_eq!(
+//         new_owner,
+//         buyer_address,
+//         "Ownership of the land should be transferred to the buyer"
+//     );
+
+//     // Verify NFT unlock
+//     let nft_dispatcher = ILandNFTDispatcher { contract_address: nft_contract_address };
+//     let nft_status = nft_dispatcher.is_locked(land_id);
+//     assert_eq!(
+//         nft_status,
+//         false,
+//         "NFT for the land should be unlocked after purchase"
+//     );
+
+//     stop_cheat_caller_address(contract_address);
+// }
+
+
