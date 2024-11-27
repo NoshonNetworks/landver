@@ -1186,12 +1186,7 @@ fn test_set_land_inspector() {
     // Verify that the inspector is correctly assigned
     let assigned_inspector = land_register_dispatcher.get_land_inspector(land_id);
     assert_eq!(
-        assigned_inspector,
-        inspector_address,
-        "Inspector address should match the assigned address"
+        assigned_inspector, inspector_address, "Inspector address should match the assigned address"
     );
-
     stop_cheat_caller_address(contract_address);
 }
-
-
