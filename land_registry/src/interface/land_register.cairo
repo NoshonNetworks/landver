@@ -14,7 +14,6 @@ pub struct Land {
     status: LandStatus, // Current verification status
     last_transaction_timestamp: u64, // Timestamp of the most recent transaction
     inspector: ContractAddress, // Address of assigned inspector
-    fee: u128, // land registration fee
 }
 
 // Represents the verification status of a land parcel
@@ -93,10 +92,10 @@ pub trait ILandRegistry<TContractState> {
     fn get_land_inspector(self: @TContractState, land_id: u256) -> ContractAddress;
     fn add_inspector(ref self: TContractState, inspector: ContractAddress);
     fn remove_inspector(ref self: TContractState, inspector: ContractAddress);
-    fn set_fee(ref self: TContractState, fee: u128);
-    fn get_fee(self: @TContractState) -> u128;
+    fn get_all_inspectors(self: @TContractState) -> Array<ContractAddress>;
 
     fn get_user_type(self: @TContractState, userAddress: ContractAddress) -> felt252;
+
 
     // Marketplace function
     fn create_listing(ref self: TContractState, land_id: u256, price: u256) -> u256;
@@ -137,6 +136,7 @@ pub struct LandUpdated {
     area: u256
 }
 
+
 #[derive(Drop, Copy, starknet::Event)]
 pub struct LandInspectorSet {
     land_id: u256,
@@ -151,12 +151,6 @@ pub struct InspectorAdded {
 #[derive(Drop, starknet::Event)]
 pub struct InspectorRemoved {
     inspector: ContractAddress,
-}
-
-#[derive(Drop, starknet::Event)]
-pub struct FeeUpdated {
-    old_fee: u128,
-    new_fee: u128,
 }
 
 #[derive(Drop, starknet::Event)]
