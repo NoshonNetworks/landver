@@ -16,7 +16,6 @@ import { TableRow } from "@/components/table/TableRow";
 import { DropdownMenu } from "@/components/DropdownMenu/DropdownMenu";
 import type { LandData, Land, LandUseEnum, StatusEnum } from "@/types/interfaces";
 
-import { formatTimestampToDate, } from "@/utils/dates";
 import Loading from "@/components/Loading/Loading";
 
 type ValuePiece = Date | null;
@@ -53,7 +52,6 @@ export function VerifyLandInspectorView() {
             const addresses = await landRegisterContract.get_lands_by_owner(address)
             const newLands:Land[] = []
 
-            let index = 0;
             for await (const address of addresses) {
                 const land = await landRegisterContract.get_land(address)
                 const landStatus = Object.entries(land.status.variant).find(entry => entry[1])
@@ -83,7 +81,6 @@ export function VerifyLandInspectorView() {
                     } as unknown as StatusEnum
                   }
                 })
-                index++;
             }
 
             setLands(newLands.reverse())

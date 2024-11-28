@@ -91,7 +91,6 @@ export default function MyCollectionsClientView() {
               unapproved: 0
             }
 
-            let index = 0;
             for await (const address of addresses) {
                 const land = await landRegisterContract.get_land(address)
                 const landStatus = Object.entries(land.status.variant).find(entry => entry[1])
@@ -126,7 +125,6 @@ export default function MyCollectionsClientView() {
                     } as unknown as StatusEnum
                   }
                 })
-                index++;
             }
 
             setLands(newLands.reverse())
