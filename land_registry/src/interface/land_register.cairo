@@ -6,6 +6,7 @@ use land_registry::utils::utils::{create_land_id};
 // Represents a land parcel with its properties and metadata
 #[derive(Drop, Copy, Serde, starknet::Store)]
 pub struct Land {
+    land_id: u256, // Land id
     owner: ContractAddress, // Address of the current land owner
     location: Location, // Geographic coordinates of the land
     area: u256, // Size of the land parcel
@@ -13,7 +14,6 @@ pub struct Land {
     status: LandStatus, // Current verification status
     last_transaction_timestamp: u64, // Timestamp of the most recent transaction
     inspector: ContractAddress, // Address of assigned inspector
-    fee: u128, // land registration fee
 }
 
 // Represents the verification status of a land parcel
@@ -74,6 +74,7 @@ pub trait ILandRegistry<TContractState> {
     fn get_land(self: @TContractState, land_id: u256) -> Land;
     fn get_land_count(self: @TContractState) -> u256;
     fn get_lands_by_owner(self: @TContractState, owner: ContractAddress) -> Span<u256>;
+    fn get_all_lands(self: @TContractState) -> Span<Land>;
     fn update_land(ref self: TContractState, land_id: u256, area: u256, land_use: LandUse);
     fn approve_land(ref self: TContractState, land_id: u256);
     fn reject_land(ref self: TContractState, land_id: u256);
@@ -91,8 +92,10 @@ pub trait ILandRegistry<TContractState> {
     fn get_land_inspector(self: @TContractState, land_id: u256) -> ContractAddress;
     fn add_inspector(ref self: TContractState, inspector: ContractAddress);
     fn remove_inspector(ref self: TContractState, inspector: ContractAddress);
-    fn set_fee(ref self: TContractState, fee: u128);
-    fn get_fee(self: @TContractState) -> u128;
+    fn get_all_inspectors(self: @TContractState) -> Array<ContractAddress>;
+
+    fn get_user_type(self: @TContractState, userAddress: ContractAddress) -> felt252;
+
 
     // Marketplace function
     fn create_listing(ref self: TContractState, land_id: u256, price: u256) -> u256;
@@ -133,6 +136,7 @@ pub struct LandUpdated {
     area: u256
 }
 
+
 #[derive(Drop, Copy, starknet::Event)]
 pub struct LandInspectorSet {
     land_id: u256,
@@ -147,12 +151,6 @@ pub struct InspectorAdded {
 #[derive(Drop, starknet::Event)]
 pub struct InspectorRemoved {
     inspector: ContractAddress,
-}
-
-#[derive(Drop, starknet::Event)]
-pub struct FeeUpdated {
-    old_fee: u128,
-    new_fee: u128,
 }
 
 #[derive(Drop, starknet::Event)]
