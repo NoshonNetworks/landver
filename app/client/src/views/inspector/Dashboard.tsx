@@ -104,7 +104,7 @@ export function DashboardInspectorView() {
   return (
     <div className="">
         
-        <Header title="Overview" hasCreateButton={true} />
+        <Header title="Overview" />
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 px-6">
           <SmallNumberCard iconColor="green" title={"10"} subtitle="Registration Request" />

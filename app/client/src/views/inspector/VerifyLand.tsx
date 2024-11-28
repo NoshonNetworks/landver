@@ -100,7 +100,7 @@ export function VerifyLandInspectorView() {
   return (
     <div className="">
         
-        <Header title="Verification" hasCreateButton={true} />
+        <Header title="Verification" />
 
         <div className="px-6 py-4">
           <div className="w-full bg-white rounded-xl px-3 py-4">
