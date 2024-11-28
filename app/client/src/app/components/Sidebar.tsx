@@ -72,8 +72,8 @@ const Sidebar: React.FC<SidebarProps> = ({ role }) => {
       </div>
 
       <nav className="flex flex-col gap-4">
-        {userMenu.map((item) => (
-          <div>
+        {userMenu.map((item, index) => (
+          <div key={index}>
             <Link
               key={item.path}
               href={item.path}

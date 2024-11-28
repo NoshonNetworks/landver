@@ -10,7 +10,7 @@ interface SelectProps<T>
   error?: string;
   classname?: string;
   onChange?: (value: string) => void;
-  value?: string | null | undefined;
+  value?: string | undefined;
 }
 
 const SelectField = <T,>({

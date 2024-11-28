@@ -1,32 +1,20 @@
 "use client";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import type { Connector } from "@starknet-react/core";
-import { X } from "lucide-react";
 import TextInput from "./Input/TextField";
 import SelectField from "./Input/SelectField";
 import Button from "./Button/Button";
 import {
-  useConnect,
-  useDisconnect,
   useAccount,
   useContract,
-  useSendTransaction,
-  useNonceForAddress,
 } from "@starknet-react/core";
 
 import {
-  CairoOption,
-  CairoOptionVariant,
-  CairoEnum,
-  AbiEnum,
-  StarknetEnumType,
-  getCalldata,
   CairoCustomEnum,
 } from "starknet";
 
 import { ABI as LandRegistryABI } from "@/abis/LandRegistryAbi";
-import { type Address } from "@starknet-react/chains";
+// import { type Address } from "@starknet-react/chains";
 import Paragraph from "./P/P";
 import { DataTable } from "./Table/Table";
 import { TableData } from "./Table/DefaultData";
@@ -37,13 +25,13 @@ import PlacesAutocomplete from "./Input/PlacesAutocomplete";
 const contractAddress =
   "0x5a4054a1b1389dcd48b650637977280d32f1ad8b3027bc6c7eb606bf7e28bf5";
 
-enum a {
-  Commercial,
-}
+// enum a {
+//   Commercial,
+// }
 
-type land_use = {
-  Commercial: any;
-};
+// type land_use = {
+//   Commercial: any;
+// };
 
 export const LandList = () => {
   const LandUse = [
@@ -82,9 +70,9 @@ export const LandList = () => {
   ];
 
   const { address, status, account } = useAccount(); // status --> "connected" | "disconnected" | "connecting" | "reconnecting";
-  const { data, isLoading, isError, error } = useNonceForAddress({
-    address: account?.address as Address,
-  });
+  // const { data, isLoading, isError, error } = useNonceForAddress({
+  //   address: account?.address as Address,
+  // });
   const { contract } = useContract({
     abi: LandRegistryABI,
     address: contractAddress,
@@ -148,15 +136,17 @@ export const LandList = () => {
           setLoadingList(false);
         }
       } catch (error) {
+        console.error(error);
         setLoadingList(false);
       }
     })();
-  }, [status, address, refresh]);
+  }, [status, address, refresh, contract]);
 
   const addInspector = async () => {
     await contract.connect(account);
     const inspector_address = inspectorToAssign;
     const response = await contract.add_inspector(inspector_address);
+    console.log(response);
   };
 
   const assignInspector = async () => {
@@ -166,18 +156,20 @@ export const LandList = () => {
       landToAssignInspector,
       inspector_address
     );
+    console.log(response);
   };
 
   const getLocation = (data: any) => {
     console.log(data);
   };
 
-  const removeInspector = async (inspector_id: string) => {
-    console.log(inspector_id);
-    await contract.connect(account);
-    const inspector_address = inspector_id;
-    const response = await contract.remove_inspector(inspector_address);
-  };
+  // const removeInspector = async (inspector_id: string) => {
+  //   console.log(inspector_id);
+  //   await contract.connect(account);
+  //   const inspector_address = inspector_id;
+  //   const response = await contract.remove_inspector(inspector_address);
+  //   console.log(response);
+  // };
 
   const createLand = async () => {
     try {
