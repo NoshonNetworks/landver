@@ -1,7 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
-// import Image from "next/image";
+import Image from "next/image";
 import type { Connector } from "@starknet-react/core";
+import { X } from "lucide-react";
+import TextInput from "./Input/TextField";
+import SelectField from "./Input/SelectField";
+import Button from "./Button/Button";
 import {
   useConnect,
   useDisconnect,
@@ -23,6 +27,12 @@ import {
 
 import { ABI as LandRegistryABI } from "@/abis/LandRegistryAbi";
 import { type Address } from "@starknet-react/chains";
+import Paragraph from "./P/P";
+import { DataTable } from "./Table/Table";
+import { TableData } from "./Table/DefaultData";
+import { columns } from "./Table/DefaultColumn";
+import Modal from "./Modal/Modal";
+import PlacesAutocomplete from "./Input/PlacesAutocomplete";
 
 const contractAddress =
   "0x5a4054a1b1389dcd48b650637977280d32f1ad8b3027bc6c7eb606bf7e28bf5";
@@ -98,8 +108,21 @@ export const LandList = () => {
     area: 0,
     latitude: 0,
     longitude: 0,
-    landUse: 0,
+    landUse: "",
   });
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+
+  useEffect(() => {
+    const isDisabled =
+      createLandData.area <= 0 ||
+      createLandData.landUse.trim() === "" ||
+      createLandData.latitude === 0 ||
+      createLandData.longitude === 0;
+
+      setIsButtonDisabled(isDisabled);
+  }, [createLandData]);
+
+  const filterData = ["all", "approved", "unapproved", "bought"];
 
   const [refresh, setRefresh] = useState(false);
 
@@ -145,6 +168,10 @@ export const LandList = () => {
     );
   };
 
+  const getLocation = (data: any) => {
+    console.log(data);
+  };
+
   const removeInspector = async (inspector_id: string) => {
     console.log(inspector_id);
     await contract.connect(account);
@@ -167,7 +194,7 @@ export const LandList = () => {
         area: 0,
         latitude: 0,
         longitude: 0,
-        landUse: 0,
+        landUse: '',
       });
       setRefresh(!refresh);
       setShowCreateLandModal(false);
@@ -184,16 +211,14 @@ export const LandList = () => {
           <div
             // onClick={createLand}
             onClick={() => setShowCreateLandModal(true)}
-            className=" cursor-pointer text-base font-bold text-gray-700 bg-gray-200 p-2 rounded-md"
-          >
+            className=" cursor-pointer text-base font-bold text-gray-700 bg-gray-200 p-2 rounded-md">
             Register Land
           </div>
           <div
             onClick={() => {
               setShowAddInspectorModal(true);
             }}
-            className=" cursor-pointer text-base font-bold text-gray-700 bg-gray-200 p-2 rounded-md"
-          >
+            className=" cursor-pointer text-base font-bold text-gray-700 bg-gray-200 p-2 rounded-md">
             Add Inspector
           </div>
         </div>
@@ -201,10 +226,13 @@ export const LandList = () => {
         <div className="flex justify-end items-center gap-10">
           <div
             onClick={() => setRefresh(!refresh)}
-            className=" cursor-pointer text-base font-bold text-gray-700 bg-gray-200 p-2 rounded-md"
-          >
+            className=" cursor-pointer text-base font-bold text-gray-700 bg-gray-200 p-2 rounded-md">
             Refresh List
           </div>
+        </div>
+
+        <div className="p-10 bg-white">
+          <DataTable columns={columns} data={TableData} filterData={filterData} searchBy="name" filterColumn="status"></DataTable>
         </div>
 
         <div className="pt-10">
@@ -218,8 +246,7 @@ export const LandList = () => {
               return (
                 <div
                   key={land.last_transaction_timestamp}
-                  className="grid grid-cols-3 gap-10 bg-gray-200 py-3 px-2 rounded-md mb-4"
-                >
+                  className="grid grid-cols-3 gap-10 bg-gray-200 py-3 px-2 rounded-md mb-4">
                   <div>
                     <span className="font-semibold">Land use:</span>{" "}
                     {
@@ -255,8 +282,7 @@ export const LandList = () => {
                         setShowAssignInspectorModal(true);
                         setLandToAssignInspector(land.id);
                       }}
-                      className="font-semibold cursor-pointer"
-                    >
+                      className="font-semibold cursor-pointer">
                       Assign Inspector
                     </div>
                   )}
@@ -276,8 +302,7 @@ export const LandList = () => {
               onClick={() => {
                 setShowAddInspectorModal(false);
               }}
-              className="text-center mb-3 cursor-pointer font-bold"
-            >
+              className="text-center mb-3 cursor-pointer font-bold">
               Close
             </div>
             <div className="text-xl font-bold text-center">
@@ -291,8 +316,7 @@ export const LandList = () => {
             />
             <div
               onClick={() => addInspector()}
-              className="text-center font-semibold p-2 bg-gray-100 cursor-pointer"
-            >
+              className="text-center font-semibold p-2 bg-gray-100 cursor-pointer">
               Add Inspector
             </div>
             <div className="h-10"></div>
@@ -306,8 +330,7 @@ export const LandList = () => {
               onClick={() => {
                 setShowAssignInspectorModal(false);
               }}
-              className="text-center mb-3 cursor-pointer font-bold"
-            >
+              className="text-center mb-3 cursor-pointer font-bold">
               Close
             </div>
             <div className="text-xl font-bold text-center">
@@ -321,94 +344,116 @@ export const LandList = () => {
             />
             <div
               onClick={() => assignInspector()}
-              className="font-semibold p-2 bg-gray-100 cursor-pointer"
-            >
+              className="font-semibold p-2 bg-gray-100 cursor-pointer">
               assign
             </div>
             <div className="h-10"></div>
           </div>
         </div>
       )}
-      {showCreateLandModal && (
-        <div className="absolute top-0 left-0 right-0 bottom-0 bg-black bg-opacity-60 flex justify-center items-center">
-          <div className="bg-white p-10 rounded-lg">
-            <div
-              onClick={() => {
-                setShowCreateLandModal(false);
-              }}
-              className="text-center mb-3 cursor-pointer font-bold"
-            >
-              Close
+      {/* {showCreateLandModal && ( */}
+        <Modal onClose={() => setShowCreateLandModal(false)} isOpen={showCreateLandModal}>
+            <div className="flex justify-center w-full mb-4">
+              <Image
+                src="/icons/layer.svg"
+                alt="layer icon"
+                height={48}
+                width={48}
+              />
             </div>
-            <div className="text-xl font-bold text-center">Land Data</div>
-            <div>Latitude</div>
-            <input
-              value={createLandData.latitude}
-              onChange={(e) =>
-                setCreateLandData({
-                  ...createLandData,
-                  latitude: e.target.value as any,
-                })
-              }
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Latitude"
-            />
-            <div>Longitude</div>
-            <input
-              value={createLandData.longitude}
-              onChange={(e) =>
-                setCreateLandData({
-                  ...createLandData,
-                  longitude: e.target.value as any,
-                })
-              }
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Longitude"
-            />
-            <div>Area</div>
-            <input
-              value={createLandData.area}
-              onChange={(e) =>
-                setCreateLandData({
-                  ...createLandData,
-                  area: e.target.value as any,
-                })
-              }
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-              placeholder="Area"
-            />
-            <div>Land use</div>
-            <select
-              value={createLandData.landUse}
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            >
-              {LandUse.map((landUse, index) => {
-                return (
-                  <option
-                    onClick={() =>
-                      setCreateLandData({
-                        ...createLandData,
-                        landUse: index as any,
-                      })
-                    }
-                  >
-                    {landUse.name}
-                  </option>
-                );
-              })}
-            </select>
-            <div className="text-white">Land use</div>
+            <Paragraph
+              size="h6"
+              weight="semibold"
+              align="center"
+              classname="text-black-2">
+              Register New Land
+            </Paragraph>
+            <Paragraph
+              size="sm"
+              weight="medium"
+              align="center"
+              classname="text-grey mt-2">
+              Please enter all details to register your land
+            </Paragraph>
+            <div className="flex flex-col gap-1 w-full mt-5">
+              <PlacesAutocomplete label="Address" onLocationSelect={getLocation} />
+              <TextInput
+                label="Latitude"
+                id="latitude"
+                type="text"
+                placeholder="Latitude"
+                required
+                onChange={(value) =>
+                  setCreateLandData({
+                    ...createLandData,
+                    latitude: value as any,
+                  })
+                }
+                value={createLandData.latitude}
+              />
+              <TextInput
+                label="Longitude"
+                id="longitude"
+                type="text"
+                placeholder="Longitude"
+                required
+                onChange={(value) =>
+                  setCreateLandData({
+                    ...createLandData,
+                    longitude: value as any,
+                  })
+                }
+                value={createLandData.longitude}
+              />
+              <TextInput
+                label="Area"
+                id="area"
+                type="text"
+                placeholder="Area"
+                required
+                onChange={(value) =>
+                  setCreateLandData({
+                    ...createLandData,
+                    area: value as any,
+                  })
+                }
+                value={createLandData.area}
+              />
+              <SelectField
+                label="Land Use"
+                value={createLandData.landUse}
+                nameKey="name"
+                required
+                options={LandUse}
+                onChange={(value) =>
+                  setCreateLandData({
+                    ...createLandData,
+                    landUse: value as any,
+                  })
+                }
+              />
+            </div>
 
-            <div
-              onClick={() => createLand()}
-              className="font-semibold p-2 text-center bg-gray-200 cursor-pointer"
-            >
-              Add Land
+            <div className="mt-8 flex gap-3 w-full">
+              <Button
+                variant="grey"
+                outlined
+                size="full"
+                onClick={() => {
+                  setShowCreateLandModal(false);
+                }}>
+                Cancel
+              </Button>
+              <Button
+                variant="primary"
+                disabled={isButtonDisabled}
+                size="full"
+                onClick={() => createLand()}>
+                Add Land
+              </Button>
             </div>
-            <div className="h-10"></div>
-          </div>
-        </div>
-      )}
+        </Modal>
+
     </div>
   );
 };
