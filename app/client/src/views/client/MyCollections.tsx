@@ -19,9 +19,10 @@ import { SmallNumberCard } from "@/components/Card/SmallNumberCard";
 import { formatDate } from "@/utils/dates";
 
 
-import type { LandData } from "@/types/interfaces";
+import type { LandData, Land, LandUseEnum, StatusEnum } from "@/types/interfaces";
 import type { CalendarValue } from '@/types/types';
 import Loading from "@/components/Loading/Loading";
+import { shortAddress } from "@/utils/AddressFormat";
 
 interface LandsCount {
   total: number, 
@@ -29,22 +30,6 @@ interface LandsCount {
   bought:number,
   unapproved:number
 } 
-
-interface Land {
-  number:number, 
-  id:string, 
-  buyerOrLandName: "",
-  latitude: number,
-  logitude: number,
-  price: number|null,
-  area:number,
-  landUse:[string, unknown] | undefined | string,
-  date: string,
-  status: [string, unknown] | undefined | string,
-  inspector_sliced: string,
-}
-
-
 
 function formatTimestampToDate(timestamp:number) {
   const date = new Date(timestamp * 1000); // Convert seconds to milliseconds
@@ -112,23 +97,34 @@ export default function MyCollectionsClientView() {
                 const landStatus = Object.entries(land.status.variant).find(entry => entry[1])
                 const landUse = Object.entries(land.land_use.variant).find(entry => entry[1])
 
+                if(!landStatus || !landUse) return 
+
                 newLandsCount.total += 1
                 if(landStatus && landStatus[0]==="Bought") newLandsCount.bought += 1
                 if(landStatus && landStatus[0]==="Approved") newLandsCount.registered += 1
                 if(landStatus && landStatus[0]==="Unapproved") newLandsCount.unapproved += 1
 
                 newLands.push({ 
-                  number:index+1, 
-                  id:address, 
-                  buyerOrLandName: "",
-                  latitude: land.location.latitude,
-                  logitude: land.location.longitude,
-                  price: null,
-                  area:land.area,
-                  landUse:landUse ? landUse[0] : "",
-                  date: formatTimestampToDate(Number(land.last_transaction_timestamp)),
-                  status: landStatus ? landStatus[0] : "",
-                  inspector_sliced:`${land.inspector}`.slice(0,4) + "..." + `${land.inspector}`.slice(-4), 
+                  id: address,
+                  area: land.area, 
+                  inspector: land.inspector, 
+                  last_transaction_timestamp: land.last_transaction_timestamp, 
+                  owner: land.owner, 
+                  fee: land.fee, 
+                  location: {
+                    latitude: land.location.latitude, 
+                    longitude: land.location.longitude,
+                  },
+                  land_use: {
+                    variant: {
+                      [landUse[0]]:{}
+                    } as unknown as LandUseEnum
+                  },
+                  status: {
+                    variant: {
+                      [landStatus[0]]: {},
+                    } as unknown as StatusEnum
+                  }
                 })
                 index++;
             }
@@ -206,7 +202,7 @@ export default function MyCollectionsClientView() {
                             items={[
                               { label: "NO", fixedWidth:70 },
                               { label: "LAND ID" },
-                              { label: "BUYER/LAND NAME" },
+                              { label: "OWNER/LAND NAME" },
                               { label: "PRICE" },
                               { label: "DATE" },
                               { label: "STATUS" },
@@ -215,21 +211,22 @@ export default function MyCollectionsClientView() {
                           />
                           {
                             lands.map((item:Land, index) => {
+
                               return (
                                 <TableRow
                                   key={"unqtablerowmycollectionss"+index}
                                   items={[
                                     { value:index+1, fixedWidth:70, },
-                                    { value:"56037-XDER" },
-                                    { value:"TRSS-123" },
-                                    { value:"0.2345" },
-                                    { value:"11/12/24" },
+                                    { value:shortAddress(item.id?.toString()) },
+                                    { value:shortAddress(item.owner.toString()) },
+                                    { value:item.fee.toString() },
+                                    { value:formatTimestampToDate(Number(item.last_transaction_timestamp)) },
                                     { 
                                       customjsx: () => (
                                         <div className="flex-1 flex gap-2 items-center">
-                                          { item.status === "Approved" && <Tag variant="approved" />  }
-                                          { item.status === "Pending" && <Tag variant="pending" />  }
-                                          { item.status === "Rejected" && <Tag variant="rejected" /> }
+                                          { Object.keys(item.status.variant)[0] === "Approved" && <Tag variant="approved" />  }
+                                          { Object.keys(item.status.variant)[0] === "Pending" && <Tag variant="pending" />  }
+                                          { Object.keys(item.status.variant)[0] === "Rejected" && <Tag variant="rejected" /> }
                                         
                                         </div>
                                       )
@@ -240,10 +237,10 @@ export default function MyCollectionsClientView() {
                                           <div className="relative cursor-pointer flex" onClick={()=>setIndexToShowOptions((indexToShowOptions===null || indexToShowOptions!==index) ? index : null)}>
                                             <Image className="hidden 2xl:block" src={"/icons/common/options.svg"} alt="ether" width={5} height={5} />
                                             {
-                                              item.status === "Pending" && (
+                                              Object.keys(item.status.variant)[0] === "Pending" && (
                                                 <DropdownMenu 
                                                   items={[
-                                                    { label: "Edit", action:()=>setEditData({ area:item.area, landId:item.id, landUse:item.landUse as string, latitude:item.latitude, longitude:item.logitude }) },
+                                                    { label: "Edit", action:()=>setEditData({ area:item.area, landId:item.id, landUse:Object.keys(item.land_use.variant)[0], latitude:item.location.latitude, longitude:item.location.longitude }) },
                                                     { label: "View", action:()=>router.push(`/my-collections/detail/${item.id}`) },
                                                     { variant:"danger", label: "Delete", action: ()=>setShowDeleteLandModal(true) },
                                                   ]}
@@ -253,7 +250,7 @@ export default function MyCollectionsClientView() {
                                               )
                                             }
                                             {
-                                              item.status !== "Pending" && (
+                                              Object.keys(item.status.variant)[0] !== "Pending" && (
                                                 <DropdownMenu 
                                                   items={[
                                                     { label: "View", action:()=>router.push(`/my-collections/detail/${item.id}`) },
@@ -266,16 +263,16 @@ export default function MyCollectionsClientView() {
                                             }
                                           </div>
                                           {
-                                            item.status === "Pending" && (
+                                            Object.keys(item.status.variant)[0] === "Pending" && (
                                               <div className="flex gap-2">
-                                                <p onClick={()=>setEditData({ area:item.area, landId:item.id, landUse:item.landUse as string, latitude:item.latitude, longitude:item.logitude })} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">Edit</p>
+                                                <p onClick={()=>setEditData({ area:item.area, landId:item.id, landUse:Object.keys(item.land_use.variant)[0] as string, latitude:item.location.latitude, longitude:item.location.longitude })} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">Edit</p>
                                                 <p onClick={()=>router.push(`/my-collections/detail/${item.id}`)} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">View</p>
                                                 <p onClick={()=>setShowDeleteLandModal(true)} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-red-500">Delete</p>
                                               </div>
                                             )
                                           }
                                           {
-                                            item.status !== "Pending" && (
+                                            Object.keys(item.status.variant)[0] && (
                                               <div className="flex gap-2">
                                                 <p onClick={()=>router.push(`/my-collections/detail/${item.id}`)} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">View</p>
                                                 <p className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">Transfer</p>

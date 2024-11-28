@@ -24,6 +24,7 @@ export interface LandData {
 }
 
 export interface Land {
+  id?: string,
   owner: string,
   location: {
       latitude: number,

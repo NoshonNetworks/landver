@@ -25,7 +25,6 @@ const EVENTS_KEY_LABEL:DynamicObject = {
 }
 
 function EventCard({ event }:EventCardProps) {
-    console.log(event)
       return ( 
         <div className="flex justify-start items-start gap-2 mt-4 cursor-default">
           { event.eventName==="ListingCreated" && <ListingCreatedEventCard event={event as Event<ListingCreatedEvent>} /> }

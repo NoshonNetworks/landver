@@ -19,50 +19,20 @@ import { SmallNumberCard } from "@/components/Card/SmallNumberCard";
 
 import { formatDate } from "@/utils/dates";
 
-
-import type { LandData } from "@/types/interfaces";
+import type { LandData, Land, LandUseEnum, StatusEnum } from "@/types/interfaces";
 import type { CalendarValue } from '@/types/types';
-
-interface Land {
-  number:number, 
-  id:string, 
-  buyerOrLandName: "",
-  latitude: number,
-  logitude: number,
-  price: number|null,
-  area:number,
-  landUse:[string, unknown] | undefined | string,
-  date: string,
-  status: [string, unknown] | undefined | string,
-  inspector_sliced: string,
-}
-
-
-function formatTimestampToDate(timestamp:number) {
-  const date = new Date(timestamp * 1000); // Convert seconds to milliseconds
-
-  const day = String(date.getDate()).padStart(2, '0');
-  const month = String(date.getMonth() + 1).padStart(2,   
- '0');
-  const year = date.getFullYear().toString().slice(-2);   
- // Get the last two digits of the year
-
-  return `${day}/${month}/${year}`;
-}
-
-
-
+import Loading from "@/components/Loading/Loading";
 
 
 export function DashboardInspectorView() {
 
   const router = useRouter()
+  const [loading, setLoading] = useState(false)
 
   const { address } = useAccount() 
   const { contract:landRegisterContract } = useLandverContract({ name:"landRegister" })
   
   const [lands, setLands] = useState<Land[]>([])
-
   const [editData, setEditData] = useState<null|LandData>(null)
 
   const [indexToShowOptions, setIndexToShowOptions] = useState<null|number>(null)
@@ -83,6 +53,7 @@ export function DashboardInspectorView() {
     (async() => {
       try {
         if(address) {
+            setLoading(true)
             const addresses = await landRegisterContract.get_lands_by_owner(address)
             const newLands:Land[] = []
 
@@ -92,25 +63,38 @@ export function DashboardInspectorView() {
                 const landStatus = Object.entries(land.status.variant).find(entry => entry[1])
                 const landUse = Object.entries(land.land_use.variant).find(entry => entry[1])
 
+                if(!landStatus || !landUse) return 
+
                 newLands.push({ 
-                  number:index+1, 
-                  id:address, 
-                  buyerOrLandName: "",
-                  latitude: land.location.latitude,
-                  logitude: land.location.longitude,
-                  price: null,
-                  area:land.area,
-                  landUse:landUse ? landUse[0] : "",
-                  date: formatTimestampToDate(Number(land.last_transaction_timestamp)),
-                  status: landStatus ? landStatus[0] : "",
-                  inspector_sliced:`${land.inspector}`.slice(0,4) + "..." + `${land.inspector}`.slice(-4), 
+                  id: address,
+                  area: land.area, 
+                  inspector: land.inspector, 
+                  last_transaction_timestamp: land.last_transaction_timestamp, 
+                  owner: land.owner, 
+                  fee: land.fee, 
+                  location: {
+                    latitude: land.location.latitude, 
+                    longitude: land.location.longitude,
+                  },
+                  land_use: {
+                    variant: {
+                      [landUse[0]]:{}
+                    } as unknown as LandUseEnum
+                  },
+                  status: {
+                    variant: {
+                      [landStatus[0]]: {},
+                    } as unknown as StatusEnum
+                  }
                 })
                 index++;
             }
 
             setLands(newLands.reverse())
-        }
-      } catch (error) {
+            setLoading(false)
+          }
+        } catch (error) {
+        setLoading(false)
         console.log(error)
       }
     })()
@@ -182,7 +166,10 @@ export function DashboardInspectorView() {
                       ]}
                     />
                     {
-                      lands.map((item:Land, index) => {
+                      loading && <Loading height={200} />
+                    }
+                    {
+                      !loading && lands.map((item:Land, index) => {
                         return (
                           <TableRow
                             key={"uniqueKeyPropsaadahsboardinspec"+index}
@@ -195,10 +182,9 @@ export function DashboardInspectorView() {
                               { 
                                 customjsx: () => (
                                   <div className="flex-1 flex gap-2 items-center">
-                                    { item.status === "Approved" && <Tag variant="approved" />  }
-                                    { item.status === "Pending" && <Tag variant="pending" />  }
-                                    { item.status === "Rejected" && <Tag variant="rejected" /> }
-                                  
+                                    { Object.keys(item.status.variant)[0] === "Approved" && <Tag variant="approved" />  }
+                                    { Object.keys(item.status.variant)[0] === "Pending" && <Tag variant="pending" />  }
+                                    { Object.keys(item.status.variant)[0] === "Rejected" && <Tag variant="rejected" /> }
                                   </div>
                                 )
                               },
@@ -208,10 +194,10 @@ export function DashboardInspectorView() {
                                     <div className="relative cursor-pointer flex" onClick={()=>setIndexToShowOptions((indexToShowOptions===null || indexToShowOptions!==index) ? index : null)}>
                                       <Image className="hidden 2xl:block" src={"/icons/common/options.svg"} alt="ether" width={5} height={5} />
                                       {
-                                        item.status === "Pending" && (
+                                        Object.keys(item.status.variant)[0] === "Pending" && (
                                           <DropdownMenu 
                                             items={[
-                                              { label: "Edit", action:()=>setEditData({ area:item.area, landId:item.id, landUse:item.landUse as string, latitude:item.latitude, longitude:item.logitude }) },
+                                              { label: "Edit", action:()=>setEditData({ area:item.area, landId:item.id, landUse:Object.keys(item.land_use.variant)[0] as string, latitude:item.location.latitude, longitude:item.location.longitude }) },
                                               { label: "View", action:()=>router.push(`/my-collections/detail/${item.id}`) },
                                               { variant:"danger", label: "Delete", action: ()=>setShowDeleteLandModal(true) },
                                             ]}
@@ -221,7 +207,7 @@ export function DashboardInspectorView() {
                                         )
                                       }
                                       {
-                                        item.status !== "Pending" && (
+                                        Object.keys(item.status.variant)[0] !== "Pending" && (
                                           <DropdownMenu 
                                             items={[
                                               { label: "View", action:()=>router.push(`/my-collections/detail/${item.id}`) },
@@ -234,16 +220,16 @@ export function DashboardInspectorView() {
                                       }
                                     </div>
                                     {
-                                      item.status === "Pending" && (
+                                      Object.keys(item.status.variant)[0] === "Pending" && (
                                         <div className="flex gap-2">
-                                          <p onClick={()=>setEditData({ area:item.area, landId:item.id, landUse:item.landUse as string, latitude:item.latitude, longitude:item.logitude })} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">Edit</p>
+                                          <p onClick={()=>setEditData({ area:item.area, landId:item.id, landUse:Object.keys(item.land_use.variant)[0] as string, latitude:item.location.latitude, longitude:item.location.longitude })} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">Edit</p>
                                           <p onClick={()=>router.push(`/my-collections/detail/${item.id}`)} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">View</p>
                                           <p onClick={()=>setShowDeleteLandModal(true)} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-red-500">Delete</p>
                                         </div>
                                       )
                                     }
                                     {
-                                      item.status !== "Pending" && (
+                                      Object.keys(item.status.variant)[0] && (
                                         <div className="flex gap-2">
                                           <p onClick={()=>router.push(`/my-collections/detail/${item.id}`)} className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">View</p>
                                           <p className="cursor-pointer 2xl:hidden bg-gray-200 rounded-lg px-2 y-1 font-normal text-gray-500">Transfer</p>
