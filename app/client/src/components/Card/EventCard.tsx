@@ -26,7 +26,7 @@ const EVENTS_KEY_LABEL:DynamicObject = {
 
 function EventCard({ event }:EventCardProps) {
       return ( 
-        <div className="flex justify-start items-start gap-2 mt-4 cursor-default">
+        <div className="flex justify-start items-start gap-2 mt-4 cursor-default min-h-[60px]">
           { event.eventName==="ListingCreated" && <ListingCreatedEventCard event={event as Event<ListingCreatedEvent>} /> }
           { event.eventName==="LandRegistered" && <LandRegisteredEventCard event={event as Event<LandRegisteredEvent>} /> }
           { event.eventName==="LandTransferred" && <LandTransferredEventCard event={event as Event<LandTransferredEvent>} /> }
@@ -73,7 +73,7 @@ const LandRegisteredEventCard = ({ event }: { event: Event<LandRegisteredEvent> 
       </div>
       <div className="flex-1">
         <p className="font-semibold">{ EVENTS_KEY_LABEL[event.eventName]  }</p>
-        <p className="">From: { shortAddress(event.rawEvent.from_address)  }</p>
+        <p className="">Owner: { shortAddress(event.rawEvent.from_address.toString())  }</p>
         {/* <p className="text-gray-400">Land Approval</p>
         <p className="text-[#50CD89] 2xl:hidden block">Approved</p> red #F1416C */}
       </div>
@@ -87,12 +87,19 @@ const LandRegisteredEventCard = ({ event }: { event: Event<LandRegisteredEvent> 
 const LandTransferredEventCard = ({ event }: { event: Event<LandTransferredEvent> }) => {
   return (
     <>
+    {/* {
+      ,
+      ,
+      ,
+    } */}
       <div className="w-12 h-12 rounded-md bg-gray-300 relative overflow-hidden">
         <EventImage eventName={EVENTS_KEY_LABEL[event.eventName as string]} />
       </div>
       <div className="flex-1">
         <p className="font-semibold">{ EVENTS_KEY_LABEL[event.eventName]  }</p>
-        <p className="">From: { shortAddress(event.rawEvent.from_address)  }</p>
+        <p className="">Land: { shortAddress(event.parsedEvent.land_id.toString())  }</p>
+        <p className="">From: { shortAddress(event.parsedEvent.from_owner.toString())  }</p>
+        <p className="">To: { shortAddress(event.parsedEvent.to_owner.toString())  }</p>
         {/* <p className="text-gray-400">Land Approval</p>
         <p className="text-[#50CD89] 2xl:hidden block">Approved</p> red #F1416C */}
       </div>
@@ -111,7 +118,8 @@ const LandVerifiedEventCard = ({ event }: { event: Event<LandVerifiedEvent> }) =
       </div>
       <div className="flex-1">
         <p className="font-semibold">{ EVENTS_KEY_LABEL[event.eventName]  }</p>
-        <p className="">From: { shortAddress(event.rawEvent.from_address)  }</p>
+        <p className="">land: { shortAddress(event.parsedEvent.land_id.toString())  }</p>
+        <p className="">Inspector: { shortAddress(event.rawEvent.from_address)  }</p>
         {/* <p className="text-gray-400">Land Approval</p>
         <p className="text-[#50CD89] 2xl:hidden block">Approved</p> red #F1416C */}
       </div>
@@ -130,7 +138,8 @@ const LandUpdatedEventCard = ({ event }: { event: Event<LandUpdatedEvent> }) => 
       </div>
       <div className="flex-1">
         <p className="font-semibold">{ EVENTS_KEY_LABEL[event.eventName]  }</p>
-        <p className="">From: { shortAddress(event.rawEvent.from_address)  }</p>
+        <p className="">Land: { shortAddress(event.parsedEvent.land_id.toString())  }</p>
+        <p className="">Owner: { shortAddress(event.rawEvent.from_address)  }</p>
         {/* <p className="text-gray-400">Land Approval</p>
         <p className="text-[#50CD89] 2xl:hidden block">Approved</p> red #F1416C */}
       </div>
@@ -149,7 +158,8 @@ const LandInspectorSetEventCard = ({ event }: { event: Event<LandInspectorSetEve
       </div>
       <div className="flex-1">
         <p className="font-semibold">{ EVENTS_KEY_LABEL[event.eventName]  }</p>
-        <p className="">From: { shortAddress(event.rawEvent.from_address)  }</p>
+        <p className="">Inspector: { shortAddress(event.parsedEvent.inspector.toString())  }</p>
+        <p className="">Land assigned: { shortAddress(event.parsedEvent.land_id.toString())  }</p>
         {/* <p className="text-gray-400">Land Approval</p>
         <p className="text-[#50CD89] 2xl:hidden block">Approved</p> red #F1416C */}
       </div>
@@ -168,7 +178,7 @@ const InspectorAddedEventCard = ({ event }: { event: Event<InspectorAddedEvent> 
       </div>
       <div className="flex-1">
         <p className="font-semibold">{ EVENTS_KEY_LABEL[event.eventName]  }</p>
-        <p className="">From: { shortAddress(event.rawEvent.from_address)  }</p>
+        <p className="">Inspector: { shortAddress(event.parsedEvent.inspector.toString())  }</p>
         {/* <p className="text-gray-400">Land Approval</p>
         <p className="text-[#50CD89] 2xl:hidden block">Approved</p> red #F1416C */}
       </div>
@@ -187,7 +197,7 @@ const InspectorRemovedEventCard = ({ event }: { event: Event<InspectorRemovedEve
       </div>
       <div className="flex-1">
         <p className="font-semibold">{ EVENTS_KEY_LABEL[event.eventName]  }</p>
-        <p className="">From: { shortAddress(event.rawEvent.from_address)  }</p>
+        <p className="">Inspector: { shortAddress(event.parsedEvent.inspector.toString())  }</p>
         {/* <p className="text-gray-400">Land Approval</p>
         <p className="text-[#50CD89] 2xl:hidden block">Approved</p> red #F1416C */}
       </div>
@@ -206,7 +216,7 @@ const FeeUpdatedEventCard = ({ event }: { event: Event<FeeUpdatedEvent> }) => {
       </div>
       <div className="flex-1">
         <p className="font-semibold">{ EVENTS_KEY_LABEL[event.eventName]  }</p>
-        <p className="">From: { shortAddress(event.rawEvent.from_address)  }</p>
+        <p className="">New Fee: { event.parsedEvent.new_fee  }</p>
         {/* <p className="text-gray-400">Land Approval</p>
         <p className="text-[#50CD89] 2xl:hidden block">Approved</p> red #F1416C */}
       </div>

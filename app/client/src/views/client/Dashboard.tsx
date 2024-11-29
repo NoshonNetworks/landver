@@ -190,7 +190,7 @@ export function DashboardClientView() {
         <div className="w-full bg-white rounded-xl p-4 container_scrollable">
           <div className="h-96">
             <SectionHeader title="Recent Activities" titleSize={"xl"} buttonMessage="View all" />
-            <div className="h-5"></div>
+            {/* <div className="h-5"></div> */}
             {
               eventsLoading && <Loading height={100} />
             }
