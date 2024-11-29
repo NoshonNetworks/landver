@@ -4,7 +4,7 @@ import Image from "next/image";
 import P from "./P/P";
 import Button from "./Button/Button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-
+import Link from "next/link";
 const RegisterCTA = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -47,7 +47,13 @@ const RegisterCTA = () => {
               -like location, area and use - and submit securely on our
               blockchain based platform
             </P>
-            <Button classname="w-full md:w-fit">Get Started</Button>
+            <Link
+              className="w-full md:w-fit bg-[#6364d5] text-white px-6 py-2 rounded text-xs"
+              href="https://demo.landver.net"
+              target="_blank"
+            >
+              Get Started
+            </Link>
           </div>
 
           <div className="hidden md:flex gap-4 flex-grow justify-center items-start">
