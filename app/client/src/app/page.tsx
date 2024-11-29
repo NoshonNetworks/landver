@@ -3,14 +3,17 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAccount } from "@starknet-react/core";
-import WalletConnector from "./components/Connector";
-import Modal from "./components/Modal/Modal";
-import Button from "./components/Button/Button";
+import WalletConnector from "@/components/Connector";
+import Modal from "@/components/Modal/Modal";
+import {Button} from "@/components/Button/Button";
 import Image from 'next/image'
+import { useLoginStore } from "@/store/loginStore";
+
 const Home = () => {
+  const loginStore = useLoginStore();
   const { status, address } = useAccount();
   const [isModalOpen, setModalOpen] = useState(false);
-  const [userType, setUserType] = useState<string | null>(null);
+  const [userType, setUserType] = useState<"inspector" | "owner" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
@@ -24,10 +27,15 @@ const Home = () => {
       return;
     }
 
-    const redirectPath =
-      userType === "inspector" ? "/inspector/dashboard" : "/owner/dashboard";
-
-    router.push(redirectPath);
+    const allowedUserTypes = ["owner", "inspector"]
+    // this is just in case of mispellings on select options value, to help future devs when make changes here on the userType select
+    if (!allowedUserTypes.includes(userType)) { 
+      setError("Not allowed user type."); 
+      return;
+    }
+    window.localStorage.setItem("user-type", userType)
+    loginStore.setUserType(userType);
+    router.push("/dashboard");
   };
 
   return (
@@ -55,7 +63,7 @@ const Home = () => {
               <select
                 className="w-full border border-gray-300 rounded-lg p-2"
                 value={userType || ""}
-                onChange={(e) => setUserType(e.target.value)}
+                onChange={(e) => setUserType(e.target.value as "owner"|"inspector")}
               >
                 <option value="" disabled>
                   Select an option
