@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import P from "./P/P";
-import Button from "./Button/Button";
+// import Button from "./Button/Button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 const RegisterCTA = () => {
