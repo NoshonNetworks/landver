@@ -48,7 +48,7 @@ const RegisterCTA = () => {
               blockchain based platform
             </P>
             <Link
-              className="w-full md:w-fit bg-[#6364d5] text-white px-6 py-2 rounded text-xs"
+              className="w-fit md:w-fit bg-[#6364d5] text-white px-6 py-2 rounded text-xs"
               href="https://demo.landver.net"
               target="_blank"
             >
