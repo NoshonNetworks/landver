@@ -175,7 +175,6 @@ pub mod LandRegistryContract {
 
             land_id
         }
-
         fn get_user_type(self: @ContractState, userAddress: ContractAddress) -> felt252 {
             let inspector = self.registered_inspectors.read(userAddress);
 
@@ -193,8 +192,7 @@ pub mod LandRegistryContract {
         }
 
         fn get_land(self: @ContractState, land_id: u256) -> Land {
-            // self.lands.read(land_id)
-            InternalFunctions::get_valid_land(self, land_id)
+            self.lands.read(land_id)
         }
 
         fn get_land_count(self: @ContractState) -> u256 {
@@ -229,8 +227,7 @@ pub mod LandRegistryContract {
 
         fn update_land(ref self: ContractState, land_id: u256, area: u256, land_use: LandUse) {
             assert(InternalFunctions::only_owner(@self, land_id), Errors::UPDATE_BY_LAND);
-            let mut land = InternalFunctions::get_valid_land(@self, land_id);
-
+            let mut land = self.lands.read(land_id);
             land.area = area;
             land.land_use = land_use;
             self.lands.write(land_id, land);
@@ -244,9 +241,7 @@ pub mod LandRegistryContract {
             assert(InternalFunctions::only_owner(@self, land_id), Errors::ONLY_OWNER_TRNF);
             assert(new_owner != 0.try_into().unwrap(), Errors::ADDRESS_ZERO);
 
-            //make sure land is valid
-            let mut land = InternalFunctions::get_valid_land(@self, land_id);
-
+            let mut land = self.lands.read(land_id);
             // Verify land is approved for transfer
             assert(land.status == LandStatus::Approved, Errors::LAND_APPROVAL);
 
@@ -302,12 +297,10 @@ pub mod LandRegistryContract {
         fn approve_land(ref self: ContractState, land_id: u256) {
             assert(InternalFunctions::only_inspector(@self, land_id), Errors::INSPECTOR_APPROVE);
 
-            //make sure land is valid
-            let mut land = InternalFunctions::get_valid_land(@self, land_id);
-
             self.approved_lands.write(land_id, true);
 
             // Mint NFT
+            let mut land = self.lands.read(land_id);
             assert(land.status == LandStatus::Pending, Errors::PENDING_LAND);
             land.status = LandStatus::Approved;
             self.lands.write(land_id, land);
@@ -324,10 +317,7 @@ pub mod LandRegistryContract {
                     | InternalFunctions::only_owner(@self, land_id),
                 Errors::INSPECTOR_OWNER_APPR
             );
-
-            //make sure land is valid
-            let mut land = InternalFunctions::get_valid_land(@self, land_id);
-
+            let mut land = self.lands.read(land_id);
             assert(land.status == LandStatus::Pending, Errors::PENDING_LAND);
             land.status = LandStatus::Rejected;
             self.lands.write(land_id, land);
@@ -347,7 +337,7 @@ pub mod LandRegistryContract {
 
 
         fn is_land_approved(self: @ContractState, land_id: u256) -> bool {
-            let land = InternalFunctions::get_valid_land(self, land_id);
+            let land = self.lands.read(land_id);
             land.status == LandStatus::Approved
         }
 
@@ -380,9 +370,8 @@ pub mod LandRegistryContract {
 
             land_history
         }
-
         fn get_land_status(self: @ContractState, land_id: u256) -> LandStatus {
-            let land = InternalFunctions::get_valid_land(self, land_id);
+            let land = self.lands.read(land_id);
             land.status
         }
 
@@ -392,7 +381,7 @@ pub mod LandRegistryContract {
             self.land_inspectors.write(land_id, inspector);
             self.lands_assigned_to_inspector.write(inspector, prev_land_count + 1);
 
-            let prev_land = InternalFunctions::get_valid_land(@self, land_id);
+            let prev_land = self.lands.read(land_id);
 
             self.lands.write(land_id, Land { inspector: inspector, ..prev_land });
 
@@ -449,7 +438,7 @@ pub mod LandRegistryContract {
             assert(InternalFunctions::only_owner(@self, land_id), Errors::ONLY_OWNER_CAN_LIST);
 
             // Verify land is approved
-            let land = InternalFunctions::get_valid_land(@self, land_id);
+            let land = self.lands.read(land_id);
             assert(land.status == LandStatus::Approved, Errors::LAND_NOT_APPROVED);
 
             // Create listing
@@ -538,13 +527,12 @@ pub mod LandRegistryContract {
             assert(listing.status == ListingStatus::Active, Errors::LISTING_NOT_ACTIVE);
             assert(buyer != listing.seller, Errors::SELLER_CANT_BUY_OWN);
 
-            // Get land details
-            let mut land = InternalFunctions::get_valid_land(@self, listing.land_id);
-
             // Verify payment
             let payment = starknet::info::get_tx_info().unbox().max_fee.into();
             assert(payment >= listing.price, Errors::INSUFFICIENT_PAYMENT_TO_BUY_LAND);
 
+            // Get land details
+            let mut land = self.lands.read(listing.land_id);
             let old_owner = land.owner;
 
             // Update listing status
@@ -649,13 +637,6 @@ pub mod LandRegistryContract {
                 }
                 i += 1;
             }
-        }
-
-        fn get_valid_land(self: @ContractState, land_id: u256) -> Land {
-            let land = self.lands.read(land_id);
-            // Check if land exists by verifying owner is not zero address
-            assert(land.owner != 0.try_into().unwrap(), Errors::NO_LAND);
-            land
         }
     }
 
