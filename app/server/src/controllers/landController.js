@@ -2,15 +2,16 @@ const Land = require('../models/Land');
 const blockchainService = require('../services/blockchainService');
 const crypto = require('crypto');
 const fs = require('fs');
+const CustomError = require('../errors/CustomError');
 
-exports.addLand = async (req, res) => {
+exports.addLand = async (req, res, next) => {
     try {
         console.log('Received land registration request:', req.body);
         const { location, area, landUse, owner } = req.body;
         const document = req.file;
 
         if (!document) {
-            return res.status(400).json({ message: 'Document is required' });
+            throw new CustomError('Document is required', 400, 'DOCUMENT_REQUIRED');
         }
 
         console.log('Document received:', document);
@@ -37,7 +38,7 @@ exports.addLand = async (req, res) => {
 
         if (!blockchainResult.success) {
             console.error('Blockchain registration failed:', blockchainResult.error);
-            return res.status(500).json({ message: 'Failed to register land on blockchain', error: blockchainResult.error });
+            throw new CustomError('Failed to register land on blockchain', 500, 'BLOCKCHAIN_REGISTRATION_FAILED', blockchainResult.error);
         }
 
         console.log('Land registered on blockchain. Creating database entry...');
@@ -61,11 +62,11 @@ exports.addLand = async (req, res) => {
         });
     } catch (error) {
         console.error('Error adding land:', error);
-        res.status(500).json({ message: 'Error adding land', error: error.message, stack: error.stack });
+        next(error instanceof CustomError ? error : new CustomError('Error adding land', 500));
     }
 };
 
-exports.getAllLands = async (req, res) => {
+exports.getAllLands = async (req, res, next) => {
     try {
         console.log('Attempting to fetch all lands');
         const lands = await Land.find();
@@ -73,17 +74,17 @@ exports.getAllLands = async (req, res) => {
         res.status(200).json(lands);
     } catch (error) {
         console.error('Error in getAllLands:', error);
-        res.status(500).json({ message: 'Error fetching lands', error: error.message });
+        next(new CustomError('Error fetching lands', 500));
     }
 };
 
-exports.getLandById = async (req, res) => {
+exports.getLandById = async (req, res, next) => {
     try {
         console.log('Fetching land with ID:', req.params.id);
         const land = await Land.findOne({ landId: req.params.id });
         if (!land) {
             console.log('Land not found in database');
-            return res.status(404).json({ message: 'Land not found' });
+            throw new CustomError('Land not found', 404, 'LAND_NOT_FOUND');
         }
 
         console.log('Land found in database:', land);
@@ -96,36 +97,36 @@ exports.getLandById = async (req, res) => {
             console.log('Blockchain details:', blockchainLandDetails);
         } catch (blockchainError) {
             console.error('Error fetching blockchain details:', blockchainError);
-            blockchainLandDetails = null;
+            blockchainLandDetails = { message: 'Blockchain details not available' };
         }
 
         // Combine database and blockchain data
         const combinedLandDetails = {
             ...land.toObject(),
-            blockchainDetails: blockchainLandDetails || { message: 'Blockchain details not available' }
+            blockchainDetails: blockchainLandDetails
         };
 
         res.status(200).json(combinedLandDetails);
     } catch (error) {
         console.error('Error in getLandById:', error);
-        res.status(500).json({ message: 'Error fetching land', error: error.message, stack: error.stack });
+        next(new CustomError('Error fetching land', 500));
     }
 };
 
-exports.verifyLand = async (req, res) => {
+exports.verifyLand = async (req, res, next) => {
     try {
         const { id } = req.params;
         console.log('Verifying land with ID:', id);
 
         if (!id) {
             console.log('Land ID is undefined or empty');
-            return res.status(400).json({ message: 'Land ID is required' });
+            throw new CustomError('Land ID is required', 400, 'LAND_ID_REQUIRED');
         }
 
         const land = await Land.findOne({ landId: id });
         if (!land) {
             console.log('Land not found in database for ID:', id);
-            return res.status(404).json({ message: 'Land not found in the database' });
+            throw new CustomError('Land not found in the database', 404, 'LAND_NOT_FOUND');
         }
 
         console.log('Land found in database:', land);
@@ -137,6 +138,6 @@ exports.verifyLand = async (req, res) => {
         });
     } catch (error) {
         console.error('Error in verifyLand:', error);
-        res.status(500).json({ message: 'Error verifying land', error: error.message, stack: error.stack });
+        next(new CustomError('Error verifying land', 500));
     }
 };

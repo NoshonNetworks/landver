@@ -1,60 +1,60 @@
 import React from "react";
-import Link from "next/link";
-const Footer: React.FC = () => {
-  return (
-    <footer className="bg-gradient-to-b from-gray-500 to-gray-950 text-white py-8">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Left Column: Resources */}
-          <div className="flex flex-col">
-            <h4 className="text-lg font-semibold mb-4">Resources</h4>
-            <ul className="space-y-2">
-              <Link href="/about">Docs</Link>
-              <li>
-                <a href="/" className="hover:underline">
-                  API
-                </a>
-              </li>
-              <li>
-                <a href="/" className="hover:underline">
-                  Guides
-                </a>
-              </li>
-            </ul>
-          </div>
+import { FaTelegram, FaGithub, FaTwitter } from "react-icons/fa";
 
-          {/* Right Column: Community Links */}
-          <div className="flex flex-col">
-            <h4 className="text-lg font-semibold mb-4">Community</h4>
-            <ul className="space-y-2">
-              <li>
-                <a href="/community" className="hover:underline">
-                  Community
-                </a>
-              </li>
-              <li>
-                <a href="https://x.com/landver0" className="hover:underline">
-                  Twitter
-                </a>
-              </li>
-              <li>
-                <a href="https://discord.com" className="hover:underline">
-                  Discord
-                </a>
-              </li>
-              <li>
-                <a
-                  href="https://github.com/NoshonNetworks/landver/"
-                  className="hover:underline"
-                >
-                  GitHub
-                </a>
-              </li>
-            </ul>
-          </div>
+const Footer = () => {
+  const links = [
+    { name: "Home", href: "/" },
+    { name: "Experience", href: "/experience" },
+    { name: "About us", href: "/about" },
+    { name: "Contact", href: "/contact" },
+  ];
+
+  const socialLinks = [
+    {
+      icon: FaTelegram,
+      href: "https://t.me/+e3pDyYQQerk3NjFk",
+      label: "Telegram",
+    },
+    {
+      icon: FaGithub,
+      href: "https://github.com/NoshonNetworks/landver",
+      label: "GitHub",
+    },
+    { icon: FaTwitter, href: "https://x.com/landver0", label: "Twitter (X)" },
+  ];
+
+  return (
+    <footer className="w-full py-8 px-4 mt-16 text-[#6e62e5]">
+      <div className="max-w-6xl mx-auto">
+        <nav className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 mb-6">
+          {links.map((link) => (
+            <a
+              key={link.name}
+              href={link.href}
+              className="text-[#6e62e5] hover:text-gray-900 transition-colors"
+            >
+              {link.name}
+            </a>
+          ))}
+        </nav>
+
+        <div className="flex justify-center items-center gap-6 mb-6">
+          {socialLinks.map((social) => (
+            <a
+              key={social.label}
+              href={social.href}
+              className="hover:text-gray-900 transition-colors"
+              aria-label={social.label}
+              target="_blank"
+            >
+              <social.icon className="w-5 h-5" />
+            </a>
+          ))}
         </div>
-        <div className="text-center mt-8">
-          <p>&copy; 2024 LandVer. All rights reserved.</p>
+
+        {/* Copyright */}
+        <div className="text-center text-sm">
+          <p>© Landver {new Date().getFullYear()} | All Rights Reserved</p>
         </div>
       </div>
     </footer>
