@@ -4,9 +4,9 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-15-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-LandVer is a decentralized land registration and verification protocol, utilizing blockchain technology to provide a secure, transparent, and immutable system for managing land records. The protocol facilitates land transactions and ownership verification across multiple blockchains, beginning with StarkNet.
+LandVer is a decentralized land registration and verification protocol, utilizing blockchain technology to provide a secure, transparent, and immutable system for managing land records. The protocol facilitates land transactions and ownership verification across multiple blockchains, beginning with Starknet.
 
-While initially built on StarkNet, LandVer is designed to be cross-chain compatible, allowing land transactions and records to be securely managed across multiple blockchains. LandVer is one of the many products of Noshon Networks, which aims to bring innovation to the world of real estate.
+While initially built on Starknet, LandVer is designed to be cross-chain compatible, allowing land transactions and records to be securely managed across multiple blockchains. LandVer is one of the many products of Noshon Networks, which aims to bring innovation to the world of real estate.
 
 ## Project Structure
 
@@ -20,13 +20,26 @@ The project is divided into the following components:
 - `scripts/`: JavaScript tools for automation and utility tasks
 - `sdk/`: JavaScript for interacting with the smart contracts and API
 
-## Land Registration Process Flow
 
-![image](https://github.com/user-attachments/assets/a9c34c70-05d3-42aa-9ce3-0c84748f2fae)
+# Development
+ 
+Steps to build and run LandVer locally.
 
-# How to Run the Code
+### Prerequisites
 
-## Running the Client and Server
+Ensure you have the prerequisites installed before proceeding. 
+
+[scarb](https://docs.swmansion.com/scarb/docs.html)
+[snfoundry](https://book.getfoundry.sh/getting-started/installation)
+[install npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+[install rust](https://www.rust-lang.org/tools/install)
+
+
+
+
+## How to Run the Code
+
+### Running the Client and Server
 
  Navigate to the client directory, install the packages, and start the client
 ```bash 
@@ -43,7 +56,7 @@ npm run dev
 ```
 
 
- Running the Land Registry Contracts
+### Running the Land Registry Contracts
 
  Navigate to the land_registry directory, build the contracts
 
