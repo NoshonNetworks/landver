@@ -1,13 +1,13 @@
 use starknet::{ContractAddress, contract_address_const};
 use snforge_std::{
     declare, ContractClassTrait, DeclareResultTrait, EventSpyAssertionsTrait, spy_events,
-    start_cheat_caller_address, stop_cheat_caller_address
+    start_cheat_caller_address, stop_cheat_caller_address,
 };
 use land_registry::land_nft::{LandNFT};
 use land_registry::interface::land_nft::{BaseURIUpdated, Locked, Unlocked};
 use land_registry::interface::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait};
 use openzeppelin::token::erc721::interface::{
-    IERC721MetadataDispatcher, IERC721MetadataDispatcherTrait
+    IERC721MetadataDispatcher, IERC721MetadataDispatcherTrait,
 };
 
 pub mod Accounts {
@@ -75,10 +75,10 @@ fn test_set_base_uri() {
                 (
                     dispatcher.contract_address,
                     LandNFT::Event::BaseURIUpdated(
-                        BaseURIUpdated { caller: Accounts::land_owner(), new_base_uri }
-                    )
-                )
-            ]
+                        BaseURIUpdated { caller: Accounts::land_owner(), new_base_uri },
+                    ),
+                ),
+            ],
         );
 }
 
@@ -119,8 +119,11 @@ fn test_lock() {
     spy
         .assert_emitted(
             @array![
-                (dispatcher.contract_address, LandNFT::Event::Locked(Locked { token_id: TOKEN_ID }))
-            ]
+                (
+                    dispatcher.contract_address,
+                    LandNFT::Event::Locked(Locked { token_id: TOKEN_ID }),
+                ),
+            ],
         );
 
     dispatcher.unlock(TOKEN_ID);
@@ -131,9 +134,9 @@ fn test_lock() {
             @array![
                 (
                     dispatcher.contract_address,
-                    LandNFT::Event::Unlocked(Unlocked { token_id: TOKEN_ID })
-                )
-            ]
+                    LandNFT::Event::Unlocked(Unlocked { token_id: TOKEN_ID }),
+                ),
+            ],
         );
 }
 

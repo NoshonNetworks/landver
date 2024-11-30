@@ -1,11 +1,11 @@
 use snforge_std::{
     declare, ContractClassTrait, DeclareResultTrait, start_cheat_caller_address,
     stop_cheat_caller_address, start_cheat_block_timestamp, stop_cheat_block_timestamp,
-    start_cheat_max_fee, stop_cheat_max_fee, spy_events, EventSpyAssertionsTrait
+    start_cheat_max_fee, stop_cheat_max_fee, spy_events, EventSpyAssertionsTrait,
 };
 use land_registry::interface::land_register::{
     ILandRegistryDispatcher, ILandRegistryDispatcherTrait, Land, LandUse, Location, LandStatus,
-    ListingStatus, Listing
+    ListingStatus, Listing,
 };
 use starknet::ContractAddress;
 use array::ArrayTrait;
@@ -95,7 +95,7 @@ fn test_can_create_land_id() {
     let id_1 = land_register_dispatcher.register_land(location1, area, land_use);
     assert(
         id_1 == 689216240506425664519995665376830138699152617179386928383439581252423035401,
-        'land_id is not as expected (1)'
+        'land_id is not as expected (1)',
     );
 
     stop_cheat_caller_address(contract_address);
@@ -108,7 +108,7 @@ fn test_can_create_land_id() {
     let id_2 = land_register_dispatcher.register_land(location2, area, land_use);
     assert(
         id_2 == 14747943344839073547474207539210781044163306897453701102442319167742800565,
-        'land_id is not as expected (2)'
+        'land_id is not as expected (2)',
     );
 
     stop_cheat_caller_address(contract_address);
@@ -121,7 +121,7 @@ fn test_can_create_land_id() {
     let id_3 = land_register_dispatcher.register_land(location3, area, land_use);
     assert(
         id_3 == 864555402638950626684962868225518693284860492943333490893906025290030385222,
-        'land_id is not as expected (3)'
+        'land_id is not as expected (3)',
     );
 
     stop_cheat_caller_address(contract_address);
@@ -192,7 +192,7 @@ fn test_can_get_is_land_approved() {
     let land_id = land_register_dispatcher.register_land(location, area, land_use);
 
     assert(
-        land_register_dispatcher.is_land_approved(land_id) == false, 'Land should not be approved'
+        land_register_dispatcher.is_land_approved(land_id) == false, 'Land should not be approved',
     );
 
     stop_cheat_caller_address(contract_address);
@@ -219,7 +219,7 @@ fn test_can_get_pending_approvals() {
 
     assert(
         land_register_dispatcher.get_pending_approvals() == array![land_id],
-        'Not enough pending approvals'
+        'Not enough pending approvals',
     );
 }
 
@@ -246,7 +246,7 @@ fn test_can_get_land_transaction_history() {
     assert(
         land_register_dispatcher
             .get_land_transaction_history(land_id) == array![(caller_address, 1)],
-        'Inaccurate land history'
+        'Inaccurate land history',
     );
 
     stop_cheat_caller_address(contract_address);
@@ -1083,8 +1083,8 @@ fn test_can_create_listing() {
 
     let expected_event = LandRegistryContract::Event::ListingCreated(
         LandRegistryContract::ListingCreated {
-            listing_id, land_id, seller: owner_address, price: listing_price
-        }
+            listing_id, land_id, seller: owner_address, price: listing_price,
+        },
     );
 
     spy.assert_emitted(@array![(contract_address, expected_event)]);
@@ -1147,7 +1147,7 @@ fn test_can_cancel_listing() {
     let listing = land_register_dispatcher.get_listing(listing_id);
 
     let expected_event = LandRegistryContract::Event::ListingCancelled(
-        LandRegistryContract::ListingCancelled { listing_id }
+        LandRegistryContract::ListingCancelled { listing_id },
     );
 
     spy.assert_emitted(@array![(contract_address, expected_event)]);
@@ -1245,7 +1245,39 @@ fn test_set_land_inspector() {
     // Verify that the inspector is correctly assigned
     let assigned_inspector = land_register_dispatcher.get_land_inspector(land_id);
     assert_eq!(
-        assigned_inspector, inspector_address, "Inspector address should match the assigned address"
+        assigned_inspector,
+        inspector_address,
+        "Inspector address should match the assigned address",
     );
+    stop_cheat_caller_address(contract_address);
+}
+
+#[test]
+#[should_panic(expected: ('Inspector not registered',))]
+fn test_get_inspector_pending_approvals_unauthorized() {
+    let contract_address = deploy("LandRegistryContract");
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    let unauthorized = starknet::contract_address_const::<0x789>();
+    start_cheat_caller_address(contract_address, unauthorized);
+    land_register_dispatcher.get_inspector_pending_approvals(10, 20);
+    stop_cheat_caller_address(contract_address);
+}
+
+#[test]
+fn test_get_inspector_pending_approvals_empty_range() {
+    let contract_address = deploy("LandRegistryContract");
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    let owner_address = starknet::contract_address_const::<0x123>();
+    let inspector_address = starknet::contract_address_const::<0x456>();
+
+    start_cheat_caller_address(contract_address, owner_address);
+    land_register_dispatcher.add_inspector(inspector_address);
+    stop_cheat_caller_address(contract_address);
+
+    start_cheat_caller_address(contract_address, inspector_address);
+    let pending = land_register_dispatcher.get_inspector_pending_approvals(20, 10);
+    assert(pending.len() == 0, 'Should have no approvals');
     stop_cheat_caller_address(contract_address);
 }
