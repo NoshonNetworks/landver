@@ -3,15 +3,15 @@ pub mod LandRegistryContract {
     use OwnableComponent::InternalTrait;
     use starknet::SyscallResultTrait;
     use starknet::{
-        get_caller_address, get_contract_address, get_block_timestamp, ContractAddress, syscalls
+        get_caller_address, get_contract_address, get_block_timestamp, ContractAddress, syscalls,
     };
     use land_registry::interface::land_register::{
-        ILandRegistry, Land, LandUse, Location, LandStatus, Listing, ListingStatus
+        ILandRegistry, Land, LandUse, Location, LandStatus, Listing, ListingStatus,
     };
     use land_registry::interface::land_register::{
         LandRegistered, LandTransferred, LandVerified, LandUpdated, LandInspectorSet,
         InspectorAdded, InspectorRemoved, ListingCreated, ListingCancelled, ListingPriceUpdated,
-        LandSold
+        LandSold,
     };
     use land_registry::land_nft::{LandNFT};
     use land_registry::interface::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait};
@@ -53,7 +53,7 @@ pub mod LandRegistryContract {
         land_count: u256, // Total number of registered lands
         nft_contract: ContractAddress, // Address of the NFT contract
         land_transaction_history: Map::<
-            (u256, u256), (ContractAddress, u64)
+            (u256, u256), (ContractAddress, u64),
         >, // Transaction history
         land_transaction_count: Map::<u256, u256>, // Number of transactions per land
         land_inspector_assignments: Map::<u256, ContractAddress>, // Inspector assignments
@@ -62,7 +62,7 @@ pub mod LandRegistryContract {
         listings: Map::<u256, Listing>,
         listing_count: u256,
         price_history: Map::<
-            (u256, u256), (u256, u64)
+            (u256, u256), (u256, u64),
         >, // (listing_id, index) -> (price, timestamp)
         price_update_count: Map::<u256, u256>, // listing_id -> number of price updates
         active_listings: Map::<u256, u256>, // index -> listing_id
@@ -93,7 +93,7 @@ pub mod LandRegistryContract {
 
     #[constructor]
     fn constructor(
-        ref self: ContractState, nft_contract_class_hash: starknet::class_hash::ClassHash
+        ref self: ContractState, nft_contract_class_hash: starknet::class_hash::ClassHash,
     ) {
         let owner = get_caller_address();
         self.ownable.initializer(owner);
@@ -108,7 +108,7 @@ pub mod LandRegistryContract {
         call_data.append(land_register_contract_address.try_into().unwrap());
         base_uri.serialize(ref call_data);
         let (nft_contract_address, _) = syscalls::deploy_syscall(
-            nft_contract_class_hash, 0, call_data.span(), true
+            nft_contract_class_hash, 0, call_data.span(), true,
         )
             .unwrap_syscall();
 
@@ -142,7 +142,7 @@ pub mod LandRegistryContract {
                 land_use,
                 status: LandStatus::Pending,
                 inspector: 0.try_into().unwrap(),
-                last_transaction_timestamp: timestamp
+                last_transaction_timestamp: timestamp,
             };
 
             // Update storage with new land information
@@ -169,8 +169,8 @@ pub mod LandRegistryContract {
                         owner: caller,
                         location: location,
                         area: area,
-                        land_use: land_use.into()
-                    }
+                        land_use: land_use.into(),
+                    },
                 );
 
             land_id
@@ -290,7 +290,7 @@ pub mod LandRegistryContract {
                 .emit(
                     LandTransferred {
                         land_id: land_id, from_owner: old_owner, to_owner: new_owner,
-                    }
+                    },
                 );
         }
 
@@ -315,7 +315,7 @@ pub mod LandRegistryContract {
             assert(
                 InternalFunctions::only_inspector(@self, land_id)
                     | InternalFunctions::only_owner(@self, land_id),
-                Errors::INSPECTOR_OWNER_APPR
+                Errors::INSPECTOR_OWNER_APPR,
             );
             let mut land = self.lands.read(land_id);
             assert(land.status == LandStatus::Pending, Errors::PENDING_LAND);
@@ -358,7 +358,7 @@ pub mod LandRegistryContract {
         }
 
         fn get_land_transaction_history(
-            self: @ContractState, land_id: u256
+            self: @ContractState, land_id: u256,
         ) -> Array<(ContractAddress, u64)> {
             let mut land_history = array![];
             let transaction_count = self.land_transaction_count.read(land_id);
@@ -451,7 +451,7 @@ pub mod LandRegistryContract {
                 price: price,
                 status: ListingStatus::Active,
                 created_at: timestamp,
-                updated_at: timestamp
+                updated_at: timestamp,
             };
 
             self.listings.write(listing_id, listing);
@@ -568,7 +568,7 @@ pub mod LandRegistryContract {
                         land_id: listing.land_id,
                         seller: old_owner,
                         buyer,
-                        price: listing.price
+                        price: listing.price,
                     }
                 );
         }
@@ -605,7 +605,7 @@ pub mod LandRegistryContract {
 
 
         fn get_inspector_pending_approvals(
-            self: @ContractState, start_time: u64, end_time: u64
+            self: @ContractState, start_time: u64, end_time: u64,
         ) -> Array<u256> {
             let caller = get_caller_address();
             let mut pending_approvals = array![];

@@ -4,14 +4,14 @@ use starknet::ContractAddress;
 #[starknet::interface]
 pub trait ILandNFT<TContractState> {
     fn upgrade(
-        ref self: TContractState, new_class_hash: starknet::class_hash::ClassHash
+        ref self: TContractState, new_class_hash: starknet::class_hash::ClassHash,
     ); // upgrade the contract class
     // Mints a new NFT representing a land parcel
     fn mint(ref self: TContractState, to: ContractAddress, token_id: u256);
 
     // Transfers ownership of a land NFT
     fn transfer(
-        ref self: TContractState, from: ContractAddress, to: ContractAddress, token_id: u256
+        ref self: TContractState, from: ContractAddress, to: ContractAddress, token_id: u256,
     );
 
     // Updates the base URI for NFT metadata
@@ -31,15 +31,15 @@ pub trait ILandNFT<TContractState> {
 #[derive(Drop, starknet::Event)]
 struct BaseURIUpdated {
     caller: ContractAddress,
-    new_base_uri: ByteArray
+    new_base_uri: ByteArray,
 }
 
 #[derive(Drop, starknet::Event)]
 pub struct Locked {
-    token_id: u256
+    token_id: u256,
 }
 
 #[derive(Drop, starknet::Event)]
 pub struct Unlocked {
-    token_id: u256
+    token_id: u256,
 }
