@@ -102,6 +102,10 @@ pub trait ILandRegistry<TContractState> {
     fn get_listing(self: @TContractState, listing_id: u256) -> Listing;
     fn get_active_listings(self: @TContractState) -> Array<u256>;
     fn get_listing_price_history(self: @TContractState, listing_id: u256) -> Array<(u256, u64)>;
+
+    fn get_inspector_pending_approvals(
+        self: @TContractState, start_time: u64, end_time: u64
+    ) -> Array<u256>;
 }
 
 // Events

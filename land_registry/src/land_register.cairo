@@ -562,6 +562,41 @@ pub mod LandRegistryContract {
 
             history
         }
+
+
+        fn get_inspector_pending_approvals(
+            self: @ContractState, start_time: u64, end_time: u64
+        ) -> Array<u256> {
+            let caller = get_caller_address();
+            let mut pending_approvals = array![];
+
+            // Verify caller is a registered inspector
+            assert(self.registered_inspectors.read(caller), Errors::NOT_REGISTERED_INSP);
+
+            let total_lands = self.land_count.read();
+            let mut i: u256 = 0;
+
+            // Iterate through all lands
+            loop {
+                if i >= total_lands {
+                    break;
+                }
+
+                let land = self.lands.read(i);
+
+                // Check if land is assigned to this inspector, is pending, and within time range
+                if land.inspector == caller
+                    && land.status == LandStatus::Pending
+                    && land.last_transaction_timestamp >= start_time
+                    && land.last_transaction_timestamp <= end_time {
+                    pending_approvals.append(i);
+                }
+
+                i += 1;
+            };
+
+            pending_approvals
+        }
     }
 
     // Internal helper functions for access control
