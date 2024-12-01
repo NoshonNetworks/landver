@@ -604,8 +604,33 @@ pub mod LandRegistryContract {
         }
 
 
+        // fn get_inspector_pending_approvals(
+        //     self: @ContractState, inspector: ContractAddress
+        // ) -> Array<Land> {
+        //     // Verify inspector is registered
+        //     assert(self.registered_inspectors.read(inspector), Errors::NOT_REGISTERED_INSP);
+
+        //     let mut pending_lands = array![];
+        //     let total_lands = self.land_count.read();
+        //     let mut i: u256 = 1; // Starting from 1 since we store in lands_registry from index 1
+
+        //     // Iterate through all lands
+        //     while i < total_lands + 1 {
+        //         let land = self.lands_registry.read(i);
+
+        //         // Check if land is assigned to this inspector and is pending
+        //         if land.inspector == inspector && land.status == LandStatus::Pending {
+        //             pending_lands.append(land);
+        //         }
+
+        //         i += 1;
+        //     };
+
+        //     pending_lands
+        // }
+
         fn get_inspector_pending_approvals(
-            self: @ContractState, inspector: ContractAddress
+            self: @ContractState, inspector: ContractAddress, start_time: u64, end_time: u64
         ) -> Array<Land> {
             // Verify inspector is registered
             assert(self.registered_inspectors.read(inspector), Errors::NOT_REGISTERED_INSP);
@@ -618,8 +643,10 @@ pub mod LandRegistryContract {
             while i < total_lands + 1 {
                 let land = self.lands_registry.read(i);
 
-                // Check if land is assigned to this inspector and is pending
-                if land.inspector == inspector && land.status == LandStatus::Pending {
+                if land.inspector == inspector
+                    && land.status == LandStatus::Pending
+                    && land.last_transaction_timestamp >= start_time
+                    && land.last_transaction_timestamp <= end_time {
                     pending_lands.append(land);
                 }
 
