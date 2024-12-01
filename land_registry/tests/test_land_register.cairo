@@ -1251,3 +1251,35 @@ fn test_set_land_inspector() {
     );
     stop_cheat_caller_address(contract_address);
 }
+
+#[test]
+#[should_panic(expected: ('Inspector not registered',))]
+fn test_get_inspector_pending_approvals_unauthorized() {
+    let contract_address = deploy("LandRegistryContract");
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    let unauthorized = starknet::contract_address_const::<0x789>();
+    start_cheat_caller_address(contract_address, unauthorized);
+    land_register_dispatcher.get_inspector_pending_approvals(unauthorized, 1, 2);
+    stop_cheat_caller_address(contract_address);
+}
+
+#[test]
+fn test_get_inspector_pending_approvals_empty_range() {
+    let contract_address = deploy("LandRegistryContract");
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    let owner_address = starknet::contract_address_const::<0x123>();
+    let inspector_address = starknet::contract_address_const::<0x456>();
+
+    // Register inspector
+    start_cheat_caller_address(contract_address, owner_address);
+    land_register_dispatcher.add_inspector(inspector_address);
+    stop_cheat_caller_address(contract_address);
+
+    // Check empty time range
+    start_cheat_caller_address(contract_address, inspector_address);
+    let pending = land_register_dispatcher.get_inspector_pending_approvals(inspector_address, 2, 1);
+    assert(pending.len() == 0, 'Should have no approvals');
+    stop_cheat_caller_address(contract_address);
+}

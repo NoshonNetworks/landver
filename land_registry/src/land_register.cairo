@@ -603,45 +603,21 @@ pub mod LandRegistryContract {
             history
         }
 
-
-        // fn get_inspector_pending_approvals(
-        //     self: @ContractState, inspector: ContractAddress
-        // ) -> Array<Land> {
-        //     // Verify inspector is registered
-        //     assert(self.registered_inspectors.read(inspector), Errors::NOT_REGISTERED_INSP);
-
-        //     let mut pending_lands = array![];
-        //     let total_lands = self.land_count.read();
-        //     let mut i: u256 = 1; // Starting from 1 since we store in lands_registry from index 1
-
-        //     // Iterate through all lands
-        //     while i < total_lands + 1 {
-        //         let land = self.lands_registry.read(i);
-
-        //         // Check if land is assigned to this inspector and is pending
-        //         if land.inspector == inspector && land.status == LandStatus::Pending {
-        //             pending_lands.append(land);
-        //         }
-
-        //         i += 1;
-        //     };
-
-        //     pending_lands
-        // }
-
         fn get_inspector_pending_approvals(
             self: @ContractState, inspector: ContractAddress, start_time: u64, end_time: u64
         ) -> Array<Land> {
-            // Verify inspector is registered
             assert(self.registered_inspectors.read(inspector), Errors::NOT_REGISTERED_INSP);
 
             let mut pending_lands = array![];
-            let total_lands = self.land_count.read();
-            let mut i: u256 = 1; // Starting from 1 since we store in lands_registry from index 1
+            let land_count = self.land_count.read();
 
-            // Iterate through all lands
-            while i < total_lands + 1 {
-                let land = self.lands_registry.read(i);
+            let mut current_land_id: u256 = 0;
+            loop {
+                if current_land_id >= land_count {
+                    break;
+                }
+
+                let land = self.lands.read(current_land_id);
 
                 if land.inspector == inspector
                     && land.status == LandStatus::Pending
@@ -650,7 +626,7 @@ pub mod LandRegistryContract {
                     pending_lands.append(land);
                 }
 
-                i += 1;
+                current_land_id += 1;
             };
 
             pending_lands
