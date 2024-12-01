@@ -605,37 +605,28 @@ pub mod LandRegistryContract {
 
 
         fn get_inspector_pending_approvals(
-            self: @ContractState, start_time: u64, end_time: u64,
-        ) -> Array<u256> {
-            let caller = get_caller_address();
-            let mut pending_approvals = array![];
+            self: @ContractState, inspector: ContractAddress
+        ) -> Array<Land> {
+            // Verify inspector is registered
+            assert(self.registered_inspectors.read(inspector), Errors::NOT_REGISTERED_INSP);
 
-            // Verify caller is a registered inspector
-            assert(self.registered_inspectors.read(caller), Errors::NOT_REGISTERED_INSP);
-
+            let mut pending_lands = array![];
             let total_lands = self.land_count.read();
-            let mut i: u256 = 0;
+            let mut i: u256 = 1; // Starting from 1 since we store in lands_registry from index 1
 
             // Iterate through all lands
-            loop {
-                if i >= total_lands {
-                    break;
-                }
+            while i < total_lands + 1 {
+                let land = self.lands_registry.read(i);
 
-                let land = self.lands.read(i);
-
-                // Check if land is assigned to this inspector, is pending, and within time range
-                if land.inspector == caller
-                    && land.status == LandStatus::Pending
-                    && land.last_transaction_timestamp >= start_time
-                    && land.last_transaction_timestamp <= end_time {
-                    pending_approvals.append(i);
+                // Check if land is assigned to this inspector and is pending
+                if land.inspector == inspector && land.status == LandStatus::Pending {
+                    pending_lands.append(land);
                 }
 
                 i += 1;
             };
 
-            pending_approvals
+            pending_lands
         }
     }
 
