@@ -12,7 +12,7 @@ interface ErrorBoundaryProps {
 
 export function ErrorBoundary({ error, reset, message }: ErrorBoundaryProps) {
     useEffect(() => {
-
+        console.error(error)
     }, [error])
 
     return (
