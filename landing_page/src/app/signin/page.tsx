@@ -48,7 +48,7 @@ export default function LoginPage() {
             </a>
           </div>
 
-          <Button classname='w-full text-lg font-[600]'>
+          <Button classname='w-full !text-lg !font-[600]'>
             Sign in
           </Button>
         </form>
