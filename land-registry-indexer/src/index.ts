@@ -18,7 +18,6 @@ import {
   handleInspectorAdded,
   handleInspectorRemoved,
   handleLandInspectorSet,
-  handleFeeUpdated,
   handleListingCreated,
   handleListingPriceUpdated,
   handleListingCancelled,
@@ -61,9 +60,7 @@ class LandRegistryIndexer implements Indexer<StarkNetCursor> {
           case 'LandInspectorSet':
             await handleLandInspectorSet(client, eventData, cursor);
             break;
-          case 'FeeUpdated':
-            await handleFeeUpdated(client, eventData, cursor);
-            break;
+
           case 'ListingCreated':
             await handleListingCreated(client, eventData, cursor);
             break;

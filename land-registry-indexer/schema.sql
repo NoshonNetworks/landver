@@ -7,7 +7,6 @@ CREATE TABLE IF NOT EXISTS lands (
     land_use VARCHAR,
     status VARCHAR,
     inspector_address VARCHAR,
-    fee NUMERIC,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -57,14 +56,14 @@ CREATE TABLE IF NOT EXISTS inspector_assignments (
     timestamp TIMESTAMP NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS fee_updates (
-    id SERIAL PRIMARY KEY,
-    old_fee NUMERIC NOT NULL,
-    new_fee NUMERIC NOT NULL,
-    transaction_hash VARCHAR NOT NULL,
-    block_number BIGINT NOT NULL,
-    timestamp TIMESTAMP NOT NULL
-);
+-- CREATE TABLE IF NOT EXISTS fee_updates (
+--     id SERIAL PRIMARY KEY,
+--     old_fee NUMERIC NOT NULL,
+--     new_fee NUMERIC NOT NULL,
+--     transaction_hash VARCHAR NOT NULL,
+--     block_number BIGINT NOT NULL,
+--     timestamp TIMESTAMP NOT NULL
+-- );
 
 CREATE TABLE IF NOT EXISTS listings (
     id SERIAL PRIMARY KEY,
