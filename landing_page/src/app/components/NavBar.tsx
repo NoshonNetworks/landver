@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
-import Button from "./Button/Button";
 
 const NavBar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -33,12 +32,12 @@ const NavBar = () => {
         <div className="hidden md:flex items-center gap-8">
           <div className="flex items-center gap-4 text-sm">
             <Link
-              href="/"
+              href="/signin"
               className="text-[#6364d5] hover:text-[#4e4fb8] transition-colors text-xs"
             >
               Login
             </Link>
-            <Button>Sign Up</Button>
+            <Link className="text-white rounded text-xs py-3 px-6 bg-[#6364d5]" href='/signup'>Sign Up</Link>
           </div>
         </div>
 
@@ -78,14 +77,14 @@ const NavBar = () => {
             </Link>
             <div className="flex flex-col gap-2 pt-2 border-t">
               <Link
-                href="/"
+                href="/signin"
                 className="p-2 text-[#6364d5] hover:bg-gray-50 rounded-lg transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Login
               </Link>
               <div className="px-2">
-                <Button classname="w-full justify-center">Sign Up</Button>
+                <Link className="text-white rounded text-xs py-3 px-6 bg-[#6364d5]" href='/signup'>Sign Up</Link>
               </div>
             </div>
           </nav>
