@@ -7,9 +7,16 @@ dotenv.config();
 
 const provider = new ethers.JsonRpcProvider(process.env.ETHEREUM_RPC_URL);
 const privateKey = process.env.PRIVATE_KEY;
-const signer = new ethers.Wallet(privateKey, provider);
-const contractAddress = process.env.LAND_REGISTRY_CONTRACT_ADDRESS;
+if (!privateKey || !privateKey.startsWith('0x')) {
+  throw new Error('Invalid private key format in .env. Must start with 0x');
+}
 
+const wallet = new ethers.Wallet(privateKey);
+const signer = wallet.connect(provider);
+const contractAddress = process.env.LAND_REGISTRY_CONTRACT_ADDRESS;
+if (!contractAddress || !contractAddress.startsWith('0x')) {
+  throw new Error('Invalid or missing LAND_REGISTRY_CONTRACT_ADDRESS in .env');
+}
 const contract = new ethers.Contract(contractAddress, LandRegistryABI, signer);
 
 function generateLandId() {
