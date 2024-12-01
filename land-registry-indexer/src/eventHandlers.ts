@@ -1,3 +1,22 @@
+/**
+ * Event handler functions for the Land Registry smart contract
+ * 
+ * These functions process events emitted by the contract and store them in PostgreSQL.
+ * Each handler receives:
+ * - client: PostgreSQL client for database operations
+ * - data: Event data from the contract
+ * - cursor: Block/transaction metadata
+ *
+ * The handlers maintain the state of:
+ * - Land parcels (registration, transfers, verification)
+ * - Inspectors (adding/removing)
+ * - Marketplace listings (creation, updates, sales)
+ *
+ * All monetary values are stored as strings to preserve precision.
+ * Addresses are stored as strings in their full StarkNet format.
+ * Timestamps are converted from Unix seconds to JavaScript Date objects.
+ */
+
 import { PoolClient } from 'pg';
 import { StarkNetCursor } from '@apibara/protocol';
 

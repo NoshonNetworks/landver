@@ -1,3 +1,11 @@
+/**
+ * Main entry point for the Land Registry Indexer
+ * 
+ * This script initializes the indexer, connects to the PostgreSQL database,
+ * and starts processing events from the StarkNet node using Apibara.
+
+ */
+
 import { Indexer, IndexerRunner } from '@apibara/indexer';
 import { StarkNetCursor, Filter } from '@apibara/protocol';
 import { Pool } from 'pg';

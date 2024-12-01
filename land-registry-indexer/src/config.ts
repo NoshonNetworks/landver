@@ -1,3 +1,10 @@
+/**
+ * Configuration settings for the Land Registry Indexer
+ * 
+ * This module loads environment variables from a .env file and provides
+ * configuration constants used throughout the application.
+ */
+
 import dotenv from 'dotenv';
 dotenv.config();
 
