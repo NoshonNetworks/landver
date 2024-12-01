@@ -1,9 +1,7 @@
 'use client'
-
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { AlertOctagon } from 'lucide-react'
-import * as Sentry from "@sentry/nextjs"
 import { useEffect } from "react"
 
 interface ErrorBoundaryProps {
@@ -14,11 +12,7 @@ interface ErrorBoundaryProps {
 
 export function ErrorBoundary({ error, reset, message }: ErrorBoundaryProps) {
     useEffect(() => {
-        // Log the error to Sentry with additional context
-        Sentry.withScope((scope) => {
-            scope.setExtra("componentStack", error.stack)
-            Sentry.captureException(error)
-        })
+
     }, [error])
 
     return (
