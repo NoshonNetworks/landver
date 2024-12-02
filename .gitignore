@@ -40,3 +40,7 @@ target/
 # typescript
 /client_test/*.tsbuildinfo
 /client_test/next-env.d.ts
+
+**/*/.env
+**/*/dist
+**/*/node_modules

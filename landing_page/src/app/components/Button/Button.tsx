@@ -4,6 +4,8 @@ interface ButtonProps extends React.PropsWithChildren {
   classname?: string;
   variant?: "default" | "error" | "success" | "gray";
   size?: "small" | "medium" | "large" | "full";
+  onClick?: () => void;
+  disabled?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -11,6 +13,8 @@ const Button: React.FC<ButtonProps> = ({
   classname = "",
   variant,
   size = "medium", // Default size
+  onClick,
+  disabled,
 }) => {
   const getVariantStyles = () => {
     switch (variant) {
@@ -42,7 +46,11 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <button
-      className={`${getVariantStyles()} ${getSizeStyles()} ${classname} text-white rounded text-xs py-3`}
+      className={`${getVariantStyles()} ${getSizeStyles()} ${classname} text-white rounded text-xs py-3 ${
+        disabled ? 'opacity-50 cursor-not-allowed' : ''
+      }`}
+      onClick={onClick}
+      disabled={disabled}
     >
       {children}
     </button>
