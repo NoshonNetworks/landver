@@ -141,3 +141,73 @@ exports.verifyLand = async (req, res, next) => {
         next(new CustomError('Error verifying land', 500));
     }
 };
+
+exports.getInspectors = async (req, res, next) => {
+    try {
+        console.log('Fetching inspectors from blockchain');
+        const inspectors = await blockchainService.getInspectors();
+        res.status(200).json(inspectors);
+    } catch (error) {
+        console.error('Error fetching inspectors:', error);
+        next(new CustomError('Error fetching inspectors', 500));
+    }
+};
+
+exports.getApprovedLands = async (req, res, next) => {
+    try {
+        console.log('Fetching approved lands');
+        const approvedLands = await blockchainService.getApprovedLands();
+        
+        // Enrich blockchain data with database information
+        const enrichedLands = await Promise.all(approvedLands.map(async (land) => {
+            const dbLand = await Land.findOne({ landId: land.id });
+            return { ...land, ...dbLand?.toObject() };
+        }));
+
+        res.status(200).json(enrichedLands);
+    } catch (error) {
+        console.error('Error fetching approved lands:', error);
+        next(new CustomError('Error fetching approved lands', 500));
+    }
+};
+
+exports.getTransferHistory = async (req, res, next) => {
+    try {
+        const { landId } = req.params;
+        console.log('Fetching transfer history for land:', landId);
+
+        if (!landId) {
+            throw new CustomError('Land ID is required', 400, 'LAND_ID_REQUIRED');
+        }
+
+        const transferHistory = await blockchainService.getLandTransferHistory(landId);
+        res.status(200).json(transferHistory);
+    } catch (error) {
+        console.error('Error fetching transfer history:', error);
+        next(new CustomError('Error fetching transfer history', 500));
+    }
+};
+
+exports.verifyLandStatus = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        console.log('Verifying land status for ID:', id);
+
+        if (!id) {
+            throw new CustomError('Land ID is required', 400, 'LAND_ID_REQUIRED');
+        }
+
+        const verificationResult = await blockchainService.verifyLandStatus(id);
+        
+        res.status(200).json({
+            isVerified: verificationResult.isVerified,
+            message: verificationResult.isVerified 
+                ? 'Land is verified in the blockchain registry'
+                : 'Land is not verified in the blockchain registry',
+            details: verificationResult.details
+        });
+    } catch (error) {
+        console.error('Error verifying land status:', error);
+        next(new CustomError('Error verifying land status', 500));
+    }
+};

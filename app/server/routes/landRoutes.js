@@ -1,17 +1,15 @@
-// const express = require('express');
-// const router = express.Router();
-// const landController = require('../controllers/landController');
+const express = require('express');
+const router = express.Router();
+const landController = require('../controllers/landController');
 
-// // Remove any authentication middleware for these routes
-// router.post('/register', landController.registerLand);
-// router.get('/', (req, res, next) => {
-//   console.log('Received GET request for all lands');
-//   landController.getAllLands(req, res, next);
-// });
-// router.get('/:id', landController.getLandById);
-// router.get('/:id/verify', landController.verifyLand);
+// Base land routes
+router.get('/', landController.getAllLands);
+router.get('/inspectors', landController.getInspectors);
+router.get('/approved', landController.getApprovedLands);
+router.get('/transfer-history/:landId', landController.getTransferHistory);
 
-// //Todo: docs, api
+// Land verification and details
+router.get('/:id', landController.getLandById);
+router.get('/:id/verify', landController.verifyLandStatus);
 
-
-// module.exports = router;
+module.exports = router;

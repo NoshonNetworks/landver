@@ -3,6 +3,7 @@ const LandRegistryABI = require('../abis/LandRegistry.json');
 const dotenv = require('dotenv');
 const crypto = require('crypto');
 
+
 dotenv.config();
 
 const provider = new ethers.JsonRpcProvider(process.env.ETHEREUM_RPC_URL);
@@ -106,8 +107,105 @@ async function verifyLand(landId) {
   }
 }
 
+const getInspectors = async () => {
+    try {
+        console.log('Fetching inspectors from blockchain...');
+        // Call the smart contract method to get inspectors
+        const inspectors = await contract.getInspectors();
+        
+        // Transform the raw data into a more useful format
+        return inspectors.map(inspector => ({
+            address: inspector.addr,
+            name: inspector.name,
+            isActive: inspector.isActive,
+            registrationDate: new Date(inspector.registrationDate * 1000).toISOString(),
+            totalLandsInspected: inspector.landsInspected.toString()
+        }));
+    } catch (error) {
+        console.error('Error fetching inspectors:', error);
+        throw new Error('Failed to fetch inspectors from blockchain');
+    }
+};
+
+const getApprovedLands = async () => {
+    try {
+        console.log('Fetching approved lands from blockchain...');
+        // Get all approved lands from the contract
+        const approvedLands = await contract.getApprovedLands();
+        
+        // Transform the raw blockchain data
+        return approvedLands.map(land => ({
+            id: land.id.toString(),
+            owner: land.owner,
+            location: land.location,
+            area: ethers.utils.formatUnits(land.area, 'ether'), // If area is stored in wei
+            landUse: land.landUse,
+            approvalDate: new Date(land.approvalDate * 1000).toISOString(),
+            inspectorAddress: land.inspector,
+            status: land.status
+        }));
+    } catch (error) {
+        console.error('Error fetching approved lands:', error);
+        throw new Error('Failed to fetch approved lands from blockchain');
+    }
+};
+
+const getLandTransferHistory = async (landId) => {
+    try {
+        console.log('Fetching transfer history for landId:', landId);
+        // Get transfer events for the specific land
+        const filter = contract.filters.LandTransferred(landId);
+        const events = await contract.queryFilter(filter, 0, 'latest');
+        
+        // Transform the events into a readable format
+        return events.map(event => ({
+            transactionHash: event.transactionHash,
+            blockNumber: event.blockNumber,
+            timestamp: new Date(event.args.timestamp * 1000).toISOString(),
+            previousOwner: event.args.from,
+            newOwner: event.args.to,
+            landId: event.args.landId.toString(),
+            transferType: event.args.transferType
+        }));
+    } catch (error) {
+        console.error('Error fetching transfer history:', error);
+        throw new Error('Failed to fetch land transfer history');
+    }
+};
+
+const verifyLandStatus = async (landId) => {
+    try {
+        console.log('Verifying land status on blockchain...');
+        // Get land details from the contract
+        const landDetails = await contract.getLand(landId);
+        
+        // Verify the land's status
+        const isVerified = await contract.isLandVerified(landId);
+        
+        return {
+            isVerified,
+            details: {
+                owner: landDetails.owner,
+                status: landDetails.status,
+                verificationDate: landDetails.verificationDate 
+                    ? new Date(landDetails.verificationDate * 1000).toISOString()
+                    : null,
+                inspector: landDetails.inspector,
+                lastUpdated: new Date(landDetails.lastUpdated * 1000).toISOString()
+            }
+        };
+    } catch (error) {
+        console.error('Error verifying land status:', error);
+        throw new Error('Failed to verify land status');
+    }
+};
+
 module.exports = {
   registerLand,
   getLandDetails,
-  verifyLand
+  verifyLand,
+  getInspectors,
+  getApprovedLands,
+  getLandTransferHistory,
+  verifyLandStatus
 };
