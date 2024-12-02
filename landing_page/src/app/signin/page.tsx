@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import Button from "../components/Button/Button";
 import { Input } from "../components/Input/Input";
 import { ToastContainer } from "react-toastify";
+import { api } from "../lib/axios";
 import "react-toastify/dist/ReactToastify.css";
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -16,29 +17,17 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const response = await fetch("/api/auth/signin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to sign in");
-      }
+      await api.post("/auth/login", { email, password });
 
       toast.success("Signed in successfully!");
       setTimeout(() => {
         window.location.href = "https://demo.landver.net";
       }, 1000);
     } catch (error) {
-      console.error(error);
-      console.log(error instanceof Error ? error.message : "Failed to sign in");
-      toast.error(error instanceof Error ? error.message : "Failed to sign in");
+      const err = error as { response?: { data?: { message?: string } } };
+      toast.error(err.response?.data?.message || "Failed to sign in");
     } finally {
       setLoading(false);
-      
     }
   };
 
