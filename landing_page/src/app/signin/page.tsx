@@ -11,13 +11,13 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [passcode, setPasscode] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await api.post("/auth/login", { email, password });
+      await api.post("/auth/login", { email, passcode });
 
       toast.success("Signed in successfully!");
       setTimeout(() => {
@@ -53,8 +53,8 @@ export default function LoginPage() {
           <Input
             type={showPassword ? "text" : "password"}
             placeholder="Passcode"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={passcode}
+            onChange={(e) => setPasscode(e.target.value)}
             required
             rightElement={
               <button
