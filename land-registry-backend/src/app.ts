@@ -19,7 +19,9 @@ app.use(express.json());
 
 // Use the auth routes
 app.use("/auth", authRoutes);
-
+app.get("/", (req, res) => {
+  res.send("Hello World!!!!!! ");
+});
 // ... other routes and middleware ...
 
 export default app;

@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from 'express';
-import { logger } from '../utils/logger';
+import { Request, Response, NextFunction } from "express";
+import { logger } from "../utils/logger";
 
 export class AppError extends Error {
   constructor(
@@ -11,13 +11,21 @@ export class AppError extends Error {
   }
 }
 
+export const routeHandler = (
+  fn: (req: Request, res: Response, next: NextFunction) => Promise<any>
+) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    Promise.resolve(fn(req, res, next)).catch(next);
+  };
+};
+
 export const errorHandler = (
   err: Error,
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  logger.error('Error:', {
+  logger.error("Error:", {
     message: err.message,
     stack: err.stack,
     path: req.path,
@@ -26,14 +34,15 @@ export const errorHandler = (
 
   if (err instanceof AppError) {
     return res.status(err.statusCode).json({
-      status: 'error',
+      status: "error",
       code: err.code,
       message: err.message,
     });
   }
 
   return res.status(500).json({
-    status: 'error',
-    message: 'Internal server error',
+    status: "error",
+    code: 500,
+    message: err.message ? err.message : "Internal server error",
   });
-}; 
+};
