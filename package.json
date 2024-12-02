@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@apibara/indexer": "^0.4.1",
+    "@apibara/protocol": "^0.4.9",
+    "pg": "^8.13.1"
+  }
+}
