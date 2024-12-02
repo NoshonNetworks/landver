@@ -36,11 +36,6 @@ export default function LoginPage() {
               </button>
             }
           />
-          <Input
-            type="text"
-            placeholder="Enter Email / Phone No"
-          />
-
           <div className="text-xs font-[500]">
             <span className="text-[#797979]">Don&apos;t have an account yet? </span>
             <a href="/signup" className="text-[#000000]">
