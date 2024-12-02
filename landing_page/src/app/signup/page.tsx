@@ -54,7 +54,8 @@ export default function SignupPage() {
         window.location.href = "https://demo.landver.net";
       }, 1000);
     } catch (err: unknown) {
-      toast.error(err.response?.data?.message || "An error occurred");
+      const error = err as { response?: { data?: { message?: string } } };
+      toast.error(error.response?.data?.message || "An error occurred");
     } finally {
       setLoading(false);
     }
