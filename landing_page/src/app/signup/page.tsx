@@ -19,7 +19,7 @@ import { toast } from "react-toastify";
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [error, setError] = useState("");
+
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -31,7 +31,7 @@ export default function SignupPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+
     setLoading(true);
 
     if (formData.password !== formData.confirmPassword) {
@@ -53,7 +53,7 @@ export default function SignupPage() {
       setTimeout(() => {
         window.location.href = "https://demo.landver.net";
       }, 1000);
-    } catch (err: any) {
+    } catch (err: unknown) {
       toast.error(err.response?.data?.message || "An error occurred");
     } finally {
       setLoading(false);
