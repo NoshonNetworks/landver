@@ -1,3 +1,10 @@
+/**
+ * Controller functions for handling land registry data
+ * 
+ * These functions manage the retrieval and processing of land registry data,
+ * including all lands, individual land details, and related transfers and verifications.
+ */
+
 import { Request, Response, NextFunction } from 'express';
 import * as landService from '../services/landService';
 import { AppError } from '../middleware/errorHandler';

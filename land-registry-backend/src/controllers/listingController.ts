@@ -1,3 +1,10 @@
+/**
+ * Controller functions for handling marketplace listings
+ * 
+ * These functions manage the retrieval and processing of marketplace listings,
+ * including active listings and individual listing details.
+ */
+
 import { Request, Response, NextFunction } from 'express';
 import * as listingService from '../services/listingService';
 import { AppError } from '../middleware/errorHandler';

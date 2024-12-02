@@ -1,3 +1,10 @@
+/**
+ * Controller functions for handling inspector data
+ * 
+ * These functions manage the retrieval and processing of inspector data,
+ * including all inspectors and their assignments.
+ */
+
 import { Request, Response, NextFunction } from 'express';
 import * as inspectorService from '../services/inspectorService';
 
