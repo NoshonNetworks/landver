@@ -77,6 +77,7 @@ const Home = () => {
 
             <Button
               type="submit"
+              // onClick={myUndefinedFunction}
               classname="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700"
             >
               Proceed
