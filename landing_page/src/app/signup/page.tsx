@@ -82,7 +82,7 @@ export default function SignupPage() {
         <div className="text-center">
           <h1 className="text-[40px] font-bold">Let&apos;s set up</h1>
           <p className="mt-2 text-[22px] font-[300] text-gray-600">
-            Hey, Enter your details to login to your account
+            Hey, enter your details to sign up for an account!
           </p>
         </div>
 
@@ -102,7 +102,7 @@ export default function SignupPage() {
             value={formData.password}
             onChange={handleChange}
             required
-            placeholder="Passcode"
+            placeholder="Password"
             rightElement={
               <button
                 type="button"
@@ -136,7 +136,7 @@ export default function SignupPage() {
             value={formData.walletAddress}
             onChange={handleChange}
             required
-            placeholder="Wallet address"
+            placeholder="Account Address"
           />
 
           <Select onValueChange={handleRoleChange}>
