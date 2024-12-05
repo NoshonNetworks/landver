@@ -52,7 +52,7 @@ export default function LoginPage() {
 
           <Input
             type={showPassword ? "text" : "password"}
-            placeholder="Passcode"
+            placeholder="Password"
             value={passcode}
             onChange={(e) => setPasscode(e.target.value)}
             required
