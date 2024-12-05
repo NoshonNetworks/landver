@@ -102,7 +102,7 @@ export default function SignupPage() {
             value={formData.password}
             onChange={handleChange}
             required
-            placeholder="Pass"
+            placeholder="Password"
             rightElement={
               <button
                 type="button"
