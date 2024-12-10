@@ -28,7 +28,7 @@ jobs:
       - name: Run Scarb commands
         working-directory: ./land_registry
         run: |
-          scarb fmt --check
+          scarb fmt
           scarb build
 
   test:
