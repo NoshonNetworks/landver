@@ -1,5 +1,5 @@
 pub mod utils {
-    use starknet::{get_caller_address, get_block_timestamp, ContractAddress};
+    use starknet::ContractAddress;
     use core::poseidon::PoseidonTrait;
     use core::hash::{HashStateTrait, HashStateExTrait};
     use land_registry::interface::land_register::{Location, LandUse};

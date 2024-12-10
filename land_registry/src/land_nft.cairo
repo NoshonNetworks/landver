@@ -1,9 +1,9 @@
 // Implementation of NFT functionality for land parcels using ERC721 standard
 
-use starknet::ContractAddress;
-use openzeppelin::token::erc721::ERC721Component;
-use openzeppelin::introspection::src5::SRC5Component;
-use land_registry::custom_error::Errors;
+// use starknet::ContractAddress;
+// use openzeppelin::token::erc721::ERC721Component;
+// use openzeppelin::introspection::src5::SRC5Component;
+// use land_registry::custom_error::Errors;
 
 use land_registry::interface::land_nft::{ILandNFT};
 
@@ -20,7 +20,7 @@ pub mod LandNFT {
     use openzeppelin::token::erc721::ERC721HooksEmptyImpl;
     use openzeppelin::access::ownable::OwnableComponent;
     use openzeppelin::upgrades::UpgradeableComponent;
-    use openzeppelin::upgrades::interface::IUpgradeable;
+    // use openzeppelin::upgrades::interface::IUpgradeable;
     use land_registry::custom_error;
     use land_registry::interface::land_nft::{BaseURIUpdated, Locked, Unlocked};
 
@@ -60,7 +60,7 @@ pub mod LandNFT {
 
     #[event]
     #[derive(Drop, starknet::Event)]
-    enum Event {
+    pub enum Event {
         #[flat]
         ERC721Event: ERC721Component::Event,
         #[flat]
