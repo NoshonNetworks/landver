@@ -29,17 +29,17 @@ pub trait ILandNFT<TContractState> {
 
 // Events
 #[derive(Drop, starknet::Event)]
-struct BaseURIUpdated {
-    caller: ContractAddress,
-    new_base_uri: ByteArray
+pub struct BaseURIUpdated {
+    pub caller: ContractAddress,
+    pub new_base_uri: ByteArray
 }
 
 #[derive(Drop, starknet::Event)]
 pub struct Locked {
-    token_id: u256
+    pub token_id: u256
 }
 
 #[derive(Drop, starknet::Event)]
 pub struct Unlocked {
-    token_id: u256
+    pub token_id: u256
 }

@@ -1,8 +1,7 @@
 // This Tests cover the full flow from land registration to NFT minting and transfer and Edge cases.
 use snforge_std::{
     declare, ContractClassTrait, DeclareResultTrait, start_cheat_caller_address,
-    stop_cheat_caller_address, start_cheat_block_timestamp, stop_cheat_block_timestamp, spy_events,
-    start_cheat_max_fee, EventSpyAssertionsTrait,
+    stop_cheat_caller_address, spy_events, EventSpyAssertionsTrait,
 };
 use starknet::ContractAddress;
 use land_registry::interface::land_register::{

@@ -3,7 +3,8 @@ pub mod LandRegistryContract {
     use OwnableComponent::InternalTrait;
     use starknet::SyscallResultTrait;
     use starknet::{
-        get_caller_address, get_contract_address, get_block_timestamp, ContractAddress, syscalls
+        get_caller_address, get_contract_address, get_block_timestamp, ContractAddress, syscalls,
+        get_tx_info
     };
     use land_registry::interface::land_register::{
         ILandRegistry, Land, LandUse, Location, LandStatus, Listing, ListingStatus
@@ -13,7 +14,7 @@ pub mod LandRegistryContract {
         InspectorAdded, InspectorRemoved, ListingCreated, ListingCancelled, ListingPriceUpdated,
         LandSold
     };
-    use land_registry::land_nft::{LandNFT};
+    // use land_registry::land_nft::{LandNFT};
     use land_registry::interface::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait};
     use land_registry::utils::utils::{create_land_id, LandUseIntoOptionFelt252};
     use core::array::ArrayTrait;
@@ -22,7 +23,7 @@ pub mod LandRegistryContract {
 
     use openzeppelin::access::ownable::OwnableComponent;
     use openzeppelin::upgrades::UpgradeableComponent;
-    use openzeppelin::upgrades::interface::IUpgradeable;
+    // use openzeppelin::upgrades::interface::IUpgradeable;
 
     // open zeppellin commponents
     component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
@@ -528,7 +529,7 @@ pub mod LandRegistryContract {
             assert(buyer != listing.seller, Errors::SELLER_CANT_BUY_OWN);
 
             // Verify payment
-            let payment = starknet::info::get_tx_info().unbox().max_fee.into();
+            let payment = get_tx_info().unbox().max_fee.into();
             assert(payment >= listing.price, Errors::INSUFFICIENT_PAYMENT_TO_BUY_LAND);
 
             // Get land details

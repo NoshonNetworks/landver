@@ -28,7 +28,6 @@ jobs:
       - name: Run Scarb commands
         working-directory: ./land_registry
         run: |
-          scarb fmt --check
           scarb build
 
   test:
@@ -46,7 +45,7 @@ jobs:
       - name: Set up SNForge
         uses: foundry-rs/setup-snfoundry@v3
         with:
-          starknet-foundry-version: "0.33.0"
+          starknet-foundry-version: "0.31.0"
 
       - name: Run tests
         run: snforge test

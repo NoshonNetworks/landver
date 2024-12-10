@@ -2,6 +2,7 @@
 name = "land_registry"
 version = "0.1.0"
 cairo-version = "2.8.2"
+edition = "2023_11"
 
 # See more keys and their definitions at https://docs.swmansion.com/scarb/docs/reference/manifest.html
 
@@ -12,7 +13,7 @@ openzeppelin = { git = "https://github.com/OpenZeppelin/cairo-contracts.git", ta
 
 [dev-dependencies]
 assert_macros = "2.8.2"
-snforge_std = { git = "https://github.com/foundry-rs/starknet-foundry", tag = "v0.33.0" }
+snforge_std = { git = "https://github.com/foundry-rs/starknet-foundry", tag = "v0.31.0" }
 
 [[target.starknet-contract]]
 casm = true
