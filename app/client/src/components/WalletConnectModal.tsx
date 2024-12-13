@@ -45,14 +45,14 @@ export function WalletConnectorModal({setShowWalletsModal}:{ setShowWalletsModal
       if (error instanceof Error) {
         if (error.message.includes("rejected")) {
           errorMessage = "Connection rejected. Please try again and approve the connection request.";
-        } else if (error.message.includes("not installed")) {
+        } else if (error.message.includes("Connector not found")) {
           errorMessage = `${walletIdToName.get(connector.id) ?? connector.name} is not installed. Please install the wallet extension first.`;
         } else {
           errorMessage += "Please check if your wallet is properly configured and try again.";
         }
       }
 
-      // Show toast instead of alert
+    
       toast.error(errorMessage);
       console.error("Wallet connection error:", error);
     }
