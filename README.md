@@ -12,7 +12,7 @@ While initially built on Starknet, LandVer is designed to be cross-chain compati
 
 The project is divided into the following components:
 
-- `backend/`: Node.js and Express-based API server
+- `land-registry-backend/`: Node.js and Express-based API server
 - `docs/`: Documentation for the project, including setup guides and API references
 - `examples/`: React-based web application
 - `land_registry/`: Land registry contract

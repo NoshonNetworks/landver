@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 // import FadeLoader from "react-spinners/FadeLoader";
 import { IoMdClose } from "react-icons/io";
 import Image from "next/image";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const walletIdToName = new Map([
   ["argentX", "Argent X"],
@@ -15,7 +17,7 @@ const walletIdToName = new Map([
 ]);
 
 const walletIcons : {
-  "braavos": string,
+  "braavos": string, 
   "argentX": string,
   "argentWebWallet": string,
   "argentMobile": string,
@@ -36,15 +38,29 @@ export function WalletConnectorModal({setShowWalletsModal}:{ setShowWalletsModal
   async function connect(connector: Connector) {
     try {
       await connectAsync({ connector });
-      // router.push("/dashboard")
       if(setShowWalletsModal) setShowWalletsModal(false)
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      // Create user-friendly error message
+      let errorMessage = "Failed to connect wallet. ";
+      if (error instanceof Error) {
+        if (error.message.includes("rejected")) {
+          errorMessage = "Connection rejected. Please try again and approve the connection request.";
+        } else if (error.message.includes("not installed")) {
+          errorMessage = `${walletIdToName.get(connector.id) ?? connector.name} is not installed. Please install the wallet extension first.`;
+        } else {
+          errorMessage += "Please check if your wallet is properly configured and try again.";
+        }
+      }
+
+      // Show toast instead of alert
+      toast.error(errorMessage);
+      console.error("Wallet connection error:", error);
     }
   }
 
   return (
     <div>
+      <ToastContainer />
       {/* {
         connecting && (
           <div className="h-72 flex justify-center items-center">
