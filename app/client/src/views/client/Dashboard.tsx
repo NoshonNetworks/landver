@@ -148,7 +148,7 @@ export function DashboardClientView() {
             <Button variant="white">Discover Now</Button>
           </div>
         </div>
-        <Card mainIconColor="green" value={`${landsOwned}`} landIds={landsAddresses||[]} unit={""} subtitle="Total Owned Land" buttonMessage={"View Details"} hasIconsMap={true} />
+        <Card mainIconColor="green" value={`${landsOwned|| 0}`} landIds={landsAddresses||[]} unit={""} subtitle="Total Owned Land" buttonMessage={"View Details"} hasIconsMap={true} />
         <Card mainIconColor="blue" value={balance} landIds={landsAddresses||[]} unit={balanceData?.symbol||""} subtitle="My Balance" buttonMessage={"Top Up Balance"} hasIconsMap={false} />
       </div>
 
