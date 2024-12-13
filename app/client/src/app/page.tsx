@@ -119,7 +119,7 @@ const Home = () => {
 
               {isModalOpen && (
                 <Modal onClose={toggleModal} isOpen={isModalOpen}>
-                  <div className="text-center p-6">
+                  <div className="text-center">
                     <h2 className="text-2xl font-bold mb-4">
                       Connect Your Wallet
                     </h2>

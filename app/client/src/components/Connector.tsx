@@ -27,37 +27,38 @@ export default function WalletConnector({
     <div>
       {status === "disconnected" && (
         <div className="  bg-gray-100" >
-  <div className="bg-white rounded-lg shadow-lg p-8 max-w-lg text-center ">
-    <h2 className="text-xl font-semibold text-gray-900 mb-6">
-      A Secure Platform for Land Registration, Inspection, and Validation on Starknet
-    </h2>
-    <ul className="text-left space-y-4 mb-6">
-      <li className="flex items-start">
-        <Check className="text-purple-600 mt-1 mr-2" />
-        <span className="text-gray-700">
-          Effortless land registration with unique property IDs.
-        </span>
-      </li>
-      <li className="flex items-start">
-        <Check className="text-purple-600 mt-1 mr-2" />
-        <span className="text-gray-700">
-          Streamlined land inspection and verification for trusted records.
-        </span>
-      </li>
-      <li className="flex items-start">
-        <Check className="text-purple-600 mt-1 mr-2" />
-        <span className="text-gray-700">
-          Immutable, blockchain security for ownership and transactions.
-        </span>
-      </li>
-    </ul>
-    <Button
-      onClick={() => setShowModal(true)}
-      classname="bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700"
-    >
-      Connect Wallet Securely
-    </Button>
-  </div>
+<div className="bg-white rounded-lg max-w-lg text-center">
+  <h3 className="text-lg font-semibold text-gray-900 mb-4 text-left">
+    A Secure Platform for Land Registration, Inspection, and Validation on Starknet
+  </h3>
+  <ul className="text-left space-y-3 mb-4">
+    <li className="flex items-start">
+      <Check className="text-purple-600 mt-1 mr-2 rounded-full bg-purple-100 p-1" />
+      <span className="text-gray-700 text-sm">
+        Effortless land registration with unique property IDs.
+      </span>
+    </li>
+    <li className="flex items-start">
+      <Check className="text-purple-600 mt-1 mr-2 rounded-full bg-purple-100 p-1" />
+      <span className="text-gray-700 text-sm">
+        Streamlined land inspection and verification for trusted records.
+      </span>
+    </li>
+    <li className="flex items-start">
+      <Check className="text-purple-600 mt-1 mr-2 rounded-full bg-purple-100 p-1" />
+      <span className="text-gray-700 text-sm">
+        Immutable, blockchain security for ownership and transactions.
+      </span>
+    </li>
+  </ul>
+  <Button
+    onClick={() => setShowModal(true)}
+    classname="bg-purple-600 text-white px-5 py-2.5 rounded-lg font-medium hover:bg-purple-700"
+  >
+    Choose Wallet
+  </Button>
+</div>
+
 </div>
 
       )}
