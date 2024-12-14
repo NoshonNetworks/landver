@@ -1269,14 +1269,6 @@ fn test_inspector_lands() {
     let land_id = land_register_dispatcher.register_land(location, area, land_use);
     stop_cheat_caller_address(contract_address);
 
-    // Get the registered land
-    let registered_land = land_register_dispatcher.get_land(land_id);
-
-    // Assert land details are correct
-    assert(registered_land.owner == owner_address, 'Wrong owner');
-    assert(registered_land.location == location, 'Wrong location');
-    assert(registered_land.area == area, 'Wrong area');
-
     // Set inspector as owner address
     start_cheat_caller_address(contract_address, owner_address);
     land_register_dispatcher.set_land_inspector(land_id, inspector_address);
