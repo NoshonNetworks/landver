@@ -1,7 +1,6 @@
 #[starknet::contract]
 pub mod LandRegistryContract {
-    use starknet::storage::StoragePathEntry;
-use OwnableComponent::InternalTrait;
+    use OwnableComponent::InternalTrait;
     use starknet::SyscallResultTrait;
     use starknet::{
         get_caller_address, get_contract_address, get_block_timestamp, ContractAddress, syscalls,
@@ -379,8 +378,10 @@ use OwnableComponent::InternalTrait;
         }
 
         fn set_land_inspector(ref self: ContractState, land_id: u256, inspector: ContractAddress) {
-            assert(InternalFunctions::only_owner(@self, land_id), Errors::OWNER_MK_INSPECTOR);
+            assert(self.only_owner(land_id), Errors::OWNER_MK_INSPECTOR);
+
             let prev_land_count = self.lands_assigned_to_inspector.read(inspector);
+
             self.land_inspectors.write(land_id, inspector);
             self.lands_assigned_to_inspector.write(inspector, prev_land_count + 1);
 
@@ -389,6 +390,27 @@ use OwnableComponent::InternalTrait;
             self.lands.write(land_id, Land { inspector: inspector, ..prev_land });
 
             self.emit(LandInspectorSet { land_id, inspector });
+        }
+
+        fn inspector_lands(self: @ContractState, inspector: ContractAddress) -> Array<Land> {
+            let mut inspector_lands: Array<Land> = array![];
+
+            let land_count = self.land_count.read();
+            let mut i: u256 = 1;
+
+            while i < land_count + 1 {
+                let land_registry: Land = self.lands_registry.read(i);
+                let land_inspector = self.land_inspectors.read(land_registry.land_id);
+
+                if land_inspector == inspector {
+                    let land =  self.lands.read(land_registry.land_id);
+                    inspector_lands.append(land);
+                }
+
+                i += 1;
+            };
+            
+            inspector_lands
         }
 
         fn get_land_inspector(self: @ContractState, land_id: u256) -> ContractAddress {
@@ -432,25 +454,6 @@ use OwnableComponent::InternalTrait;
                 i += 1;
             };
             inspectors
-        }
-
-        fn inspector_lands(self: @ContractState, inspector: ContractAddress) -> Array<Land> {
-            let mut inspector_lands: Array<Land> = array![];
-
-            let land_count = self.land_count.read();
-            let mut i: u256 = 1;
-
-            while i < land_count + 1 {
-                let land = self.lands_registry.read(i);
-
-                if land.inspector == inspector {
-                    inspector_lands.append(land);
-                }
-
-                i += 1;
-            };
-            
-            inspector_lands
         }
 
         fn create_listing(ref self: ContractState, land_id: u256, price: u256) -> u256 {

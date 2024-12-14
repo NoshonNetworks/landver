@@ -1246,3 +1246,44 @@ fn test_set_land_inspector() {
     );
     stop_cheat_caller_address(contract_address);
 }
+
+#[test]
+fn test_inspector_lands() {
+    let contract_address = deploy("LandRegistryContract");
+
+    // Instance of LandRegistryContract
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    start_cheat_max_fee(contract_address, 10000000000000000000);
+
+    // Set up test data
+    let owner_address = starknet::contract_address_const::<0x123>();
+    let inspector_address = starknet::contract_address_const::<0x456>();
+    let location = Location { latitude: 1, longitude: 2 };
+    let area = 1000;
+    let land_use = LandUse::Residential;
+
+    // Register land as owner
+    start_cheat_caller_address(contract_address, owner_address);
+    let land_id = land_register_dispatcher.register_land(location, area, land_use);
+    stop_cheat_caller_address(contract_address);
+
+    // Get the registered land
+    let registered_land = land_register_dispatcher.get_land(land_id);
+
+    // Assert land details are correct
+    assert(registered_land.owner == owner_address, 'Wrong owner');
+    assert(registered_land.location == location, 'Wrong location');
+    assert(registered_land.area == area, 'Wrong area');
+
+    // Set inspector as owner address
+    start_cheat_caller_address(contract_address, owner_address);
+    land_register_dispatcher.set_land_inspector(land_id, inspector_address);
+    stop_cheat_caller_address(contract_address);
+
+    let inspector_lands = land_register_dispatcher.inspector_lands(inspector_address);
+
+    println!("Inspector land: {}", inspector_lands.len());
+
+    assert(inspector_lands.len() == 1, 'Wrong inspector land count');
+}
