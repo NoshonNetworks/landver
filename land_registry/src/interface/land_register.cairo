@@ -93,6 +93,7 @@ pub trait ILandRegistry<TContractState> {
     fn add_inspector(ref self: TContractState, inspector: ContractAddress);
     fn remove_inspector(ref self: TContractState, inspector: ContractAddress);
     fn get_all_inspectors(self: @TContractState) -> Array<ContractAddress>;
+    fn inspector_lands(self: @TContractState, inspector: ContractAddress) -> Array<Land>;
 
     fn get_user_type(self: @TContractState, userAddress: ContractAddress) -> felt252;
 

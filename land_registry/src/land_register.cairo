@@ -432,6 +432,10 @@ pub mod LandRegistryContract {
             inspectors
         }
 
+        fn inspector_lands(self: @ContractState, inspector: ContractAddress) -> Array<Land> {
+
+        }
+
         fn create_listing(ref self: ContractState, land_id: u256, price: u256) -> u256 {
             let caller = get_caller_address();
 
