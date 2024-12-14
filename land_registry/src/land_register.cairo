@@ -1,6 +1,7 @@
 #[starknet::contract]
 pub mod LandRegistryContract {
-    use OwnableComponent::InternalTrait;
+    use starknet::storage::StoragePathEntry;
+use OwnableComponent::InternalTrait;
     use starknet::SyscallResultTrait;
     use starknet::{
         get_caller_address, get_contract_address, get_block_timestamp, ContractAddress, syscalls,
@@ -433,7 +434,24 @@ pub mod LandRegistryContract {
         }
 
         fn inspector_lands(self: @ContractState, inspector: ContractAddress) -> Array<Land> {
+            assert(self.registered_inspectors.entry(inspector).read(), 'unregistered inspector');
 
+            let mut inspector_lands: Array<Land> = array![];
+
+            let land_count = self.land_count.read();
+            let mut i: u256 = 1;
+
+            while i < land_count + 1 {
+                let land = self.lands_registry.read(i);
+
+                if land.inspector == inspector {
+                    inspector_lands.append(land);
+                }
+
+                i += 1;
+            };
+            
+            inspector_lands
         }
 
         fn create_listing(ref self: ContractState, land_id: u256, price: u256) -> u256 {
