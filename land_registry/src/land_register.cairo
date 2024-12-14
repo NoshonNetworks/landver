@@ -235,7 +235,7 @@ use OwnableComponent::InternalTrait;
             land.status = land_status;
             self.lands.write(land_id, land);
 
-            self.emit(LandUpdated { land_id: land_id, area: area, land_use: land_use.into() });
+            self.emit(LandUpdated { land_id: land_id, area: area, land_use: land_use.into(), status: land_status });
         }
 
         // Transfers land ownership to a new owner

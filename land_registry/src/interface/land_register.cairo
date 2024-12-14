@@ -134,7 +134,8 @@ pub struct LandVerified {
 pub struct LandUpdated {
     pub land_id: u256,
     pub land_use: Option<felt252>,
-    pub area: u256
+    pub area: u256,
+    pub status: LandStatus
 }
 
 
