@@ -424,6 +424,7 @@ fn test_can_update_land() {
     let location = Location { latitude: 1, longitude: 2 };
     let initial_area = 1000;
     let initial_land_use = LandUse::Residential;
+    let land_status = LandStatus::Approved;
 
     // Register land as owner
     start_cheat_caller_address(contract_address, owner_address);
@@ -434,12 +435,13 @@ fn test_can_update_land() {
     let new_land_use = LandUse::Commercial;
 
     // Update land
-    land_register_dispatcher.update_land(land_id, new_area, new_land_use);
+    land_register_dispatcher.update_land(land_id, new_area, new_land_use, land_status);
 
     // Verify updates
     let updated_land = land_register_dispatcher.get_land(land_id);
     assert(updated_land.area == new_area, 'Area not updated correctly');
     assert(updated_land.land_use == new_land_use, 'Land use not updated correctly');
+    assert(updated_land.status == land_status, 'Land status not updated');
 
     stop_cheat_caller_address(contract_address);
 }
@@ -464,7 +466,7 @@ fn test_update_land_by_unauthorized_user_will_fail() {
 
     // Attempt to update land as unauthorized user
     start_cheat_caller_address(contract_address, unauthorized_address);
-    land_register_dispatcher.update_land(land_id, 1500, LandUse::Commercial); // This should panic
+    land_register_dispatcher.update_land(land_id, 1500, LandUse::Commercial, LandStatus::Approved); // This should panic
     stop_cheat_caller_address(contract_address);
 }
 
