@@ -1276,7 +1276,5 @@ fn test_inspector_lands() {
 
     let inspector_lands = land_register_dispatcher.inspector_lands(inspector_address);
 
-    println!("Inspector land: {}", inspector_lands.len());
-
     assert(inspector_lands.len() == 1, 'Wrong inspector land count');
 }
