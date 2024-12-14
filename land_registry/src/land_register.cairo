@@ -227,11 +227,12 @@ use OwnableComponent::InternalTrait;
             lands.span()
         }
 
-        fn update_land(ref self: ContractState, land_id: u256, area: u256, land_use: LandUse) {
+        fn update_land(ref self: ContractState, land_id: u256, area: u256, land_use: LandUse, land_status: LandStatus) {
             assert(InternalFunctions::only_owner(@self, land_id), Errors::UPDATE_BY_LAND);
             let mut land = self.lands.read(land_id);
             land.area = area;
             land.land_use = land_use;
+            land.status = land_status;
             self.lands.write(land_id, land);
 
             self.emit(LandUpdated { land_id: land_id, area: area, land_use: land_use.into() });
