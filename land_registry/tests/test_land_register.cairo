@@ -424,6 +424,7 @@ fn test_can_update_land() {
     let location = Location { latitude: 1, longitude: 2 };
     let initial_area = 1000;
     let initial_land_use = LandUse::Residential;
+    let land_status = LandStatus::Approved;
 
     // Register land as owner
     start_cheat_caller_address(contract_address, owner_address);
@@ -434,12 +435,13 @@ fn test_can_update_land() {
     let new_land_use = LandUse::Commercial;
 
     // Update land
-    land_register_dispatcher.update_land(land_id, new_area, new_land_use);
+    land_register_dispatcher.update_land(land_id, new_area, new_land_use, land_status);
 
     // Verify updates
     let updated_land = land_register_dispatcher.get_land(land_id);
     assert(updated_land.area == new_area, 'Area not updated correctly');
     assert(updated_land.land_use == new_land_use, 'Land use not updated correctly');
+    assert(updated_land.status == land_status, 'Land status not updated');
 
     stop_cheat_caller_address(contract_address);
 }
@@ -464,7 +466,8 @@ fn test_update_land_by_unauthorized_user_will_fail() {
 
     // Attempt to update land as unauthorized user
     start_cheat_caller_address(contract_address, unauthorized_address);
-    land_register_dispatcher.update_land(land_id, 1500, LandUse::Commercial); // This should panic
+    land_register_dispatcher
+        .update_land(land_id, 1500, LandUse::Commercial, LandStatus::Approved); // This should panic
     stop_cheat_caller_address(contract_address);
 }
 
@@ -1243,4 +1246,35 @@ fn test_set_land_inspector() {
         assigned_inspector, inspector_address, "Inspector address should match the assigned address"
     );
     stop_cheat_caller_address(contract_address);
+}
+
+#[test]
+fn test_inspector_lands() {
+    let contract_address = deploy("LandRegistryContract");
+
+    // Instance of LandRegistryContract
+    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+
+    start_cheat_max_fee(contract_address, 10000000000000000000);
+
+    // Set up test data
+    let owner_address = starknet::contract_address_const::<0x123>();
+    let inspector_address = starknet::contract_address_const::<0x456>();
+    let location = Location { latitude: 1, longitude: 2 };
+    let area = 1000;
+    let land_use = LandUse::Residential;
+
+    // Register land as owner
+    start_cheat_caller_address(contract_address, owner_address);
+    let land_id = land_register_dispatcher.register_land(location, area, land_use);
+    stop_cheat_caller_address(contract_address);
+
+    // Set inspector as owner address
+    start_cheat_caller_address(contract_address, owner_address);
+    land_register_dispatcher.set_land_inspector(land_id, inspector_address);
+    stop_cheat_caller_address(contract_address);
+
+    let inspector_lands = land_register_dispatcher.inspector_lands(inspector_address);
+
+    assert(inspector_lands.len() == 1, 'Wrong inspector land count');
 }

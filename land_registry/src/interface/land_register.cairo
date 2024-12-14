@@ -75,7 +75,13 @@ pub trait ILandRegistry<TContractState> {
     fn get_land_count(self: @TContractState) -> u256;
     fn get_lands_by_owner(self: @TContractState, owner: ContractAddress) -> Span<u256>;
     fn get_all_lands(self: @TContractState) -> Span<Land>;
-    fn update_land(ref self: TContractState, land_id: u256, area: u256, land_use: LandUse);
+    fn update_land(
+        ref self: TContractState,
+        land_id: u256,
+        area: u256,
+        land_use: LandUse,
+        land_status: LandStatus
+    );
     fn approve_land(ref self: TContractState, land_id: u256);
     fn reject_land(ref self: TContractState, land_id: u256);
     fn is_inspector(self: @TContractState, inspector: ContractAddress) -> bool;
@@ -93,6 +99,7 @@ pub trait ILandRegistry<TContractState> {
     fn add_inspector(ref self: TContractState, inspector: ContractAddress);
     fn remove_inspector(ref self: TContractState, inspector: ContractAddress);
     fn get_all_inspectors(self: @TContractState) -> Array<ContractAddress>;
+    fn inspector_lands(self: @TContractState, inspector: ContractAddress) -> Array<Land>;
 
     fn get_user_type(self: @TContractState, userAddress: ContractAddress) -> felt252;
 
@@ -133,7 +140,8 @@ pub struct LandVerified {
 pub struct LandUpdated {
     pub land_id: u256,
     pub land_use: Option<felt252>,
-    pub area: u256
+    pub area: u256,
+    pub status: LandStatus
 }
 
 

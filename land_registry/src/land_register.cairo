@@ -226,14 +226,26 @@ pub mod LandRegistryContract {
             lands.span()
         }
 
-        fn update_land(ref self: ContractState, land_id: u256, area: u256, land_use: LandUse) {
+        fn update_land(
+            ref self: ContractState,
+            land_id: u256,
+            area: u256,
+            land_use: LandUse,
+            land_status: LandStatus
+        ) {
             assert(InternalFunctions::only_owner(@self, land_id), Errors::UPDATE_BY_LAND);
             let mut land = self.lands.read(land_id);
             land.area = area;
             land.land_use = land_use;
+            land.status = land_status;
             self.lands.write(land_id, land);
 
-            self.emit(LandUpdated { land_id: land_id, area: area, land_use: land_use.into() });
+            self
+                .emit(
+                    LandUpdated {
+                        land_id: land_id, area: area, land_use: land_use.into(), status: land_status
+                    }
+                );
         }
 
         // Transfers land ownership to a new owner
@@ -377,8 +389,10 @@ pub mod LandRegistryContract {
         }
 
         fn set_land_inspector(ref self: ContractState, land_id: u256, inspector: ContractAddress) {
-            assert(InternalFunctions::only_owner(@self, land_id), Errors::OWNER_MK_INSPECTOR);
+            assert(self.only_owner(land_id), Errors::OWNER_MK_INSPECTOR);
+
             let prev_land_count = self.lands_assigned_to_inspector.read(inspector);
+
             self.land_inspectors.write(land_id, inspector);
             self.lands_assigned_to_inspector.write(inspector, prev_land_count + 1);
 
@@ -387,6 +401,27 @@ pub mod LandRegistryContract {
             self.lands.write(land_id, Land { inspector: inspector, ..prev_land });
 
             self.emit(LandInspectorSet { land_id, inspector });
+        }
+
+        fn inspector_lands(self: @ContractState, inspector: ContractAddress) -> Array<Land> {
+            let mut inspector_lands: Array<Land> = array![];
+
+            let land_count = self.land_count.read();
+            let mut i: u256 = 1;
+
+            while i < land_count + 1 {
+                let land_registry: Land = self.lands_registry.read(i);
+                let land_inspector = self.land_inspectors.read(land_registry.land_id);
+
+                if land_inspector == inspector {
+                    let land = self.lands.read(land_registry.land_id);
+                    inspector_lands.append(land);
+                }
+
+                i += 1;
+            };
+
+            inspector_lands
         }
 
         fn get_land_inspector(self: @ContractState, land_id: u256) -> ContractAddress {
