@@ -435,8 +435,6 @@ use OwnableComponent::InternalTrait;
         }
 
         fn inspector_lands(self: @ContractState, inspector: ContractAddress) -> Array<Land> {
-            assert(self.registered_inspectors.entry(inspector).read(), 'unregistered inspector');
-
             let mut inspector_lands: Array<Land> = array![];
 
             let land_count = self.land_count.read();
