@@ -226,7 +226,13 @@ pub mod LandRegistryContract {
             lands.span()
         }
 
-        fn update_land(ref self: ContractState, land_id: u256, area: u256, land_use: LandUse, land_status: LandStatus) {
+        fn update_land(
+            ref self: ContractState,
+            land_id: u256,
+            area: u256,
+            land_use: LandUse,
+            land_status: LandStatus
+        ) {
             assert(InternalFunctions::only_owner(@self, land_id), Errors::UPDATE_BY_LAND);
             let mut land = self.lands.read(land_id);
             land.area = area;
@@ -234,7 +240,12 @@ pub mod LandRegistryContract {
             land.status = land_status;
             self.lands.write(land_id, land);
 
-            self.emit(LandUpdated { land_id: land_id, area: area, land_use: land_use.into(), status: land_status });
+            self
+                .emit(
+                    LandUpdated {
+                        land_id: land_id, area: area, land_use: land_use.into(), status: land_status
+                    }
+                );
         }
 
         // Transfers land ownership to a new owner
@@ -403,13 +414,13 @@ pub mod LandRegistryContract {
                 let land_inspector = self.land_inspectors.read(land_registry.land_id);
 
                 if land_inspector == inspector {
-                    let land =  self.lands.read(land_registry.land_id);
+                    let land = self.lands.read(land_registry.land_id);
                     inspector_lands.append(land);
                 }
 
                 i += 1;
             };
-            
+
             inspector_lands
         }
 

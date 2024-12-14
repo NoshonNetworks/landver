@@ -75,7 +75,13 @@ pub trait ILandRegistry<TContractState> {
     fn get_land_count(self: @TContractState) -> u256;
     fn get_lands_by_owner(self: @TContractState, owner: ContractAddress) -> Span<u256>;
     fn get_all_lands(self: @TContractState) -> Span<Land>;
-    fn update_land(ref self: TContractState, land_id: u256, area: u256, land_use: LandUse, land_status: LandStatus);
+    fn update_land(
+        ref self: TContractState,
+        land_id: u256,
+        area: u256,
+        land_use: LandUse,
+        land_status: LandStatus
+    );
     fn approve_land(ref self: TContractState, land_id: u256);
     fn reject_land(ref self: TContractState, land_id: u256);
     fn is_inspector(self: @TContractState, inspector: ContractAddress) -> bool;

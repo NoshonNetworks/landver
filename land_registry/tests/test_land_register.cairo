@@ -466,7 +466,8 @@ fn test_update_land_by_unauthorized_user_will_fail() {
 
     // Attempt to update land as unauthorized user
     start_cheat_caller_address(contract_address, unauthorized_address);
-    land_register_dispatcher.update_land(land_id, 1500, LandUse::Commercial, LandStatus::Approved); // This should panic
+    land_register_dispatcher
+        .update_land(land_id, 1500, LandUse::Commercial, LandStatus::Approved); // This should panic
     stop_cheat_caller_address(contract_address);
 }
 
