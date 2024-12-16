@@ -22,7 +22,7 @@ type ValuePiece = Date | null;
 type Value = [ValuePiece, ValuePiece];
 
 
-export function VerifyLandInspectorView() {
+export function LandsInspectorView() {
 
   const router = useRouter()
   const [loading, setLoading] = useState(false)

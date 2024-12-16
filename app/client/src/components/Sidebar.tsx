@@ -20,7 +20,7 @@ const OPTIONS = {
     ],
     inspector: [
       { path:"/dashboard", name:"Dashboard", iconDisabled:"dashboard.svg", iconEnabled:"dashboard-selected.svg" },
-      { path:"/verify-land", name:"Verify Land", iconDisabled:"shared.svg", iconEnabled:"shared-selected.svg" },
+      { path:"/lands", name:"Lands", iconDisabled:"shared.svg", iconEnabled:"shared-selected.svg" },
       { path:"/verify-user", name:"Verify User", iconDisabled:"user.svg", iconEnabled:"user-selected.svg" },
       { path:"/transfer-ownership", name:"Transfer Ownership", iconDisabled:"shared.svg", iconEnabled:"shared-selected.svg" },
       { path:"/reports-and-logs", name:"Reports and Logs", iconDisabled:"shared.svg", iconEnabled:"shared-selected.svg" },
