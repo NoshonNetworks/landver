@@ -1,9 +1,11 @@
-use starknet::{ContractAddress, contract_address_const};
+// use starknet::{ContractAddress, contract_address_const};
 use snforge_std::{
     declare, ContractClassTrait, DeclareResultTrait, EventSpyAssertionsTrait, spy_events,
     start_cheat_caller_address, stop_cheat_caller_address
 };
-use land_registry::land_nft::{LandNFT, ILandNFTDispatcher, ILandNFTDispatcherTrait};
+use land_registry::land_nft::{LandNFT};
+use land_registry::interface::land_nft::{BaseURIUpdated, Locked, Unlocked};
+use land_registry::interface::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait};
 use openzeppelin::token::erc721::interface::{
     IERC721MetadataDispatcher, IERC721MetadataDispatcherTrait
 };
@@ -73,7 +75,7 @@ fn test_set_base_uri() {
                 (
                     dispatcher.contract_address,
                     LandNFT::Event::BaseURIUpdated(
-                        LandNFT::BaseURIUpdated { caller: Accounts::land_owner(), new_base_uri }
+                        BaseURIUpdated { caller: Accounts::land_owner(), new_base_uri }
                     )
                 )
             ]
@@ -117,10 +119,7 @@ fn test_lock() {
     spy
         .assert_emitted(
             @array![
-                (
-                    dispatcher.contract_address,
-                    LandNFT::Event::Locked(LandNFT::Locked { token_id: TOKEN_ID })
-                )
+                (dispatcher.contract_address, LandNFT::Event::Locked(Locked { token_id: TOKEN_ID }))
             ]
         );
 
@@ -132,7 +131,7 @@ fn test_lock() {
             @array![
                 (
                     dispatcher.contract_address,
-                    LandNFT::Event::Unlocked(LandNFT::Unlocked { token_id: TOKEN_ID })
+                    LandNFT::Event::Unlocked(Unlocked { token_id: TOKEN_ID })
                 )
             ]
         );
@@ -199,5 +198,23 @@ fn test_unlock_non_existing_token() {
     start_cheat_caller_address(dispatcher.contract_address, Accounts::land_registry());
 
     dispatcher.unlock(NON_EXISTENT_TOKEN_ID);
+}
+
+#[test]
+fn test_upgradability() {
+    let base_uri = "https://some.base.uri/";
+    let dispatcher = deploy(base_uri);
+    let new_class_hash = declare("LandNFT").unwrap().contract_class().class_hash;
+    dispatcher.upgrade(*new_class_hash);
+}
+
+#[test]
+#[should_panic]
+fn test_upgradability_should_fail_if_not_owner_tries_to_update() {
+    let base_uri = "https://some.base.uri/";
+    let dispatcher = deploy(base_uri);
+    let new_class_hash = declare("LandNFT").unwrap().contract_class().class_hash;
+    start_cheat_caller_address(dispatcher.contract_address, Accounts::land_registry());
+    dispatcher.upgrade(*new_class_hash);
 }
 

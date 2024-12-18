@@ -1,19 +1,11 @@
-use starknet::ContractAddress;
-use openzeppelin::token::erc721::ERC721Component;
-use openzeppelin::introspection::src5::SRC5Component;
-use land_registry::custom_error::Errors;
+// Implementation of NFT functionality for land parcels using ERC721 standard
 
-#[starknet::interface]
-pub trait ILandNFT<TContractState> {
-    fn mint(ref self: TContractState, to: ContractAddress, token_id: u256);
-    fn transfer(
-        ref self: TContractState, from: ContractAddress, to: ContractAddress, token_id: u256
-    );
-    fn set_base_uri(ref self: TContractState, new_base_uri: ByteArray, updater: ContractAddress);
-    fn lock(ref self: TContractState, token_id: u256);
-    fn unlock(ref self: TContractState, token_id: u256);
-    fn is_locked(self: @TContractState, token_id: u256) -> bool;
-}
+// use starknet::ContractAddress;
+// use openzeppelin::token::erc721::ERC721Component;
+// use openzeppelin::introspection::src5::SRC5Component;
+// use land_registry::custom_error::Errors;
+
+use land_registry::interface::land_nft::{ILandNFT};
 
 #[starknet::contract]
 pub mod LandNFT {
@@ -26,10 +18,17 @@ pub mod LandNFT {
     use openzeppelin::token::erc721::ERC721Component;
     use openzeppelin::introspection::src5::SRC5Component;
     use openzeppelin::token::erc721::ERC721HooksEmptyImpl;
+    use openzeppelin::access::ownable::OwnableComponent;
+    use openzeppelin::upgrades::UpgradeableComponent;
+    // use openzeppelin::upgrades::interface::IUpgradeable;
     use land_registry::custom_error;
+    use land_registry::interface::land_nft::{BaseURIUpdated, Locked, Unlocked};
+
 
     component!(path: ERC721Component, storage: erc721, event: ERC721Event);
     component!(path: SRC5Component, storage: src5, event: SRC5Event);
+    component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
+    component!(path: UpgradeableComponent, storage: upgradeable, event: UpgradeableEvent);
 
     #[abi(embed_v0)]
     impl ERC721Impl = ERC721Component::ERC721Impl<ContractState>;
@@ -38,59 +37,59 @@ pub mod LandNFT {
     #[abi(embed_v0)]
     impl ERC721CamelOnlyImpl = ERC721Component::ERC721CamelOnlyImpl<ContractState>;
     impl ERC721InternalImpl = ERC721Component::InternalImpl<ContractState>;
+    #[abi(embed_v0)]
+    impl OwnableMixinImpl = OwnableComponent::OwnableMixinImpl<ContractState>;
+    impl OwnableInternalImpl = OwnableComponent::InternalImpl<ContractState>;
+    // Upgradeable
+    impl UpgradeableInternalImpl = UpgradeableComponent::InternalImpl<ContractState>;
+
 
     #[storage]
     struct Storage {
         #[substorage(v0)]
-        erc721: ERC721Component::Storage,
+        erc721: ERC721Component::Storage, // ERC721 standard storage
         #[substorage(v0)]
-        src5: SRC5Component::Storage,
-        land_registry: ContractAddress,
-        locked: Map<u256, bool>,
+        src5: SRC5Component::Storage, // SRC5 interface storage
+        #[substorage(v0)]
+        ownable: OwnableComponent::Storage, // Openzeppelin storage for Ownable component
+        #[substorage(v0)]
+        upgradeable: UpgradeableComponent::Storage, // Openzeppelin storage for Upgradable component 
+        land_registry: ContractAddress, // Address of the land registry contract
+        locked: Map<u256, bool>, // Mapping of locked status for each token
     }
 
     #[event]
     #[derive(Drop, starknet::Event)]
-    enum Event {
+    pub enum Event {
         #[flat]
         ERC721Event: ERC721Component::Event,
         #[flat]
         SRC5Event: SRC5Component::Event,
+        #[flat]
+        OwnableEvent: OwnableComponent::Event, // openzeppelin event
+        #[flat]
+        UpgradeableEvent: UpgradeableComponent::Event, // openzeppelin event
         BaseURIUpdated: BaseURIUpdated,
         Locked: Locked,
         Unlocked: Unlocked,
     }
 
-    #[derive(Drop, starknet::Event)]
-    struct BaseURIUpdated {
-        caller: ContractAddress,
-        new_base_uri: ByteArray
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct Locked {
-        token_id: u256
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct Unlocked {
-        token_id: u256
-    }
-
-    pub mod Errors {
-        pub const INVALID_ADDRESS: felt252 = 'Invalid address';
-        pub const LOCKED: felt252 = 'Locked';
-        pub const NOT_LOCKED: felt252 = 'Not locked';
-    }
-
     #[constructor]
     fn constructor(ref self: ContractState, land_registry: ContractAddress, base_uri: ByteArray) {
+        let owner = starknet::get_caller_address();
+        self.ownable.initializer(owner);
+
         self.erc721.initializer("Land NFT", "LAND", base_uri);
         self.land_registry.write(land_registry);
     }
 
     #[abi(embed_v0)]
     impl LandNFTImpl of ILandNFT<ContractState> {
+        fn upgrade(ref self: ContractState, new_class_hash: starknet::class_hash::ClassHash) {
+            self.ownable.assert_only_owner();
+            self.upgradeable.upgrade(new_class_hash);
+        }
+
         fn mint(ref self: ContractState, to: ContractAddress, token_id: u256) {
             // Only the land registry contract can mint NFTs
             assert(
@@ -121,9 +120,9 @@ pub mod LandNFT {
             // Only the land registry contract can update the metadata URI
             assert(
                 starknet::get_caller_address() == self.land_registry.read(),
-                'Only land registry can update'
+                custom_error::Errors::SET_URI_ONLY_LAND_REGISTRY,
             );
-            assert(Zero::is_non_zero(@updater), Errors::INVALID_ADDRESS);
+            assert(Zero::is_non_zero(@updater), custom_error::Errors::INVALID_ADDRESS);
             self.erc721._set_base_uri(new_base_uri.clone());
             self.emit(BaseURIUpdated { caller: updater, new_base_uri });
         }
@@ -132,7 +131,7 @@ pub mod LandNFT {
             // Only land registry can lock
             assert(
                 starknet::get_caller_address() == self.land_registry.read(),
-                'Only land registry can lock'
+                custom_error::Errors::LOCK_NFT_ONLY_LAND_REGISTRY,
             );
             self.erc721._require_owned(token_id);
             self._assert_not_locked(token_id);
@@ -144,7 +143,7 @@ pub mod LandNFT {
             // Only land registry can unlock
             assert(
                 starknet::get_caller_address() == self.land_registry.read(),
-                'Only land registry can unlock'
+                custom_error::Errors::UNLOCK_NFT_ONLY_LAND_REGISTRY,
             );
             self.erc721._require_owned(token_id);
             self._assert_locked(token_id);
@@ -161,12 +160,12 @@ pub mod LandNFT {
     impl Internal of InternalTrait {
         /// Makes a function only callable when the contract is not locked.
         fn _assert_not_locked(self: @ContractState, token_id: u256) {
-            assert(!self.is_locked(token_id), Errors::LOCKED);
+            assert(!self.is_locked(token_id), custom_error::Errors::LOCKED);
         }
 
         /// Makes a function only callable when the contract is locked.
         fn _assert_locked(self: @ContractState, token_id: u256) {
-            assert(self.is_locked(token_id), Errors::NOT_LOCKED);
+            assert(self.is_locked(token_id), custom_error::Errors::NOT_LOCKED);
         }
     }
 }

@@ -1,37 +1,82 @@
 #[starknet::contract]
 pub mod LandRegistryContract {
+    use OwnableComponent::InternalTrait;
     use starknet::SyscallResultTrait;
     use starknet::{
-        get_caller_address, get_contract_address, get_block_timestamp, ContractAddress, syscalls
+        get_caller_address, get_contract_address, get_block_timestamp, ContractAddress, syscalls,
+        get_tx_info
     };
-    use land_registry::interface::{ILandRegistry, Land, LandUse, Location, LandStatus};
-    use land_registry::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait, LandNFT};
+    use land_registry::interface::land_register::{
+        ILandRegistry, Land, LandUse, Location, LandStatus, Listing, ListingStatus
+    };
+    use land_registry::interface::land_register::{
+        LandRegistered, LandTransferred, LandVerified, LandUpdated, LandInspectorSet,
+        InspectorAdded, InspectorRemoved, ListingCreated, ListingCancelled, ListingPriceUpdated,
+        LandSold
+    };
+    // use land_registry::land_nft::{LandNFT};
+    use land_registry::interface::land_nft::{ILandNFTDispatcher, ILandNFTDispatcherTrait};
     use land_registry::utils::utils::{create_land_id, LandUseIntoOptionFelt252};
     use core::array::ArrayTrait;
     use starknet::storage::{Map, StorageMapWriteAccess, StorageMapReadAccess};
     use land_registry::custom_error::Errors;
 
+    use openzeppelin::access::ownable::OwnableComponent;
+    use openzeppelin::upgrades::UpgradeableComponent;
+    // use openzeppelin::upgrades::interface::IUpgradeable;
+
+    // open zeppellin commponents
+    component!(path: OwnableComponent, storage: ownable, event: OwnableEvent);
+    component!(path: UpgradeableComponent, storage: upgradeable, event: UpgradeableEvent);
+
+    // Ownable Mixin
+    #[abi(embed_v0)]
+    impl OwnableMixinImpl = OwnableComponent::OwnableMixinImpl<ContractState>;
+    impl OwnableInternalImpl = OwnableComponent::InternalImpl<ContractState>;
+    // Upgradeable
+    impl UpgradeableInternalImpl = UpgradeableComponent::InternalImpl<ContractState>;
+
 
     #[storage]
     struct Storage {
-        lands: Map::<u256, Land>,
-        owner_lands: Map::<(ContractAddress, u256), u256>,
-        owner_land_count: Map::<ContractAddress, u256>,
-        land_inspectors: Map::<u256, ContractAddress>,
-        lands_assigned_to_inspector: Map::<ContractAddress, u256>,
-        approved_lands: Map::<u256, bool>,
-        land_count: u256,
-        nft_contract: ContractAddress,
-        land_transaction_history: Map::<(u256, u256), (ContractAddress, u64)>,
-        land_transaction_count: Map::<u256, u256>,
-        land_inspector_assignments: Map::<u256, ContractAddress>,
-        registered_inspectors: Map::<ContractAddress, bool>,
-        inspector_count: u256,
+        #[substorage(v0)]
+        ownable: OwnableComponent::Storage, // Openzeppelin storage for Ownable component
+        #[substorage(v0)]
+        upgradeable: UpgradeableComponent::Storage, // Openzeppelin storage for Upgradable component 
+        lands: Map::<u256, Land>, // Stores all registered lands
+        lands_registry: Map::<u256, Land>,
+        owner_lands: Map::<(ContractAddress, u256), u256>, // Maps owners to their lands
+        owner_land_count: Map::<ContractAddress, u256>, // Number of lands per owner
+        land_inspectors: Map::<u256, ContractAddress>, // Assigned inspector for each land
+        all_land_inspectors: Map::<u256, ContractAddress>, // All inspectors
+        lands_assigned_to_inspector: Map::<ContractAddress, u256>, // Number of lands per inspector
+        approved_lands: Map::<u256, bool>, // Tracks approved land status
+        land_count: u256, // Total number of registered lands
+        nft_contract: ContractAddress, // Address of the NFT contract
+        land_transaction_history: Map::<
+            (u256, u256), (ContractAddress, u64)
+        >, // Transaction history
+        land_transaction_count: Map::<u256, u256>, // Number of transactions per land
+        land_inspector_assignments: Map::<u256, ContractAddress>, // Inspector assignments
+        registered_inspectors: Map::<ContractAddress, bool>, // List of registered inspectors
+        inspector_count: u256, // Total number of registered inspectors
+        listings: Map::<u256, Listing>,
+        listing_count: u256,
+        price_history: Map::<
+            (u256, u256), (u256, u64)
+        >, // (listing_id, index) -> (price, timestamp)
+        price_update_count: Map::<u256, u256>, // listing_id -> number of price updates
+        active_listings: Map::<u256, u256>, // index -> listing_id
+        active_listing_count: u256,
     }
 
     #[event]
     #[derive(Drop, starknet::Event)]
     pub enum Event {
+        #[flat]
+        OwnableEvent: OwnableComponent::Event, // openzeppelin event
+        #[flat]
+        UpgradeableEvent: UpgradeableComponent::Event, // openzeppelin event
         LandRegistered: LandRegistered,
         LandTransferred: LandTransferred,
         LandVerified: LandVerified,
@@ -39,57 +84,24 @@ pub mod LandRegistryContract {
         LandInspectorSet: LandInspectorSet,
         InspectorAdded: InspectorAdded,
         InspectorRemoved: InspectorRemoved,
+        ListingCreated: ListingCreated,
+        ListingCancelled: ListingCancelled,
+        ListingPriceUpdated: ListingPriceUpdated,
+        LandSold: LandSold,
     }
 
-    #[derive(Drop, starknet::Event)]
-    pub struct LandRegistered {
-        land_id: u256,
-        owner: ContractAddress,
-        location: Location,
-        area: u256,
-        land_use: Option<felt252>,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct LandTransferred {
-        land_id: u256,
-        from_owner: ContractAddress,
-        to_owner: ContractAddress,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct LandVerified {
-        land_id: u256,
-    }
-
-    #[derive(Drop, Copy, starknet::Event)]
-    pub struct LandUpdated {
-        land_id: u256,
-        land_use: Option<felt252>,
-        area: u256
-    }
-
-    #[derive(Drop, Copy, starknet::Event)]
-    pub struct LandInspectorSet {
-        land_id: u256,
-        inspector: ContractAddress,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct InspectorAdded {
-        inspector: ContractAddress,
-    }
-
-    #[derive(Drop, starknet::Event)]
-    pub struct InspectorRemoved {
-        inspector: ContractAddress,
-    }
+    // Constructor initializes the contract with NFT functionality
 
     #[constructor]
     fn constructor(
         ref self: ContractState, nft_contract_class_hash: starknet::class_hash::ClassHash
     ) {
+        let owner = get_caller_address();
+        self.ownable.initializer(owner);
+
         self.inspector_count.write(0);
+
+        // Deploy the NFT contract and store its address
 
         let land_register_contract_address = get_contract_address();
         let base_uri: ByteArray = "https://example.base.uri/";
@@ -106,36 +118,51 @@ pub mod LandRegistryContract {
 
     #[abi(embed_v0)]
     impl LandRegistry of ILandRegistry<ContractState> {
+        fn upgrade(ref self: ContractState, new_class_hash: starknet::class_hash::ClassHash) {
+            self.ownable.assert_only_owner();
+            self.upgradeable.upgrade(new_class_hash);
+        }
+
+        // Registers a new land parcel in the system
         fn register_land(
             ref self: ContractState, location: Location, area: u256, land_use: LandUse,
         ) -> u256 {
             let caller = get_caller_address();
+
             let timestamp = get_block_timestamp();
+            // Generate unique land ID based on owner, timestamp and location
             let land_id = create_land_id(caller, timestamp, location);
             let transaction_count = self.land_transaction_count.read(land_id);
 
+            // Create new land record
             let new_land = Land {
+                land_id,
                 owner: caller,
-                location: location,
-                area: area,
-                land_use: land_use,
+                location,
+                area,
+                land_use,
                 status: LandStatus::Pending,
                 inspector: 0.try_into().unwrap(),
-                last_transaction_timestamp: timestamp,
+                last_transaction_timestamp: timestamp
             };
 
+            // Update storage with new land information
             self.lands.write(land_id, new_land);
+            self.lands_registry.write(self.land_count.read() + 1, new_land);
             self.land_count.write(self.land_count.read() + 1);
 
+            // Update owner's land records
             let owner_land_count = self.owner_land_count.read(caller);
             self.owner_lands.write((caller, owner_land_count), land_id);
             self.owner_land_count.write(caller, owner_land_count + 1);
 
+            // Record transaction in history
             self.land_transaction_history.write((land_id, transaction_count), (caller, timestamp));
             self
                 .land_transaction_count
                 .write(land_id, self.land_transaction_count.read(land_id) + 1);
 
+            // Emit registration event
             self
                 .emit(
                     LandRegistered {
@@ -149,6 +176,21 @@ pub mod LandRegistryContract {
 
             land_id
         }
+        fn get_user_type(self: @ContractState, userAddress: ContractAddress) -> felt252 {
+            let inspector = self.registered_inspectors.read(userAddress);
+
+            let owner = self.owner_land_count.read(userAddress);
+            let inspector_role = 'inspector';
+            let owner_role = 'owner';
+
+            if inspector {
+                return inspector_role;
+            } else if (owner > 0) {
+                return owner_role;
+            } else {
+                return 'None';
+            }
+        }
 
         fn get_land(self: @ContractState, land_id: u256) -> Land {
             self.lands.read(land_id)
@@ -157,6 +199,7 @@ pub mod LandRegistryContract {
         fn get_land_count(self: @ContractState) -> u256 {
             self.land_count.read()
         }
+
 
         fn get_lands_by_owner(self: @ContractState, owner: ContractAddress) -> Span<u256> {
             let mut result = array![];
@@ -170,29 +213,61 @@ pub mod LandRegistryContract {
             result.span()
         }
 
-        fn update_land(ref self: ContractState, land_id: u256, area: u256, land_use: LandUse) {
+        fn get_all_lands(self: @ContractState) -> Span<Land> {
+            let mut lands = array![];
+            let land_count = self.land_count.read();
+            let mut i: u256 = 1;
+
+            while i < land_count + 1 {
+                let land: Land = self.lands_registry.read(i);
+                lands.append(land);
+                i += 1;
+            };
+            lands.span()
+        }
+
+        fn update_land(
+            ref self: ContractState,
+            land_id: u256,
+            area: u256,
+            land_use: LandUse,
+            land_status: LandStatus
+        ) {
             assert(InternalFunctions::only_owner(@self, land_id), Errors::UPDATE_BY_LAND);
             let mut land = self.lands.read(land_id);
             land.area = area;
             land.land_use = land_use;
+            land.status = land_status;
             self.lands.write(land_id, land);
 
-            self.emit(LandUpdated { land_id: land_id, area: area, land_use: land_use.into() });
+            self
+                .emit(
+                    LandUpdated {
+                        land_id: land_id, area: area, land_use: land_use.into(), status: land_status
+                    }
+                );
         }
 
+        // Transfers land ownership to a new owner
         fn transfer_land(ref self: ContractState, land_id: u256, new_owner: ContractAddress) {
+            // Verify caller is the current owner
             assert(InternalFunctions::only_owner(@self, land_id), Errors::ONLY_OWNER_TRNF);
+            assert(new_owner != 0.try_into().unwrap(), Errors::ADDRESS_ZERO);
 
             let mut land = self.lands.read(land_id);
+            // Verify land is approved for transfer
             assert(land.status == LandStatus::Approved, Errors::LAND_APPROVAL);
+
             let old_owner = land.owner;
             land.owner = new_owner;
             self.lands.write(land_id, land);
 
-            // Update owner_lands for old owner
+            // Update old owner's land records
             let mut old_owner_land_count = self.owner_land_count.read(old_owner);
             let mut index_to_remove = old_owner_land_count;
             let mut i: u256 = 0;
+
+            // Find the land index in old owner's records
             loop {
                 if i >= old_owner_land_count {
                     break;
@@ -206,22 +281,24 @@ pub mod LandRegistryContract {
 
             assert(index_to_remove < old_owner_land_count, Errors::NO_LAND);
 
+            // Reorganize old owner's land records
             if index_to_remove < old_owner_land_count - 1 {
                 let last_land = self.owner_lands.read((old_owner, old_owner_land_count - 1));
                 self.owner_lands.write((old_owner, index_to_remove), last_land);
             }
             self.owner_land_count.write(old_owner, old_owner_land_count - 1);
 
-            // Update owner_lands for new owner
+            // Update new owner's land records
             let new_owner_land_count = self.owner_land_count.read(new_owner);
             self.owner_lands.write((new_owner, new_owner_land_count), land_id);
             self.owner_land_count.write(new_owner, new_owner_land_count + 1);
 
-            // Transfer NFT
+            // Transfer the associated NFT
             let nft_contract = self.nft_contract.read();
             let nft_dispatcher = ILandNFTDispatcher { contract_address: nft_contract };
             nft_dispatcher.transfer(old_owner, new_owner, land_id);
 
+            // Emit transfer event
             self
                 .emit(
                     LandTransferred {
@@ -232,6 +309,7 @@ pub mod LandRegistryContract {
 
         fn approve_land(ref self: ContractState, land_id: u256) {
             assert(InternalFunctions::only_inspector(@self, land_id), Errors::INSPECTOR_APPROVE);
+
             self.approved_lands.write(land_id, true);
 
             // Mint NFT
@@ -311,8 +389,10 @@ pub mod LandRegistryContract {
         }
 
         fn set_land_inspector(ref self: ContractState, land_id: u256, inspector: ContractAddress) {
-            assert(InternalFunctions::only_owner(@self, land_id), Errors::OWNER_MK_INSPECTOR);
+            assert(self.only_owner(land_id), Errors::OWNER_MK_INSPECTOR);
+
             let prev_land_count = self.lands_assigned_to_inspector.read(inspector);
+
             self.land_inspectors.write(land_id, inspector);
             self.lands_assigned_to_inspector.write(inspector, prev_land_count + 1);
 
@@ -321,6 +401,27 @@ pub mod LandRegistryContract {
             self.lands.write(land_id, Land { inspector: inspector, ..prev_land });
 
             self.emit(LandInspectorSet { land_id, inspector });
+        }
+
+        fn inspector_lands(self: @ContractState, inspector: ContractAddress) -> Array<Land> {
+            let mut inspector_lands: Array<Land> = array![];
+
+            let land_count = self.land_count.read();
+            let mut i: u256 = 1;
+
+            while i < land_count + 1 {
+                let land_registry: Land = self.lands_registry.read(i);
+                let land_inspector = self.land_inspectors.read(land_registry.land_id);
+
+                if land_inspector == inspector {
+                    let land = self.lands.read(land_registry.land_id);
+                    inspector_lands.append(land);
+                }
+
+                i += 1;
+            };
+
+            inspector_lands
         }
 
         fn get_land_inspector(self: @ContractState, land_id: u256) -> ContractAddress {
@@ -333,6 +434,7 @@ pub mod LandRegistryContract {
 
             // Register the inspector
             self.registered_inspectors.write(inspector, true);
+            self.all_land_inspectors.write(self.inspector_count.read(), inspector);
             self.inspector_count.write(self.inspector_count.read() + 1);
             self.lands_assigned_to_inspector.write(inspector, 0);
 
@@ -350,20 +452,237 @@ pub mod LandRegistryContract {
 
             self.emit(InspectorRemoved { inspector });
         }
+
+        fn get_all_inspectors(self: @ContractState) -> Array<ContractAddress> {
+            let mut inspectors = array![];
+            let inspector_count = self.inspector_count.read();
+            let mut i = 0;
+            while i < inspector_count {
+                let inspector = self.all_land_inspectors.read(i);
+                if (self.registered_inspectors.read(inspector)) {
+                    inspectors.append(inspector);
+                }
+                i += 1;
+            };
+            inspectors
+        }
+
+        fn create_listing(ref self: ContractState, land_id: u256, price: u256) -> u256 {
+            let caller = get_caller_address();
+
+            // Verify caller owns the land
+            assert(InternalFunctions::only_owner(@self, land_id), Errors::ONLY_OWNER_CAN_LIST);
+
+            // Verify land is approved
+            let land = self.lands.read(land_id);
+            assert(land.status == LandStatus::Approved, Errors::LAND_NOT_APPROVED);
+
+            // Create listing
+            let listing_id = self.listing_count.read() + 1;
+            let timestamp = get_block_timestamp();
+
+            let listing = Listing {
+                land_id: land_id,
+                seller: caller,
+                price: price,
+                status: ListingStatus::Active,
+                created_at: timestamp,
+                updated_at: timestamp
+            };
+
+            self.listings.write(listing_id, listing);
+            self.listing_count.write(listing_id);
+
+            // Add to active listings
+            let active_count = self.active_listing_count.read();
+            self.active_listings.write(active_count, listing_id);
+            self.active_listing_count.write(active_count + 1);
+
+            // Record initial price in history
+            self.price_history.write((listing_id, 0), (price, timestamp));
+            self.price_update_count.write(listing_id, 1);
+
+            // Lock the NFT
+            let nft_contract = self.nft_contract.read();
+            let nft_dispatcher = ILandNFTDispatcher { contract_address: nft_contract };
+            nft_dispatcher.lock(land_id);
+
+            self.emit(ListingCreated { listing_id, land_id, seller: caller, price });
+
+            listing_id
+        }
+
+        fn cancel_listing(ref self: ContractState, listing_id: u256) {
+            let mut listing = self.listings.read(listing_id);
+            let caller = get_caller_address();
+
+            assert(listing.seller == caller, Errors::ONLY_SELLER_CAN_CANCEL_LIST);
+            assert(listing.status == ListingStatus::Active, Errors::LISTING_NOT_ACTIVE);
+
+            listing.status = ListingStatus::Cancelled;
+            listing.updated_at = get_block_timestamp();
+            self.listings.write(listing_id, listing);
+
+            // Remove from active listings
+            self._remove_from_active_listings(listing_id);
+
+            // Unlock the NFT
+            let nft_contract = self.nft_contract.read();
+            let nft_dispatcher = ILandNFTDispatcher { contract_address: nft_contract };
+            nft_dispatcher.unlock(listing.land_id);
+
+            self.emit(ListingCancelled { listing_id });
+        }
+
+        fn update_listing_price(ref self: ContractState, listing_id: u256, new_price: u256) {
+            let mut listing = self.listings.read(listing_id);
+            let caller = get_caller_address();
+
+            assert(listing.seller == caller, Errors::ONLY_SELLER_CAN_UPDATE_LIST);
+            assert(listing.status == ListingStatus::Active, Errors::LISTING_NOT_ACTIVE);
+
+            let old_price = listing.price;
+            listing.price = new_price;
+            listing.updated_at = get_block_timestamp();
+            self.listings.write(listing_id, listing);
+
+            // Record price update in history
+            let update_count = self.price_update_count.read(listing_id);
+            self
+                .price_history
+                .write((listing_id, update_count), (new_price, get_block_timestamp()));
+            self.price_update_count.write(listing_id, update_count + 1);
+
+            self.emit(ListingPriceUpdated { listing_id, old_price, new_price });
+        }
+
+        fn buy_land(ref self: ContractState, listing_id: u256) {
+            let mut listing = self.listings.read(listing_id);
+            let buyer = get_caller_address();
+
+            assert(listing.status == ListingStatus::Active, Errors::LISTING_NOT_ACTIVE);
+            assert(buyer != listing.seller, Errors::SELLER_CANT_BUY_OWN);
+
+            // Verify payment
+            let payment = get_tx_info().unbox().max_fee.into();
+            assert(payment >= listing.price, Errors::INSUFFICIENT_PAYMENT_TO_BUY_LAND);
+
+            // Get land details
+            let mut land = self.lands.read(listing.land_id);
+            let old_owner = land.owner;
+
+            // Update listing status
+            listing.status = ListingStatus::Sold;
+            listing.updated_at = get_block_timestamp();
+            self.listings.write(listing_id, listing);
+
+            // Remove from active listings
+            self._remove_from_active_listings(listing_id);
+
+            // Update owner records
+            let old_owner_count = self.owner_land_count.read(old_owner);
+            self.owner_land_count.write(old_owner, old_owner_count - 1);
+
+            let new_owner_count = self.owner_land_count.read(buyer);
+            self.owner_lands.write((buyer, new_owner_count), listing.land_id);
+            self.owner_land_count.write(buyer, new_owner_count + 1);
+
+            // Update land ownership
+            land.owner = buyer;
+            self.lands.write(listing.land_id, land);
+
+            // Handle NFT
+            let nft_contract = self.nft_contract.read();
+            let nft_dispatcher = ILandNFTDispatcher { contract_address: nft_contract };
+            nft_dispatcher.unlock(listing.land_id);
+            nft_dispatcher.transfer(old_owner, buyer, listing.land_id);
+
+            self
+                .emit(
+                    LandSold {
+                        listing_id,
+                        land_id: listing.land_id,
+                        seller: old_owner,
+                        buyer,
+                        price: listing.price
+                    }
+                );
+        }
+
+        fn get_listing(self: @ContractState, listing_id: u256) -> Listing {
+            self.listings.read(listing_id)
+        }
+
+        fn get_active_listings(self: @ContractState) -> Array<u256> {
+            let mut active = array![];
+            let count = self.active_listing_count.read();
+
+            let mut i: u256 = 0;
+            while i < count {
+                active.append(self.active_listings.read(i));
+                i += 1;
+            };
+
+            active
+        }
+
+        fn get_listing_price_history(self: @ContractState, listing_id: u256) -> Array<(u256, u64)> {
+            let mut history = array![];
+            let update_count = self.price_update_count.read(listing_id);
+
+            let mut i: u256 = 0;
+            while i < update_count {
+                history.append(self.price_history.read((listing_id, i)));
+                i += 1;
+            };
+
+            history
+        }
     }
 
+    // Internal helper functions for access control
     #[generate_trait]
     impl InternalFunctions of InternalFunctionsTrait {
+        // Verifies if the caller is the owner of the land
         fn only_owner(self: @ContractState, land_id: u256) -> bool {
             let land = self.lands.read(land_id);
             land.owner == get_caller_address()
         }
 
+        // Verifies if the caller is the inspector assigned to the land
         fn only_inspector(self: @ContractState, land_id: u256) -> bool {
             let caller = get_caller_address();
             let inspector = self.land_inspectors.read(land_id);
-
             inspector == caller
         }
+
+        fn _remove_from_active_listings(ref self: ContractState, listing_id: u256) {
+            let count = self.active_listing_count.read();
+            let mut i: u256 = 0;
+
+            // Find listing index
+            while i < count {
+                if self.active_listings.read(i) == listing_id {
+                    // Replace with last listing if not last
+                    if i < count - 1 {
+                        let last_listing = self.active_listings.read(count - 1);
+                        self.active_listings.write(i, last_listing);
+                    }
+                    self.active_listing_count.write(count - 1);
+                    break;
+                }
+                i += 1;
+            }
+        }
+    }
+
+    fn is_inspector(self: @ContractState, inspector: ContractAddress) -> bool {
+        let count = self.lands_assigned_to_inspector.read(inspector);
+
+        if count > 0 {
+            return true;
+        }
+
+        return false;
     }
 }
