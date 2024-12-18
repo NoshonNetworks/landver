@@ -1,12 +1,12 @@
 import React from "react";
 import { FaTelegram, FaGithub, FaTwitter } from "react-icons/fa";
-
+import Link from "next/link";
 const Footer = () => {
   const links = [
-    { name: "Home", href: "/" },
-    { name: "Experience", href: "/experience" },
-    { name: "About us", href: "/about" },
-    { name: "Contact", href: "/contact" },
+    { name: "Home", href: "#" },
+    { name: "Experience", href: "#experience" },
+    { name: "About us", href: "#about" },
+    { name: "Contact", href: "#contact" },
   ];
 
   const socialLinks = [
@@ -40,15 +40,17 @@ const Footer = () => {
 
         <div className="flex justify-center items-center gap-6 mb-6">
           {socialLinks.map((social) => (
-            <a
+            <Link
               key={social.label}
               href={social.href}
+              scroll={false}
+
               className="hover:text-gray-900 transition-colors"
               aria-label={social.label}
               target="_blank"
             >
               <social.icon className="w-5 h-5" />
-            </a>
+            </Link>
           ))}
         </div>
 
