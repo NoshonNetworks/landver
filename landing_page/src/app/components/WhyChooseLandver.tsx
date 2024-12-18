@@ -48,7 +48,7 @@ const WhyChooseLandver = () => {
   });
 
   return (
-    <div className="grid justify-center place-content-center place-items-center gap-4 p-4 ">
+    <div className="grid justify-center place-content-center place-items-center gap-4 p-4 " id="about">
       <P size="h4" classname="text-center">
         Our Unique Offerings
       </P>

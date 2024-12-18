@@ -17,13 +17,13 @@ const NavBar = () => {
         <div className="flex items-center gap-2">
           <Image src="/images/logo.svg" alt="logo" height={100} width={100} />
           <nav className="md:flex items-center gap-6 text-sm hidden">
-            <Link href="/" className="hover:text-gray-600 transition-colors text-xs">
+            <Link href="https://demo.landver.net/" className="hover:text-gray-600 transition-colors text-xs" target="_blank">
               Register Land
             </Link>
-            <Link href="/" className="hover:text-gray-600 transition-colors text-xs">
+            <Link href="https://demo.landver.net/" className="hover:text-gray-600 transition-colors text-xs"target="_blank">
               Inspect Land
             </Link>
-            <Link href="/" className="hover:text-gray-600 transition-colors text-xs">
+            <Link href="https://demo.landver.net" className="hover:text-gray-600 transition-colors text-xs" target="_blank">
               Buy Land
             </Link>
           </nav>
@@ -55,21 +55,24 @@ const NavBar = () => {
         <div className="absolute top-full left-0 right-0 bg-white border-t md:hidden">
           <nav className="flex flex-col p-4 gap-4">
             <Link
-              href="/"
+              href="https://demo.landver.net"
+              target="_blank"
               className="p-2 hover:bg-gray-50 rounded-lg transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               Register Land
             </Link>
             <Link
-              href="/"
+              href="https://demo.landver.net"
+              target="_blank"
               className="p-2 hover:bg-gray-50 rounded-lg transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >
               Inspect Land
             </Link>
             <Link
-              href="/"
+              href="https://demo.landver.net"
+              target="_blank"
               className="p-2 hover:bg-gray-50 rounded-lg transition-colors"
               onClick={() => setIsMenuOpen(false)}
             >

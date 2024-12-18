@@ -41,7 +41,7 @@ const Benefits = () => {
     },
   ];
   return (
-    <div className="mb-10">
+    <div className="mb-10" id="experience">
       <div className="flex flex-col justify-center items-center gap-1">
         <P classname="capitalize text-center  mt-10" size="h4">
           Experience The Unique Benefits of Landver
