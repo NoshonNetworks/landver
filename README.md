@@ -1,10 +1,10 @@
 # LandVer - Land Verification System
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-15-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-15-orange.svg?style=flat-square)](https://github.com/NoshonNetworks/landver/graphs/contributors)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-LandVer is a decentralized land registration and verification protocol, utilizing blockchain technology to provide a secure, transparent, and immutable system for managing land records. The protocol facilitates land transactions and ownership verification across multiple blockchains, beginning with Starknet.
+[LandVer](https://landver.net/) is a decentralized land registration and verification protocol, utilizing blockchain technology to provide a secure, transparent, and immutable system for managing land records. The protocol facilitates land transactions and ownership verification on the Starknet blockchain.
 
 While initially built on Starknet, LandVer is designed to be cross-chain compatible, allowing land transactions and records to be securely managed across multiple blockchains. LandVer is one of the many products of Noshon Networks, which aims to bring innovation to the world of real estate.
 
@@ -29,10 +29,10 @@ Steps to build and run LandVer locally.
 
 Ensure you have the prerequisites installed before proceeding. 
 
-[scarb](https://docs.swmansion.com/scarb/docs.html)
-[snfoundry](https://book.getfoundry.sh/getting-started/installation)
-[install npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
-[install rust](https://www.rust-lang.org/tools/install)
+- [scarb](https://docs.swmansion.com/scarb/docs.html)
+- [snfoundry](https://book.getfoundry.sh/getting-started/installation)
+- [install npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+- [install rust](https://www.rust-lang.org/tools/install)
 
 
 
