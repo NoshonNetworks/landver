@@ -29,10 +29,10 @@ Steps to build and run LandVer locally.
 
 Ensure you have the prerequisites installed before proceeding. 
 
-[scarb](https://docs.swmansion.com/scarb/docs.html)
-[snfoundry](https://book.getfoundry.sh/getting-started/installation)
-[install npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
-[install rust](https://www.rust-lang.org/tools/install)
+- [scarb](https://docs.swmansion.com/scarb/docs.html)
+- [snfoundry](https://book.getfoundry.sh/getting-started/installation)
+- [install npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
+- [install rust](https://www.rust-lang.org/tools/install)
 
 
 
