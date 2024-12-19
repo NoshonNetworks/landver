@@ -10,32 +10,38 @@ While initially built on Starknet, LandVer is designed to be cross-chain compati
 
 ## Project Structure
 
-The project is divided into the following components:
+The monorepo is organized into the following components:
 
-- `land-registry-backend/`: Node.js and Express-based API server
-- `docs/`: Documentation for the project, including setup guides and API references
-- `examples/`: React-based web application
-- `land_registry/`: Land registry contract
-- `public/`: Public assets and resources
-- `scripts/`: JavaScript tools for automation and utility tasks
-- `sdk/`: JavaScript for interacting with the smart contracts and API
+- `app/`: Contains the main application code:
 
+* Frontend client application
+* Backend server implementation
 
-# Development
- 
-Steps to build and run LandVer locally.
+- `docs/`: Project documentation, including setup guides and API references
+- `land-registry-backend/`: Core backend service for land registry operations
+- `land-registry-indexer/`: Blockchain indexer service for tracking land registry events
+- `land_registry/`: Smart contract implementation for the land registry system
+- `landing_page/`: Marketing website and landing page
+- `scripts/`: Utility scripts for development and deployment
+- `sdk/`: JavaScript SDK for interacting with LandVer protocols
+- `tools/`: Development and maintenance tools
+- `.github/`: GitHub workflows and configuration files
+
 
 ### Prerequisites
 
-Ensure you have the prerequisites installed before proceeding. 
+Before you begin, ensure you have the following installed. 
 
-- [scarb](https://docs.swmansion.com/scarb/docs.html)
-- [snfoundry](https://book.getfoundry.sh/getting-started/installation)
-- [install npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
-- [install rust](https://www.rust-lang.org/tools/install)
+- [scarb](https://docs.swmansion.com/scarb/docs.html): Smart contract development tool
+
+- [snfoundry](https://book.getfoundry.sh/getting-started/installation): Smart contract testing framework
+- [install npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm): JavaScript runtime and package manager
+- [install rust](https://www.rust-lang.org/tools/install): Required for some development tools
 
 
-
+# Development Setup
+ 
+Steps to build and run LandVer locally.
 
 ## How to Run the Code
 
