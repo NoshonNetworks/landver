@@ -5,24 +5,34 @@ import { toast } from "react-toastify";
 import Button from "../components/Button/Button";
 import { Input } from "../components/Input/Input";
 import { ToastContainer } from "react-toastify";
+import { useRouter } from "next/navigation";
 import { api } from "../lib/axios";
+import { setCookie } from 'cookies-next/server';
 import "react-toastify/dist/ReactToastify.css";
+
+
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [passcode, setPasscode] = useState("");
 
+  const router = useRouter();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await api.post("/auth/login", { email, passcode });
+      const res = await api.post("/auth/login", { email, passcode });
+      
+      setCookie('landver_token', res.data.data.token);
+      // localStorage.setItem("landver_token", res.data.data.token);
 
       toast.success("Signed in successfully!");
-      setTimeout(() => {
-        window.location.href = "https://demo.landver.net";
-      }, 1000);
+
+      router.push("https://demo.landver.net");
+     
+
     } catch (error) {
       const err = error as { response?: { data?: { message?: string } } };
       toast.error(err.response?.data?.message || "Failed to sign in");

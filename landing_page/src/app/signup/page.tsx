@@ -75,6 +75,8 @@ export default function SignupPage() {
     });
   };
 
+
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f5f5f5] text-[#1f1f1f] px-4">
       <ToastContainer theme="colored" />
