@@ -11,12 +11,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/Select/Select";
+import { useRouter } from "next/navigation";
 import { api } from "../lib/axios";
+import { setCookie } from 'cookies-next/server';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
 
 export default function SignupPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -48,10 +51,15 @@ export default function SignupPage() {
         userType: formData.role,
       });
 
-      localStorage.setItem("token", response.data.token);
+      
+
+      // localStorage.setItem("token", response.data.token);
+            
+      setCookie('landver_token', response.data.data.token);
+
       toast.success("Registration successful!");
       setTimeout(() => {
-        window.location.href = "https://demo.landver.net";
+       router.push("https://demo.landver.net")
       }, 1000);
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } } };
