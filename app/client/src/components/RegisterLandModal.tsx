@@ -1,10 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { X } from "lucide-react";
-import { CairoCustomEnum,} from "starknet";
+import { CairoCustomEnum, AccountInterface } from "starknet";
 import { useAccount } from "@starknet-react/core";
 import { useLandverContract } from "@/hooks/useLandverContract";
 import Image from "next/image";
 import FadeLoader from "react-spinners/FadeLoader";
+import dynamic from 'next/dynamic';
+import type { RegisterLandModalProps, LandData } from "@/types/interfaces";
+
+// Import MapPicker dynamically to avoid SSR issues with Leaflet
+const MapPicker = dynamic(() => import('./MapPicker'), {
+  ssr: false,
+  loading: () => <div className="h-[300px] w-full bg-gray-100 rounded-lg flex items-center justify-center">Loading map...</div>
+});
 
 const LandUse = [
     {
@@ -39,27 +47,21 @@ const LandUse = [
       name: "MixedUse",
       enum: new CairoCustomEnum({"MixedUse": {}})
     },
-  ] 
-
-
-import type { RegisterLandModalProps, LandData } from "@/types/interfaces"
-
+  ] as const;
 
 const RegisterLandModal: React.FC<RegisterLandModalProps> = ({ isOpen, onClose, mode, editData }) => {
-    const { account } = useAccount()
-    const { contract:landRegisterContract } = useLandverContract({ name:"landRegister" })
-    const [enableSubmit, setEnableSubmit] = useState(false)
-    const [landData, setLandData] = useState<LandData>(
-      {
+    const { account } = useAccount();
+    const { contract:landRegisterContract } = useLandverContract({ name:"landRegister" });
+    const [enableSubmit, setEnableSubmit] = useState(false);
+    const [landData, setLandData] = useState<LandData>({
         area: null,
         landUse: "Commercial",
         latitude: null,
         longitude: null
-    })
+    });
 
-
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState(false)
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(false);
 
   const handleBackgroundClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
@@ -69,85 +71,85 @@ const RegisterLandModal: React.FC<RegisterLandModalProps> = ({ isOpen, onClose, 
 
   const handleSubmit = async() => {
     try {
-        if(!enableSubmit || loading) return 
-            setError(false)
-            setLoading(true)
+        if(!enableSubmit || loading || !account || !landRegisterContract) return;
+        setError(false);
+        setLoading(true);
 
-            const landUseEnum = LandUse.find(lu => lu.name === landData.landUse)?.enum
+        const landUseEnum = LandUse.find(lu => lu.name === landData.landUse)?.enum;
+        if (!landUseEnum) throw new Error("Invalid land use");
 
-            await landRegisterContract.connect(account)
-            await landRegisterContract.register_land(
-                { latitude:landData.latitude, longitude:landData.longitude }, 
-                landData.area,
-                landUseEnum
-            )
-            setLoading(false)
-            onClose()
+        await landRegisterContract.connect(account as AccountInterface);
+        await landRegisterContract.register_land(
+            { latitude:landData.latitude || 0, longitude:landData.longitude || 0 }, 
+            landData.area || 0,
+            landUseEnum
+        );
+        setLoading(false);
+        onClose();
     } catch (error) {
-        console.log("error ->", error)
-        setLoading(false)
-        setError(true)
+        console.log("error ->", error);
+        setLoading(false);
+        setError(true);
     }
-  }
+  };
 
   const handleEdit = async() => {
     try {
-      if(!editData) return 
-      // console.log(Number(editData.landId?.toString()))
-      // return 
-        if(!enableSubmit || loading) return 
-            setError(false)
-            setLoading(true)
+      if(!editData || !enableSubmit || loading || !account || !landRegisterContract) return;
+      setError(false);
+      setLoading(true);
 
+      const landUseEnum = LandUse.find(lu => lu.name === landData.landUse)?.enum;
+      if (!landUseEnum) throw new Error("Invalid land use");
 
-            const landUseEnum = LandUse.find(lu => lu.name === landData.landUse)?.enum
-            await landRegisterContract.connect(account)
-            await landRegisterContract.update_land(
-                editData.landId,
-                landData.area, 
-                landUseEnum,
-            )
-            setLoading(false)
-            onClose()
+      const landId = typeof editData.landId === 'string' ? Number(editData.landId) : (editData.landId || 0);
+
+      await landRegisterContract.connect(account as AccountInterface);
+      await landRegisterContract.update_land(
+          landId,
+          landData.area || 0,
+          landUseEnum
+      );
+      setLoading(false);
+      onClose();
     } catch (error) {
-        console.log("error ->", error)
-        setLoading(false)
-        setError(true)
+        console.log("error ->", error);
+        setLoading(false);
+        setError(true);
     }
-  }
+  };
   
   // Check validity of inputs to enable CREATE_SAVE button
-  useEffect(()=>{
-    const enable = Object.values(landData).every(item => item) 
-    setEnableSubmit(enable)
-    setError(false)
-  }, [landData])
+  useEffect(() => {
+    const enable = Object.values(landData).every(item => item !== null);
+    setEnableSubmit(enable);
+    setError(false);
+  }, [landData]);
 
   // Reset states when close 
-  useEffect(()=>{
+  useEffect(() => {
     if(!isOpen) {
         setLandData({
             area: 0,
             latitude: 0,
             longitude: 0,
             landUse: "Commercial"
-        })
-        setError(false)
-        setLoading(false)
+        });
+        setError(false);
+        setLoading(false);
     }
-  },[isOpen])
+  }, [isOpen]);
 
   // set land data 
-  useEffect(()=>{
+  useEffect(() => {
     if(isOpen && editData) {
         setLandData({
           ...editData  
-        })
-        setError(false)
-        setLoading(false)
+        });
+        setError(false);
+        setLoading(false);
     }
-  },[isOpen])
-
+  }, [isOpen, editData]);
 
   if (!isOpen) return null;
 
@@ -158,7 +160,6 @@ const RegisterLandModal: React.FC<RegisterLandModalProps> = ({ isOpen, onClose, 
       onClick={handleBackgroundClick}
     >
       <div className="relative bg-white rounded-lg shadow-lg w-full max-w-md p-6">
-        {/* Close Button */}
         <button
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-800"
           onClick={onClose}
@@ -170,92 +171,109 @@ const RegisterLandModal: React.FC<RegisterLandModalProps> = ({ isOpen, onClose, 
             <div className="w-16 h-16 rounded-full mx-auto relative bg-[#F9F5FF] flex justify-center items-center">
                 <div className="w-12 h-12 rounded-full mx-auto relative bg-[#F4EBFF] flex justify-center items-center">
                     <div className="w-9 h-9 rounded-full mx-auto relative">
-                        <Image src={"/icons/sidebar/shared-selected.svg"} alt="ether" fill style={{ objectFit:"cover", objectPosition:"center" }} />
+                        <Image src="/icons/sidebar/shared-selected.svg" alt="ether" fill style={{ objectFit:"cover", objectPosition:"center" }} />
                     </div>
                 </div>
             </div>
-            {
-              mode == "create" && <p className="text-xl font-semibold text-center mt-5">Register New Land</p>
-            }
-            {
-              mode == "edit" && <p className="text-xl font-semibold text-center mt-5">Edit Land Registry</p>
-            }
-            {
-              mode == "create" && <p className="text-center text-gray-500">Please enter all details to register your land</p> 
-            }
-            {/* FORM  */}
+            {mode === "create" && (
+              <p className="text-xl font-semibold text-center mt-5">Register New Land</p>
+            )}
+            {mode === "edit" && (
+              <p className="text-xl font-semibold text-center mt-5">Edit Land Registry</p>
+            )}
+            {mode === "create" && (
+              <p className="text-center text-gray-500">Please enter all details to register your land</p> 
+            )}
             <div>
-                {
-                  !editData &&
+                {!editData && (
                   <div className="mt-4">
-                      <p>Latitude <span className="text-red-500">*</span></p>
-                      <input type="number" value={landData.latitude||undefined} onChange={(e)=>setLandData({...landData, latitude:Number(e.target.value)})}  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder=""/>
+                    <p>Select Location <span className="text-red-500">*</span></p>
+                    <div className="mt-2">
+                      <MapPicker
+                        position={[landData.latitude || 0, landData.longitude || 0]}
+                        onPositionChange={(lat: number, lng: number) => 
+                          setLandData({...landData, latitude: lat, longitude: lng})
+                        }
+                      />
+                    </div>
+                    <div className="mt-2 flex gap-4">
+                      <div className="flex-1">
+                        <p className="text-sm text-gray-600">Latitude: {landData.latitude?.toFixed(6)}</p>
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-sm text-gray-600">Longitude: {landData.longitude?.toFixed(6)}</p>
+                      </div>
+                    </div>
                   </div>
-                }
-                {
-                  !editData && 
-                  <div className="mt-4">
-                      <p>Longitude <span className="text-red-500">*</span></p>
-                      <input type="number" value={landData.longitude||undefined} onChange={(e)=>setLandData({...landData, longitude:Number(e.target.value)})}  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder=""/>
-                  </div>
-                }
+                )}
                 <div className="mt-4">
                     <p>Area <span className="text-red-500">*</span></p>
-                    <input type="number" value={landData.area||undefined} onChange={(e)=>setLandData({...landData, area:Number(e.target.value)})}  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder=""/>
+                    <input 
+                      type="number" 
+                      value={landData.area || undefined} 
+                      onChange={(e) => setLandData({...landData, area: Number(e.target.value)})}  
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                      placeholder=""
+                    />
                 </div>
                 <div className="mt-4">
                     <p>Land Use <span className="text-red-500">*</span></p>
-                    <select value={landData.landUse} onChange={(e)=>setLandData({ ...landData, landUse:e.target.value })} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                    {
-                        LandUse.map((landUse, index) => {
-                        return (
-                            <option value={landUse.name} key={"unique-land-item-ddfa"+index}>
-                            { landUse.name }
-                            </option>
-                        )
-                        })
-                    }
+                    <select 
+                      value={landData.landUse} 
+                      onChange={(e) => setLandData({ ...landData, landUse: e.target.value })} 
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
+                      {LandUse.map((landUse, index) => (
+                        <option value={landUse.name} key={`unique-land-item-ddfa${index}`}>
+                          {landUse.name}
+                        </option>
+                      ))}
                     </select>
                 </div>
 
-
                 <div className="flex justify-between items-center gap-5 mt-7">
-                    <div onClick={() => !loading && onClose()} className="cursor-pointer flex-1 px-5 py-1 text-gray-400 border-gray-300 border rounded-lg"><p className="text-center">Cancel</p></div>
-                    {
-                      mode === "create" && <div onClick={handleSubmit} className={`cursor-pointer flex-1 px-5 py-1 text-white border-transparent ${enableSubmit?"bg-[#7369e0]":"bg-[#E0E0E0]"} border-2 rounded-lg`}><p className="text-center">Submit</p></div>
-                    }
-                    {
-                      mode === "edit" && <div onClick={handleEdit} className={`cursor-pointer flex-1 px-5 py-1 text-white border-transparent ${enableSubmit?"bg-[#7369e0]":"bg-[#E0E0E0]"} border-2 rounded-lg`}><p className="text-center">Save</p></div>
-                    }
+                    <div 
+                      onClick={() => !loading && onClose()} 
+                      className="cursor-pointer flex-1 px-5 py-1 text-gray-400 border-gray-300 border rounded-lg"
+                    >
+                      <p className="text-center">Cancel</p>
+                    </div>
+                    {mode === "create" && (
+                      <div 
+                        onClick={handleSubmit} 
+                        className={`cursor-pointer flex-1 px-5 py-1 text-white border-transparent ${enableSubmit ? "bg-[#7369e0]" : "bg-[#E0E0E0]"} border-2 rounded-lg`}
+                      >
+                        <p className="text-center">Submit</p>
+                      </div>
+                    )}
+                    {mode === "edit" && (
+                      <div 
+                        onClick={handleEdit} 
+                        className={`cursor-pointer flex-1 px-5 py-1 text-white border-transparent ${enableSubmit ? "bg-[#7369e0]" : "bg-[#E0E0E0]"} border-2 rounded-lg`}
+                      >
+                        <p className="text-center">Save</p>
+                      </div>
+                    )}
                 </div>
 
-                {
-                    loading &&
-                        <div className="flex justify-center items-center">
-                            <FadeLoader
-                                color="#6E62E5"
-                                speedMultiplier={2}
-                                radius={10}
-                            />
-                        </div>
-                }
+                {loading && (
+                  <div className="flex justify-center items-center">
+                    <FadeLoader
+                      color="#6E62E5"
+                      speedMultiplier={2}
+                      radius={10}
+                    />
+                  </div>
+                )}
 
-                {
-                    error && 
-                    <div className="py-1">
-                        <p className="text-red-800 text-center">Transaction failed</p>
-                    </div>
-                }
-
+                {error && (
+                  <div className="py-1">
+                    <p className="text-red-800 text-center">Transaction failed</p>
+                  </div>
+                )}
             </div>
         </div>
-
       </div>
-
-    <div className="">
-        <p></p>
-    </div>
-
     </div>
   );
 };
