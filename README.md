@@ -21,7 +21,7 @@ The monorepo is organized into the following components:
 - `land-registry-backend/`: Core backend service for land registry operations
 - `land-registry-indexer/`: Blockchain indexer service for tracking land registry events
 - `land_registry/`: Smart contract implementation for the land registry system
-- `landing_page/`: Marketing website and landing page
+- `landing_page/`: Website and landing page
 - `scripts/`: Utility scripts for development and deployment
 - `sdk/`: JavaScript SDK for interacting with LandVer protocols
 - `tools/`: Development and maintenance tools
@@ -50,8 +50,8 @@ Steps to build and run LandVer locally.
  Navigate to the client directory, install the packages, and start the client
 ```bash 
 cd app/client
- npm install 
- npm start
+ pnpm install 
+ pnpm start
 ```
  In a separate terminal, navigate to the server directory, install the packages, and start the server
 
@@ -75,6 +75,30 @@ scarb build
 ```bash
 cd land_registry
 scarb test
+```
+
+### Backend Services
+
+Start the land registry backend:
+
+```bash
+cd land-registry-backend
+npm install
+npm run dev
+```
+
+### Start the indexer service:
+
+```bash
+cd land-registry-indexer
+npm install
+npm start
+```
+
+### Build for production:
+
+```bash
+pnpm build
 ```
 
 ## Contributors
