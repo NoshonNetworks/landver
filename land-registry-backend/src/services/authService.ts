@@ -4,8 +4,12 @@ import { query } from "./db";
 import { RegisterDTO, LoginDTO, User } from "../types/auth";
 import { AppError } from "../middleware/errorHandler";
 import { config } from "../config";
+import dotenv from "dotenv";
+dotenv.config();
 
-export async function register(data: RegisterDTO): Promise<User> {
+export async function register(
+  data: RegisterDTO
+): Promise<{ token: string; user: User }> {
   // Check if user already exists
   const existingUser = await query(
     "SELECT * FROM users WHERE email = $1 OR wallet_address = $2",
@@ -30,7 +34,32 @@ export async function register(data: RegisterDTO): Promise<User> {
     [data.email, passwordHash, data.walletAddress, data.userType]
   );
 
-  return result.rows[0];
+  const user: User = result.rows[0];
+
+  const token = jwt.sign(
+    {
+      email: user.email,
+      walletAddress: user.walletAddress,
+      userType: user.userType,
+    },
+    config.jwtSecret,
+    { expiresIn: "1h" } // Token expires in 1 hour
+  );
+
+  console.log(token);
+
+  // Return the user and token
+  return {
+    user: {
+      id: user.id,
+      email: user.email,
+      walletAddress: user.walletAddress,
+      userType: user.userType,
+      createdAt: user.createdAt,
+      updatedAt: user.updatedAt,
+    },
+    token,
+  };
 }
 
 export async function login(
@@ -58,7 +87,7 @@ export async function login(
     config.jwtSecret,
     { expiresIn: "24h" }
   );
-
+  
   return {
     token,
     user: {
