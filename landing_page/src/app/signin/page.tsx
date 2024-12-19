@@ -28,9 +28,9 @@ export default function LoginPage() {
       setCookie('landver_token', res.data.data.token, {maxAge: 5});
       // localStorage.setItem("landver_token", res.data.data.token);
 
-      toast.success("Signed in successfully!");
+      toast.success("Signed in successfully!")
 
-      router.push("https://demo.landver.net");
+      router.push("https://demo.landver.net")
      
 
     } catch (error) {
