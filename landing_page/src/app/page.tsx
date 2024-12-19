@@ -14,13 +14,13 @@ export default function Home() {
   const router = useRouter();
 
 
-  useEffect(() => {
-    const isLoggedIn = getCookie("landver_token");
+  // useEffect(() => {
+  //   const isLoggedIn = getCookie("landver_token");
 
-    if (isLoggedIn) {
-      router.push("https://demo.landver.net/");
-    }
-  }, [router]);
+  //   if (isLoggedIn) {
+  //     router.push("https://demo.landver.net/");
+  //   }
+  // }, [router]);
 
   return (
     <div className="bg-[#f5f5f5] text-[#1f1f1f]">

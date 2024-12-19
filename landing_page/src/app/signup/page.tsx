@@ -13,7 +13,7 @@ import {
 } from "../components/Select/Select";
 import { useRouter } from "next/navigation";
 import { api } from "../lib/axios";
-import { setCookie } from 'cookies-next/server';
+import { setCookie } from 'cookies-next/client';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";

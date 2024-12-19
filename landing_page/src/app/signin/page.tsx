@@ -7,7 +7,7 @@ import { Input } from "../components/Input/Input";
 import { ToastContainer } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { api } from "../lib/axios";
-import { setCookie } from 'cookies-next/server';
+import { setCookie } from 'cookies-next/client';
 import "react-toastify/dist/ReactToastify.css";
 
 
@@ -25,7 +25,7 @@ export default function LoginPage() {
     try {
       const res = await api.post("/auth/login", { email, passcode });
       
-      setCookie('landver_token', res.data.data.token);
+      setCookie('landver_token', res.data.data.token, {maxAge: 5});
       // localStorage.setItem("landver_token", res.data.data.token);
 
       toast.success("Signed in successfully!");
