@@ -26,3 +26,22 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     next(error);
   }
 } 
+
+
+//Logout user
+export const logoutUser = 
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      res.cookie("landver_token", "", { maxAge: 1 });
+      // res.cookie("refresh_token", "", { maxAge: 1 });
+
+      const userId = req.user?._id || "";
+
+      res.status(200).json({
+        success: true,
+        message: "Logged Out successfully",
+      });
+    } catch (error: any) {
+      return next(error);
+    }
+  }
