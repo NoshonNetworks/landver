@@ -15,19 +15,19 @@ const VARIANTS = {
   "danger": "text-red-500",
 }
 
-function DropdownMenu({position, items, show }:DropdownMenuProps) {
+function DropdownMenu({ position, items, show }: DropdownMenuProps) {
   return (
-    <div className={`transition-all absolute ${ POSITIONS[position] } bg-white shadow-md shadow-gray-400 rounded-xl px-3 py-2`} style={{ transform:`scale(${show?"1":"0"})`, zIndex:10000 }}>
+    <div className={`transition-all space-y-2 absolute ${POSITIONS[position]} bg-white shadow-md shadow-gray-400 rounded-xl px-3 py-2`} style={{ transform: `scale(${show ? "1" : "0"})`, zIndex: 10000 }}>
       {
         items.map((item, index) => {
           return (
-            <p key={'dditemmenu'+index} onClick={()=>item.action()} className={`cursor-pointer font-normal ${item.variant?VARIANTS[item.variant]:"text-gray-500"}`}>{ item.label }</p>
+            <p key={'dditemmenu' + index} onClick={() => item.action()} className={`cursor-pointer font-normal ${item.variant ? VARIANTS[item.variant] : "text-gray-500"}`}>{item.label}</p>
           )
         })
       }
-      
+
     </div>
   )
 }
 
-export {DropdownMenu}
+export { DropdownMenu }
