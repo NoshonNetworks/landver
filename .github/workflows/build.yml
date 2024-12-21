@@ -29,6 +29,34 @@ jobs:
   #       working-directory: ./land_registry
   #       run: |
   #         scarb build
+    build:
+      runs-on: ubuntu-latest
+      name: Build app/client and Landing Page
+      
+      steps:
+        - name: Checkout Code
+          uses: actions/checkout@v3
+
+        - name: Setup Node
+          uses: actions/setup-node@v3
+          with: 
+            node-version: "18"
+
+        - name: Install dependencies for app/client
+          working-directory: app
+          run: npm install
+
+        - name: Build app/client
+          working-directory: app
+          run: npm run build
+
+        - name: Install dependecies for Landing Page
+          working-directory: landing_page
+          run: npm install
+
+        - name: Build Landing Page
+          working-directory: landing_page
+          run: npm run build
 
   test:
     runs-on: ubuntu-latest
