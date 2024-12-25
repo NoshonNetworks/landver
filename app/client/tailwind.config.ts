@@ -1,15 +1,21 @@
 import type { Config } from "tailwindcss";
 
+<<<<<<< HEAD
 const config: Config = {
+=======
+export default {
+>>>>>>> pr/Birdmannn/257
     darkMode: ["class"],
     content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/views/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
   	extend: {
   		colors: {
+<<<<<<< HEAD
   			primary: {
   				DEFAULT: 'hsl(var(--primary))',
   				foreground: 'hsl(var(--primary-foreground))'
@@ -66,6 +72,10 @@ const config: Config = {
   				'4': 'hsl(var(--chart-4))',
   				'5': 'hsl(var(--chart-5))'
   			}
+=======
+  			background: 'var(--background)',
+  			foreground: 'var(--foreground)'
+>>>>>>> pr/Birdmannn/257
   		},
   		borderRadius: {
   			lg: 'var(--radius)',
@@ -75,5 +85,9 @@ const config: Config = {
   	}
   },
   plugins: [require("tailwindcss-animate")],
+<<<<<<< HEAD
 };
 export default config;
+=======
+} satisfies Config;
+>>>>>>> pr/Birdmannn/257
