@@ -34,7 +34,7 @@ export const createIndexerConfig = () => {
 
   const request = StarknetStream.Request.make({
     filter: [filter],
-    finality: "pending" || "accepted" || "succeeded",
+    finality: "accepted",
     startingCursor: {
       orderKey: BigInt(process.env.STARTING_BLOCK || "0"),
     },
