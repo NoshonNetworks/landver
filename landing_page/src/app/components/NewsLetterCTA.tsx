@@ -6,7 +6,7 @@ const NewsLetterCTA = () => {
   return (
     <section className="flex justify-center items-center gap-3 relative py-6 px-4 sm:px-8 bg-[#eae8fb] " id="contact" >
       <div className="w-full max-w-[500px] relative flex justify-center items-center gap-3">
-        <P classname="text-[#6e62e5] text-center text-[16px] font-bold mb-3">
+        <P classname="text-[#6e62e5] text-center text-lg md:text-2xl font-bold mb-3">
           Newsletter
         </P>
 
