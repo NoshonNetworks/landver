@@ -7,7 +7,7 @@ import { config } from "./config";
 
 const app = express();
 
-Middleware
+// Middleware
 app.use(helmet());
 app.use(
   cors({
