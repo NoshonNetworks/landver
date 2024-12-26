@@ -62,7 +62,7 @@ const WhyChooseLandver = () => {
         {uniqueOfferings.map((offering, index) => (
           <div
             key={index}
-            className="w-[250px] p-4 border bg-[#e9f3f1] rounded-lg flex flex-col "
+            className="w-[250px] p-4 border bg-[#eae8fb] rounded-lg flex flex-col "
           >
             <Image
               src={offering.url}
@@ -71,7 +71,7 @@ const WhyChooseLandver = () => {
               width={250}
               className="object-cover rounded"
             />
-            <p className="text-purple-800 font-semibold mt-2">
+            <p className="text-black font-semibold mt-2">
               {offering.heading}
             </p>
             <P classname="leading-relaxed mt-1">{offering.description}</P>
@@ -87,7 +87,7 @@ const WhyChooseLandver = () => {
           {uniqueOfferings.map((offering, index) => (
             <div
               key={index}
-              className="w-full flex-shrink-0 p-4 border bg-[#e9f3f1] rounded-lg flex flex-col items-center"
+              className="w-full flex-shrink-0 p-4 border bg-[#eae8fb] rounded-lg flex flex-col items-center"
             >
               <Image
                 src={offering.url}
@@ -96,7 +96,7 @@ const WhyChooseLandver = () => {
                 width={150}
                 className="object-cover rounded"
               />
-              <p className="text-purple-800 font-semibold mt-2">
+              <p className="text-black font-semibold mt-2">
                 {offering.heading}
               </p>
               <P classname="leading-relaxed text-center mt-1">

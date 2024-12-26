@@ -36,7 +36,7 @@ const RegisterCTA = () => {
 
   return (
     <section className="px-4 py-8 flex justify-center">
-      <div className="bg-[#e9f3f1] rounded-lg border p-4 md:p-6 w-full max-w-6xl">
+      <div className="bg-[#eae8fb] rounded-lg border p-4 md:p-6 w-full max-w-6xl">
         <div className="flex flex-col md:flex-row gap-8">
           <div className="flex flex-col md:w-1/3">
             <P size="h6" classname="capitalize font-bold mb-3">

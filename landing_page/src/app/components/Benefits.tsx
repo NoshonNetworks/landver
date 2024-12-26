@@ -18,7 +18,7 @@ const Benefits = () => {
       alt: "user ticked",
       description:
         "Approved by trusted inspectors, ensuring every land record is authentic and secure. ",
-      bColor: "#e9f3f1",
+      bColor: "#eae8fb",
       color: "black",
     },
     {
@@ -27,7 +27,7 @@ const Benefits = () => {
       alt: "arrows",
       description:
         "Ownership transfers are quick, transparent, and recorded on-chain, keeping your assets safe",
-      bColor: "#e9f3f1",
+      bColor: "#eae8fb",
       color: "black",
     },
     {
@@ -53,7 +53,7 @@ const Benefits = () => {
         </P>
       </div>
       <div className="grid justify-center">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 justify-center w-fit place-content-center place-items-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-10 justify-center w-fit place-content-center place-items-center">
           {benefits.map((benefit, i: number) => {
             return (
               <div
