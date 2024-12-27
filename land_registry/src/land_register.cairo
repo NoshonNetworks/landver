@@ -68,6 +68,7 @@ pub mod LandRegistryContract {
         price_update_count: Map::<u256, u256>, // listing_id -> number of price updates
         active_listings: Map::<u256, u256>, // index -> listing_id
         active_listing_count: u256,
+        id_exists: Map::<u256, bool>,
     }
 
     #[event]
@@ -130,9 +131,21 @@ pub mod LandRegistryContract {
             let caller = get_caller_address();
 
             let timestamp = get_block_timestamp();
-            // Generate unique land ID based on owner, timestamp and location
-            let land_id = create_land_id(caller, timestamp, location);
+            // Generate unique land ID based on owner, timestamp, location, and a counter
+            // This counter increases for each registration to re-ensure uniqueness.
+            let mut counter = self.land_count.read();
+            let mut land_id = create_land_id(caller, timestamp, location, counter);
+            
+            while self.id_exists.read(land_id) {
+                // This is highly impossible, but not impossible. re-iterate.
+                counter += 1;
+                land_id = create_land_id(caller, timestamp, location, counter);
+            };
+
             let transaction_count = self.land_transaction_count.read(land_id);
+            
+            // id is available, now make it unavailable.
+            self.id_exists.write(land_id, true);
 
             // Create new land record
             let new_land = Land {
