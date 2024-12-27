@@ -1,39 +1,37 @@
 import React from 'react'
-
 import type { TableRowProps } from '@/types/interfaces'
 
 const ALIGN_TEXT = {
-  "center":'text-center',
-  "left":"text-left",
-  "right":"text-right"
+  "center": 'text-center',
+  "left": "text-left",
+  "right": "text-right"
 }
 
-function TableRow({ items, headers }:TableRowProps) {
+export function TableRow({ items, headers, showMobileHeaders = false }: TableRowProps) {
   return (
-    <div className="flex flex-col 2xl:flex-row justify-start 2xl:items-center w-full gap-1 border-dashed border-t-2 border-t-gray-300 mt-5 pt-5 font-semibold">
-      {
-        items.map((item, index)=>{
-          return(
-            <div 
-              key={"item"+item.value+"TableHeader"+index} 
-              className={`
-                ${ !item.fixedWidth && `flex-1` }
-                ${ ALIGN_TEXT[item.alignText || "left"] } 
-                flex items-center 2xl:block gap-2
-                `}
-                style={{ width:item.fixedWidth??"auto" }}
-            >
-              <p className='2xl:hidden'>{headers[index]}: </p>
-              <p>
-                { item.value && item.value }
-              </p>
-              { item.customjsx && item.customjsx() }
-            </div>
-          )
-        })
-      }
-    </div>
+    <tr className="bg-white hover:bg-gray-50">
+      {items.map((item, index) => (
+        <td
+          key={`item-${index}`}
+          className={`
+            py-4 px-4 whitespace-nowrap text-sm
+            ${!item.fixedWidth ? 'w-auto' : ''}
+            ${ALIGN_TEXT[item.alignText || "left"]}
+            ${index === 0 ? 'font-medium text-gray-900' : 'text-gray-500'}
+            ${item.className || ''}
+          `}
+          style={{ width: item.fixedWidth ?? 'auto' }}
+        >
+          {showMobileHeaders && (
+            <div className="sm:hidden font-medium text-gray-900 mb-1">{headers[index]}</div>
+          )}
+          <div className="flex items-center gap-2">
+            {item.value && <span>{item.value}</span>}
+            {item.customjsx && item.customjsx()}
+          </div>
+        </td>
+      ))}
+    </tr>
   )
 }
 
-export {TableRow}

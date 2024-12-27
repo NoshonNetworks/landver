@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from "react";
-import {Button} from "@/components/Button/Button";
+import { Button } from "@/components/Button/Button";
 import { Header } from "@/components/Headers/Header";
 import { useAccount, useBalance } from "@starknet-react/core";
 import { useLandverContract } from "@/hooks/useLandverContract";
@@ -25,14 +25,14 @@ export function DashboardClientView() {
     address: address,
   });
 
-  const balance = balanceData?.formatted?.slice(0,4) || ""
+  const balance = balanceData?.formatted?.slice(0, 4) || ""
 
-  const { contract:landRegisterContract } = useLandverContract({ name:"landRegister" })
-  const [landsOwned, setLandsOwned] = useState<number|null>(null)
-  const [landsAddresses, setLandsAdresses] = useState<string[]|null>(null)
-  const { events: recentEvents, isLoading:eventsLoading } = useEvents<ParsedEventsEnum>({
-    name:"landRegister",
-    triggerRefetch:false, // this could be an state that toggles false-true and refetch event
+  const { contract: landRegisterContract } = useLandverContract({ name: "landRegister" })
+  const [landsOwned, setLandsOwned] = useState<number | null>(null)
+  const [landsAddresses, setLandsAdresses] = useState<string[] | null>(null)
+  const { events: recentEvents, isLoading: eventsLoading } = useEvents<ParsedEventsEnum>({
+    name: "landRegister",
+    triggerRefetch: false, // this could be an state that toggles false-true and refetch event
     filters: {
       events: [
         'LandRegistered',
@@ -47,7 +47,7 @@ export function DashboardClientView() {
         'ListingCancelled',
         'ListingPriceUpdated',
         'LandSold',
-        ]
+      ]
     }
   })
 
@@ -60,75 +60,75 @@ export function DashboardClientView() {
   //       ]
   //   }
   // })
-    // here is the mock while we can create sold events to fetch
-    const soldEvents: Event<LandSoldEvent>[] = [
-      {
-        eventKey: "",
-        eventName: "",
-        parsedEvent:{
-          buyer: "TRSS-123",
-          seller:"0x2222",
-          land_id:"56037-XDER",
-          listing_id:1,
-          price:0.2345,
-        },
-        rawEvent:{
-          from_address:""
-        }
-      },      
-      {
-        eventKey: "",
-        eventName: "",
-        parsedEvent:{
-          buyer: "TRSS-123",
-          seller:"0x2222",
-          land_id:"56037-XDER",
-          listing_id:1,
-          price:0.2345,
-        },
-        rawEvent:{
-          from_address:""
-        }
-      },      
-      {
-        eventKey: "",
-        eventName: "",
-        parsedEvent:{
-          buyer: "TRSS-123",
-          seller:"0x2222",
-          land_id:"56037-XDER",
-          listing_id:1,
-          price:0.2345,
-        },
-        rawEvent:{
-          from_address:""
-        }
-      },      
-      {
-        eventKey: "",
-        eventName: "",
-        parsedEvent:{
-          buyer: "TRSS-123",
-          seller:"0x2222",
-          land_id:"56037-XDER",
-          listing_id:1,
-          price:0.2345,
-        },
-        rawEvent:{
-          from_address:""
-        }
-      },      
-    ] 
+  // here is the mock while we can create sold events to fetch
+  const soldEvents: Event<LandSoldEvent>[] = [
+    {
+      eventKey: "",
+      eventName: "",
+      parsedEvent: {
+        buyer: "TRSS-123",
+        seller: "0x2222",
+        land_id: "56037-XDER",
+        listing_id: 1,
+        price: 0.2345,
+      },
+      rawEvent: {
+        from_address: ""
+      }
+    },
+    {
+      eventKey: "",
+      eventName: "",
+      parsedEvent: {
+        buyer: "TRSS-123",
+        seller: "0x2222",
+        land_id: "56037-XDER",
+        listing_id: 1,
+        price: 0.2345,
+      },
+      rawEvent: {
+        from_address: ""
+      }
+    },
+    {
+      eventKey: "",
+      eventName: "",
+      parsedEvent: {
+        buyer: "TRSS-123",
+        seller: "0x2222",
+        land_id: "56037-XDER",
+        listing_id: 1,
+        price: 0.2345,
+      },
+      rawEvent: {
+        from_address: ""
+      }
+    },
+    {
+      eventKey: "",
+      eventName: "",
+      parsedEvent: {
+        buyer: "TRSS-123",
+        seller: "0x2222",
+        land_id: "56037-XDER",
+        listing_id: 1,
+        price: 0.2345,
+      },
+      rawEvent: {
+        from_address: ""
+      }
+    },
+  ]
 
 
- 
- 
 
-  useEffect(()=>{
-    (async()=>{
+
+
+  useEffect(() => {
+    (async () => {
       try {
-        if(address){
-          const result:string[] = await landRegisterContract.get_lands_by_owner(address)
+        if (address) {
+          const result: string[] = await landRegisterContract.get_lands_by_owner(address)
           setLandsOwned(result.length)
           setLandsAdresses(result)
         }
@@ -148,44 +148,76 @@ export function DashboardClientView() {
             <Button variant="white">Discover Now</Button>
           </div>
         </div>
-        <Card mainIconColor="green" value={`${landsOwned|| 0}`} landIds={landsAddresses||[]} unit={""} subtitle="Total Owned Land" buttonMessage={"View Details"} hasIconsMap={true} />
-        <Card mainIconColor="blue" value={balance} landIds={landsAddresses||[]} unit={balanceData?.symbol||""} subtitle="My Balance" buttonMessage={"Top Up Balance"} hasIconsMap={false} />
+        <Card mainIconColor="green" value={`${landsOwned || 0}`} landIds={landsAddresses || []} unit={""} subtitle="Total Owned Land" buttonMessage={"View Details"} hasIconsMap={true} />
+        <Card mainIconColor="blue" value={balance} landIds={landsAddresses || []} unit={balanceData?.symbol || ""} subtitle="My Balance" buttonMessage={"Top Up Balance"} hasIconsMap={false} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mt-5 px-6 mb-10 lg:mb-0">
         <div className="w-full bg-white rounded-xl lg:col-span-2 p-4 container_scrollable">
           <div className="h-96">
             <SectionHeader title="Best Seller" titleSize={"xl"} buttonMessage="View all" />
-          
-            <TableHeader 
-              items={[
-                { label:"NO", fixedWidth:70, },
-                { label:"Land ID" },
-                { label:"BUYER/LAND NAME" },
-                { label:"PRICE" },
-                { label:"DATE", alignText:"right" },
-              ]}
-              />            
+            <table className="w-full min-w-max divide-y divide-gray-200">
+              <TableHeader
+                items={[
+                  {
+                    label: "NO", fixedWidth: 70,
+                    className: ""
+                  },
+                  {
+                    label: "Land ID",
+                    className: ""
+                  },
+                  {
+                    label: "BUYER/LAND NAME",
+                    className: ""
+                  },
+                  {
+                    label: "PRICE",
+                    className: ""
+                  },
+                  {
+                    label: "DATE", alignText: "left",
+                    className: ""
+                  },
+                ]}
+              />
 
-          {
-            soldEvents.map((item, index) => {
-              return (
-                <TableRow 
-                  key={"uniquetablerowkeu"+index}
-                  items={[
-                    { value:index+1, fixedWidth:70, },
-                    { value:item.parsedEvent.land_id },
-                    { value:item.parsedEvent.buyer },
-                    { value:item.parsedEvent.price },
-                    { value:"-", alignText:"right" },
-                  ]}
-                  headers={["NO", "LAND ID", "BUYER/LAND NAME", "PRICE", "DATE"]}
-                />
-              )
-            })
-          }
-          <div className="h-10" />
-        </div>
+              {
+                soldEvents.map((item, index) => {
+                  return (
+                    <TableRow
+                      key={"uniquetablerowkeu" + index}
+                      items={[
+                        {
+                          value: index + 1, fixedWidth: 70,
+                          className: ""
+                        },
+                        {
+                          value: item.parsedEvent.land_id,
+                          className: ""
+                        },
+                        {
+                          value: item.parsedEvent.buyer,
+                          className: ""
+                        },
+                        {
+                          value: item.parsedEvent.price,
+                          className: ""
+                        },
+                        {
+                          value: "-", alignText: "right",
+                          className: ""
+                        },
+                      ]}
+                      headers={["NO", "LAND ID", "BUYER/LAND NAME", "PRICE", "DATE"]}
+                      showMobileHeaders={false}
+                    />
+                  )
+                })
+              }
+            </table>
+            {/* <div className="h-10" /> */}
+          </div>
         </div>
         <div className="w-full bg-white rounded-xl p-4 container_scrollable">
           <div className="h-96">
@@ -195,9 +227,9 @@ export function DashboardClientView() {
               eventsLoading && <Loading height={100} />
             }
             {
-              !eventsLoading && recentEvents.map((event, index)=>{
+              !eventsLoading && recentEvents.map((event, index) => {
                 return (
-                  <EventCard event={event} index={index} key={"dashboardrecentsactivities1e2"+index} />
+                  <EventCard event={event} index={index} key={"dashboardrecentsactivities1e2" + index} />
                 )
               })
             }
@@ -211,54 +243,54 @@ export function DashboardClientView() {
 }
 
 
-const LandImage = ({ landAddress }:{landAddress:string}) => {
-  const { blockiesImageSrc } = useBlockies({ address:landAddress }) 
-  return <Image src={blockiesImageSrc} alt="ether" fill style={{ objectFit:"cover", objectPosition:"center" }} />
+const LandImage = ({ landAddress }: { landAddress: string }) => {
+  const { blockiesImageSrc } = useBlockies({ address: landAddress })
+  return <Image src={blockiesImageSrc} alt="ether" fill style={{ objectFit: "cover", objectPosition: "center" }} />
 }
 
 
-const Card = ({ value, unit, subtitle, buttonMessage, hasIconsMap, landIds, mainIconColor}:{ value:string, unit:string, subtitle:string, buttonMessage:string, hasIconsMap:boolean, landIds:string[], mainIconColor:"blue"|"green" }) => {
-  
-  const landIdsToShow = landIds.length > 6 ? landIds.slice(0,6) : landIds
+const Card = ({ value, unit, subtitle, buttonMessage, hasIconsMap, landIds, mainIconColor }: { value: string, unit: string, subtitle: string, buttonMessage: string, hasIconsMap: boolean, landIds: string[], mainIconColor: "blue" | "green" }) => {
+
+  const landIdsToShow = landIds.length > 6 ? landIds.slice(0, 6) : landIds
 
   return (
     <div className="w-full bg-white rounded-xl">
-        <div className="min-h-56 p-4 flex flex-col gap-6 relative">
-            <div className="flex gap-2 items-end">
-              <p className="text-xl md:text-4xl font-bold">{ value ?? "-" }</p>
-              <p className="text-xl md:text-xl font-base">{ unit }</p>
-            </div>
-            <p className="text-xl md:text-xl font-sm text-gray-500">{ subtitle }</p>
-            <div className="relative h-[30px]">
-              {
-                (!!landIds&&hasIconsMap) && landIdsToShow.map((landId, index)=>{
-                  const imageRandomizer = "adffhhyethtvegq" 
+      <div className="min-h-56 p-4 flex flex-col gap-6 relative">
+        <div className="flex gap-2 items-end">
+          <p className="text-xl md:text-4xl font-bold">{value ?? "-"}</p>
+          <p className="text-xl md:text-xl font-base">{unit}</p>
+        </div>
+        <p className="text-xl md:text-xl font-sm text-gray-500">{subtitle}</p>
+        <div className="relative h-[30px]">
+          {
+            (!!landIds && hasIconsMap) && landIdsToShow.map((landId, index) => {
+              const imageRandomizer = "adffhhyethtvegq"
 
-                  return(
-                    <div key={"land-circles-on-dashboard"+index} style={{ position:"absolute", left:22*index }}>
-                      <div className="w-[30px] h-[30px] bg-gray-300 rounded-full overflow-hidden relative">
-                        <LandImage landAddress={landId+imageRandomizer} />
-                      </div>
-                    </div>
-                  )
-                })
-              }
-            </div>
+              return (
+                <div key={"land-circles-on-dashboard" + index} style={{ position: "absolute", left: 22 * index }}>
+                  <div className="w-[30px] h-[30px] bg-gray-300 rounded-full overflow-hidden relative">
+                    <LandImage landAddress={landId + imageRandomizer} />
+                  </div>
+                </div>
+              )
+            })
+          }
+        </div>
 
-            <Button variant="whiteWithBorder" >
-              { buttonMessage }
-            </Button>
-            <div className="absolute top-7 right-4 w-[60px] h-[60px] rounded-full flex justify-center items-center" style={{ backgroundColor:mainIconColor==="blue"?"#F2FAFD":"#F4FDF9" }}>
-              <div className="relative w-[40px] h-[40px] rounded-full">
-                {
-                  mainIconColor === "blue"&&<Image src={"/icons/common/stack-green.svg"} alt="ether" fill style={{ objectFit:"cover", objectPosition:"center" }} />
-                }
-                {
-                  mainIconColor === "green"&&<Image src={"/icons/common/stack-blue.svg"} alt="ether" fill style={{ objectFit:"cover", objectPosition:"center" }} />
-                }
-              </div>
-            </div>
+        <Button variant="whiteWithBorder" >
+          {buttonMessage}
+        </Button>
+        <div className="absolute top-7 right-4 w-[60px] h-[60px] rounded-full flex justify-center items-center" style={{ backgroundColor: mainIconColor === "blue" ? "#F2FAFD" : "#F4FDF9" }}>
+          <div className="relative w-[40px] h-[40px] rounded-full">
+            {
+              mainIconColor === "blue" && <Image src={"/icons/common/stack-green.svg"} alt="ether" fill style={{ objectFit: "cover", objectPosition: "center" }} />
+            }
+            {
+              mainIconColor === "green" && <Image src={"/icons/common/stack-blue.svg"} alt="ether" fill style={{ objectFit: "cover", objectPosition: "center" }} />
+            }
+          </div>
         </div>
       </div>
+    </div>
   )
 }

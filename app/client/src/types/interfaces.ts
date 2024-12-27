@@ -124,6 +124,7 @@ export interface DropdownMenuProps {
   }
 
 export interface HeaderItem {
+    className: string;
     label:string,
     alignText?:'left'|'center'|'right',
     fixedWidth?: number
@@ -135,6 +136,7 @@ export interface TableHeaderProps {
   
 
   export interface RowItem {
+    className: string;
     value?:string|number,
     alignText?:'left'|'center'|'right',
     fixedWidth?: number, 
@@ -144,6 +146,7 @@ export interface TableHeaderProps {
   export interface TableRowProps {
     items:RowItem[], 
     headers: string[],
+    showMobileHeaders?: boolean
   }
 
 export interface TagProps {
