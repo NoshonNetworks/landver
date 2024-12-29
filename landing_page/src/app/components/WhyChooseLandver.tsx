@@ -48,14 +48,17 @@ const WhyChooseLandver = () => {
   });
 
   return (
-    <div className="grid justify-center place-content-center place-items-center gap-4 p-4" id="about">
+    <div
+      className="grid justify-center place-content-center place-items-center gap-4 p-4"
+      id="about"
+    >
       <P size="h4" classname="text-center text-2xl font-semibold">
         Our Unique Offerings
       </P>
       <P classname="text-center w-full md:w-[80%] lg:w-[60%] leading-relaxed text-base">
         Our Unique Offerings LandVer offers secure, NFT-backed land ownership
-        that's easy to register, verify, and transfer on the blockchain. Trust
-        in transparent, immutable records for seamless land management.
+        that&apos;s easy to register, verify, and transfer on the blockchain.
+        Trust in transparent, immutable records for seamless land management.
       </P>
 
       <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mt-3">
