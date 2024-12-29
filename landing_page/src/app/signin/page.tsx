@@ -7,6 +7,15 @@ import { Input } from "../components/Input/Input";
 import { ToastContainer } from "react-toastify";
 import { api } from "../lib/axios";
 import "react-toastify/dist/ReactToastify.css";
+
+interface LoginError {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+}
+
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -24,7 +33,7 @@ export default function LoginPage() {
         window.location.href = "https://demo.landver.net";
       }, 1000);
     } catch (error) {
-      const err = error as { response?: { data?: { message?: string } } };
+      const err = error as LoginError;
       toast.error(err.response?.data?.message || "Failed to sign in");
     } finally {
       setLoading(false);
@@ -35,8 +44,8 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-[#f5f5f5] text-[#1f1f1f] px-4">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <h1 className="text-[40px] font-bold">Sign in</h1>
-          <p className="mt-2 text-[22px] font-[300] text-gray-600">
+          <h1 className="text-2xl font-semibold">Sign in</h1>
+          <p className="mt-2 text-sm font-light text-gray-600">
             Hey, Enter your details to login to your account
           </p>
         </div>
@@ -60,13 +69,13 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className=""
+                className="text-sm font-medium"
               >
                 {showPassword ? "Hide" : "Show"}
               </button>
             }
           />
-          <div className="text-xs font-[500]">
+          <div className="text-sm font-medium">
             <span className="text-[#797979]">
               Don&apos;t have an account yet?{" "}
             </span>
@@ -75,7 +84,10 @@ export default function LoginPage() {
             </a>
           </div>
 
-          <Button classname="w-full !text-lg !font-[600]" disabled={loading}>
+          <Button 
+            classname="w-full text-sm font-semibold" 
+            disabled={loading}
+          >
             {loading ? "Signing in..." : "Sign in"}
           </Button>
         </form>
