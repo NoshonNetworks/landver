@@ -49,7 +49,7 @@ const Benefits = () => {
           Experience The Unique Benefits of Landver
         </P>
         <P classname="w-[100%] md:w-[40%] text-center p-5 text-base">
-          LandVer offers secure, NFT-backed land ownership that's easy to
+          LandVer offers secure, NFT-backed land ownership that&apos;s easy to
           register, verify, and transfer on the blockchain. Trust in
           transparent, immutable records for seamless land management.
         </P>
