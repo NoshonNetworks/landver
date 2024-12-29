@@ -25,28 +25,28 @@ const Button: React.FC<ButtonProps> = ({
       case "gray":
         return "bg-[#828282]";
       default:
-        return "bg-[#6364d5]";
+        return "bg-[#6364d5]"; 
     }
   };
-
+  
   const getSizeStyles = () => {
     switch (size) {
       case "small":
-        return "px-4 py-1";
+        return "px-4 py-1 text-sm";
       case "medium":
-        return "px-6 py-2";
+        return "px-6 py-2 text-base";
       case "large":
-        return "px-8 py-3";
+        return "px-8 py-3 text-lg";
       case "full":
-        return "px-12 py-[0.65rem]"; // Full-width button
+        return "px-12 py-[0.65rem] text-base"; 
       default:
-        return "px-6 py-2";
+        return "px-6 py-2 text-base";
     }
   };
-
+  
   return (
     <button
-      className={`${getVariantStyles()} ${getSizeStyles()} ${classname} text-white rounded text-xs py-3 ${
+      className={`${getVariantStyles()} ${getSizeStyles()} ${classname} text-white font-bold rounded-md text-center ${
         disabled ? 'opacity-50 cursor-not-allowed' : ''
       }`}
       onClick={onClick}
