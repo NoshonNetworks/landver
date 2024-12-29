@@ -98,7 +98,7 @@ npm start
 ### Build for production:
 
 ```bash
-pnpm build
+npm run build
 ```
 
 ## Contributors
