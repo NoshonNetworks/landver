@@ -38,6 +38,7 @@ export function WalletConnectorModal({setShowWalletsModal}:{ setShowWalletsModal
   async function connect(connector: Connector) {
     try {
       await connectAsync({ connector });
+      localStorage.setItem("landver-connector", connector.id)
       if(setShowWalletsModal) setShowWalletsModal(false)
     } catch (error: unknown) {
       // Create user-friendly error message
