@@ -1,13 +1,13 @@
 'use client'
 import { useLoginStore } from "@/store/loginStore";
-import { VerifyLandInspectorView } from "@/views/inspector/VerifyLand";
+import { LandsInspectorView } from "@/views/inspector/Lands";
 
 export default function Dashboard() {
   const loginStore = useLoginStore()
 
   return (
     <div className="">
-      { loginStore.userType=="inspector" && <VerifyLandInspectorView /> }
+      { loginStore.userType=="inspector" && <LandsInspectorView /> }
     </div>
   );
 }

@@ -1,41 +1,47 @@
 # LandVer - Land Verification System
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-15-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-15-orange.svg?style=flat-square)](https://github.com/NoshonNetworks/landver/graphs/contributors)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-LandVer is a decentralized land registration and verification protocol, utilizing blockchain technology to provide a secure, transparent, and immutable system for managing land records. The protocol facilitates land transactions and ownership verification across multiple blockchains, beginning with Starknet.
+[LandVer](https://landver.net/) is a decentralized land registration and verification protocol, utilizing blockchain technology to provide a secure, transparent, and immutable system for managing land records. The protocol facilitates land transactions and ownership verification on the Starknet blockchain.
 
 While initially built on Starknet, LandVer is designed to be cross-chain compatible, allowing land transactions and records to be securely managed across multiple blockchains. LandVer is one of the many products of Noshon Networks, which aims to bring innovation to the world of real estate.
 
 ## Project Structure
 
-The project is divided into the following components:
+The monorepo is organized into the following components:
 
-- `land-registry-backend/`: Node.js and Express-based API server
-- `docs/`: Documentation for the project, including setup guides and API references
-- `examples/`: React-based web application
-- `land_registry/`: Land registry contract
-- `public/`: Public assets and resources
-- `scripts/`: JavaScript tools for automation and utility tasks
-- `sdk/`: JavaScript for interacting with the smart contracts and API
+- `app/`: Contains the main application code:
 
+* Frontend client application
+* Backend server implementation
 
-# Development
- 
-Steps to build and run LandVer locally.
+- `docs/`: Project documentation, including setup guides and API references
+- `land-registry-backend/`: Core backend service for land registry operations
+- `land-registry-indexer/`: Blockchain indexer service for tracking land registry events
+- `land_registry/`: Smart contract implementation for the land registry system
+- `landing_page/`: Website and landing page
+- `scripts/`: Utility scripts for development and deployment
+- `sdk/`: JavaScript SDK for interacting with LandVer protocols
+- `tools/`: Development and maintenance tools
+- `.github/`: GitHub workflows and configuration files
+
 
 ### Prerequisites
 
-Ensure you have the prerequisites installed before proceeding. 
+Before you begin, ensure you have the following installed. 
 
-[scarb](https://docs.swmansion.com/scarb/docs.html)
-[snfoundry](https://book.getfoundry.sh/getting-started/installation)
-[install npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm)
-[install rust](https://www.rust-lang.org/tools/install)
+- [scarb](https://docs.swmansion.com/scarb/docs.html): Smart contract development tool
+
+- [snfoundry](https://book.getfoundry.sh/getting-started/installation): Smart contract testing framework
+- [install npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm): JavaScript runtime and package manager
+- [install rust](https://www.rust-lang.org/tools/install): Required for some development tools
 
 
-
+# Development Setup
+ 
+Steps to build and run LandVer locally.
 
 ## How to Run the Code
 
@@ -44,8 +50,8 @@ Ensure you have the prerequisites installed before proceeding.
  Navigate to the client directory, install the packages, and start the client
 ```bash 
 cd app/client
- npm install 
- npm start
+ pnpm install 
+ pnpm start
 ```
  In a separate terminal, navigate to the server directory, install the packages, and start the server
 
@@ -69,6 +75,30 @@ scarb build
 ```bash
 cd land_registry
 scarb test
+```
+
+### Backend Services
+
+Start the land registry backend:
+
+```bash
+cd land-registry-backend
+npm install
+npm run dev
+```
+
+### Start the indexer service:
+
+```bash
+cd land-registry-indexer
+npm install
+npm start
+```
+
+### Build for production:
+
+```bash
+npm run build
 ```
 
 ## Contributors

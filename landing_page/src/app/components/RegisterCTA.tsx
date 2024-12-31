@@ -2,9 +2,9 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import P from "./P/P";
-// import Button from "./Button/Button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
+
 const RegisterCTA = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
 
@@ -39,16 +39,16 @@ const RegisterCTA = () => {
       <div className="bg-[#e9f3f1] rounded-lg border p-4 md:p-6 w-full max-w-6xl">
         <div className="flex flex-col md:flex-row gap-8">
           <div className="flex flex-col md:w-1/3">
-            <P size="h6" classname="capitalize font-bold mb-3">
+            <P size="h6" classname="capitalize font-semibold mb-3 text-xl">
               Register Your land with Ease
             </P>
-            <P classname="leading-[1.7] mb-6">
+            <P classname="leading-[1.7] mb-6 text-base">
               LandVer simplifies land registration. Enter essential details
               -like location, area and use - and submit securely on our
               blockchain based platform
             </P>
             <Link
-              className="w-fit md:w-fit bg-[#6364d5] text-white px-6 py-2 rounded text-xs"
+              className="w-fit md:w-fit bg-[#6364d5] text-white px-6 py-2 rounded text-sm"
               href="https://demo.landver.net"
               target="_blank"
             >
@@ -67,7 +67,7 @@ const RegisterCTA = () => {
                     className="object-cover rounded-lg"
                   />
                 </div>
-                <P classname="mt-2 text-center">{image.description}</P>
+                <P classname="mt-2 text-center text-sm">{image.description}</P>
               </div>
             ))}
           </div>
@@ -80,7 +80,7 @@ const RegisterCTA = () => {
                 fill
                 className="object-cover rounded-lg"
               />
-              <P classname="absolute bottom-4 left-0 right-0 text-center bg-black/50 text-white py-2">
+              <P classname="absolute bottom-4 left-0 right-0 text-center bg-black/50 text-white py-2 text-sm">
                 {imagesArray[currentSlide].description}
               </P>
             </div>

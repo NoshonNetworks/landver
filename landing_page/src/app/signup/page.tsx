@@ -18,11 +18,18 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
 
+interface SignupError {
+  response?: {
+    data?: {
+      message?: string;
+    };
+  };
+}
+
 export default function SignupPage() {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -34,7 +41,6 @@ export default function SignupPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     setLoading(true);
 
     if (formData.password !== formData.confirmPassword) {
@@ -62,7 +68,7 @@ export default function SignupPage() {
        router.push("https://demo.landver.net")
       }, 1000);
     } catch (err: unknown) {
-      const error = err as { response?: { data?: { message?: string } } };
+      const error = err as SignupError;
       toast.error(error.response?.data?.message || "An error occurred");
     } finally {
       setLoading(false);
@@ -90,8 +96,8 @@ export default function SignupPage() {
       <ToastContainer theme="colored" />
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <h1 className="text-[40px] font-bold">Let&apos;s set up</h1>
-          <p className="mt-2 text-[22px] font-[300] text-gray-600">
+          <h1 className="text-2xl font-semibold">Let&apos;s set up</h1>
+          <p className="mt-2 text-sm font-light text-gray-600">
             Hey, enter your details to sign up for an account!
           </p>
         </div>
@@ -117,6 +123,7 @@ export default function SignupPage() {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
+                className="text-sm font-medium"
               >
                 {showPassword ? "Hide" : "Show"}
               </button>
@@ -134,6 +141,7 @@ export default function SignupPage() {
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="text-sm font-medium"
               >
                 {showConfirmPassword ? "Hide" : "Show"}
               </button>
@@ -150,29 +158,27 @@ export default function SignupPage() {
           />
 
           <Select onValueChange={handleRoleChange}>
-            <SelectTrigger className="w-full">
+            <SelectTrigger className="w-full text-sm">
               <SelectValue placeholder="Select role" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="landowner">Land owner</SelectItem>
-                <SelectItem value="inspector">Inspector</SelectItem>
-                <SelectItem value="landbuyer">Land buyer</SelectItem>
+                <SelectItem value="landowner" className="text-sm">Land owner</SelectItem>
+                <SelectItem value="inspector" className="text-sm">Inspector</SelectItem>
+                <SelectItem value="landbuyer" className="text-sm">Land buyer</SelectItem>
               </SelectGroup>
             </SelectContent>
           </Select>
 
-          <div className="text-xs font-[500]">
+          <div className="text-sm font-medium">
             <span className="text-[#797979]">Already have an account? </span>
             <a href="/signin" className="text-[#000000]">
               Sign in!
             </a>
           </div>
 
-          <Button
-            classname={`w-full !text-lg !font-[600] ${
-              loading ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+          <Button 
+            classname="w-full text-sm font-semibold" 
             disabled={loading}
           >
             {loading ? "Signing up..." : "Sign up"}
