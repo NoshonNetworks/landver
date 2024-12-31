@@ -11,7 +11,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/Select/Select";
+import { useRouter } from "next/navigation";
 import { api } from "../lib/axios";
+import { setCookie } from 'cookies-next/client';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { toast } from "react-toastify";
@@ -25,6 +27,7 @@ interface SignupError {
 }
 
 export default function SignupPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -54,10 +57,15 @@ export default function SignupPage() {
         userType: formData.role,
       });
 
-      localStorage.setItem("token", response.data.token);
+      
+
+      // localStorage.setItem("token", response.data.token);
+            
+      setCookie('landver_token', response.data.data.token);
+
       toast.success("Registration successful!");
       setTimeout(() => {
-        window.location.href = "https://demo.landver.net";
+       router.push("https://demo.landver.net")
       }, 1000);
     } catch (err: unknown) {
       const error = err as SignupError;
@@ -80,6 +88,8 @@ export default function SignupPage() {
       role: value,
     });
   };
+
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#f5f5f5] text-[#1f1f1f] px-4">

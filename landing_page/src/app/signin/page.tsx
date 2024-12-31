@@ -5,8 +5,11 @@ import { toast } from "react-toastify";
 import Button from "../components/Button/Button";
 import { Input } from "../components/Input/Input";
 import { ToastContainer } from "react-toastify";
+import { useRouter } from "next/navigation";
 import { api } from "../lib/axios";
+import { setCookie } from 'cookies-next/client';
 import "react-toastify/dist/ReactToastify.css";
+
 
 interface LoginError {
   response?: {
@@ -22,16 +25,22 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [passcode, setPasscode] = useState("");
 
+  const router = useRouter();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      await api.post("/auth/login", { email, passcode });
+      const res = await api.post("/auth/login", { email, passcode });
+      
+      setCookie('landver_token', res.data.data.token, {maxAge: 5});
+      // localStorage.setItem("landver_token", res.data.data.token);
 
-      toast.success("Signed in successfully!");
-      setTimeout(() => {
-        window.location.href = "https://demo.landver.net";
-      }, 1000);
+      toast.success("Signed in successfully!")
+
+      router.push("https://demo.landver.net")
+     
+
     } catch (error) {
       const err = error as LoginError;
       toast.error(err.response?.data?.message || "Failed to sign in");
