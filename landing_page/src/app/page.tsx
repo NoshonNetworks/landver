@@ -6,12 +6,12 @@ import Footer from "./components/Footer";
 import RegisterCTA from "./components/RegisterCTA";
 import Benefits from "./components/Benefits";
 import NewsLetterCTA from "./components/NewsLetterCTA";
-import { getCookie } from "cookies-next/server";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
+// import { getCookie } from "cookies-next/server";
+// import { useEffect } from "react";
+// import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const router = useRouter();
+  // const router = useRouter();
 
 
   // useEffect(() => {
