@@ -51,7 +51,7 @@ Steps to build and run LandVer locally.
 ```bash 
 cd app/client
  pnpm install 
- pnpm start
+ pnpm run dev
 ```
  In a separate terminal, navigate to the server directory, install the packages, and start the server
 
