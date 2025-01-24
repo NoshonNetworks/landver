@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../components/Select/Select";
+import { validatePassword, TPasswordValidationResult } from "../lib/utils/RegEx";
 import { useRouter } from "next/navigation";
 import { api } from "../lib/axios";
 import { setCookie } from 'cookies-next/client';
@@ -38,10 +39,20 @@ export default function SignupPage() {
     walletAddress: "",
     role: "",
   });
+  const [passwordValidation, setPasswordValidation] = useState<TPasswordValidationResult>({
+    isValid: false,
+    unmetRequirements: [],
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+
+    if (!passwordValidation.isValid) {
+      toast.error("Password does not meet requirements");
+      setLoading(false);
+      return;
+    }
 
     if (formData.password !== formData.confirmPassword) {
       toast.error("Passwords do not match");
@@ -57,15 +68,15 @@ export default function SignupPage() {
         userType: formData.role,
       });
 
-      
+
 
       // localStorage.setItem("token", response.data.token);
-            
+
       setCookie('landver_token', response.data.data.token);
 
       toast.success("Registration successful!");
       setTimeout(() => {
-       router.push("https://demo.landver.net")
+        router.push("https://demo.landver.net")
       }, 1000);
     } catch (err: unknown) {
       const error = err as SignupError;
@@ -80,6 +91,10 @@ export default function SignupPage() {
       ...formData,
       [e.target.name]: e.target.value,
     });
+
+    if (e.target.name === "password") {
+      setPasswordValidation(validatePassword(e.target.value));
+    }
   };
 
   const handleRoleChange = (value: string) => {
@@ -130,6 +145,12 @@ export default function SignupPage() {
             }
           />
 
+          <ul className="text-sm text-red-500">
+            {passwordValidation.unmetRequirements.map((requirement, index) => (
+              <li key={index}>{requirement}</li>
+            ))}
+          </ul>
+
           <Input
             name="confirmPassword"
             type={showConfirmPassword ? "text" : "password"}
@@ -177,8 +198,8 @@ export default function SignupPage() {
             </a>
           </div>
 
-          <Button 
-            classname="w-full text-sm font-semibold" 
+          <Button
+            classname="w-full text-sm font-semibold"
             disabled={loading}
           >
             {loading ? "Signing up..." : "Sign up"}
