@@ -30,9 +30,9 @@ export function validatePassword(password: string): TPasswordValidationResult {
         [PasswordRequirement.LENGTH]: password.length >= 8,
     };
 
-    const unmetRequirements = Object.entries(requirements)
-        .filter(([_, isMet]) => !isMet)
-        .map(([requirement]) => requirement as PasswordRequirement);
+    const unmetRequirements = Object.keys(requirements)
+        .filter((requirement) => !requirements[requirement as PasswordRequirement])
+        .map((requirement) => requirement as PasswordRequirement);
 
     return {
         isValid: unmetRequirements.length === 0,
