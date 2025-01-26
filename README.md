@@ -101,6 +101,13 @@ npm start
 npm run build
 ```
 
+# Project Flow Chart
+Landver as a decentralized land registration and verification protocol has a very easy navigation system as illustrated below. 
+- Once the project is set up on your device as illustrated above,  
+
+![Flowchart](<landing_page/public/images/Landver Flowchart.drawio.png>)
+
+
 ## Contributors
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
