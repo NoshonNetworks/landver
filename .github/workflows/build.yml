@@ -50,3 +50,35 @@ jobs:
       - name: Run tests
         run: snforge test
         working-directory: land_registry
+
+  build-client:
+    runs-on: ubuntu-latest
+    name: Build app/client and landing page
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@main
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18  # Use the version required by your project
+
+      - name: Cache Node.js modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            npm-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: npm install
+        working-directory: app/client
+
+      - name: Build app/client
+        run: npm run build
+        working-directory: app/client
+
+      - name: Build landing page
+        run: npm run build-landing-page  # Replace with the actual command for building the landing page
+        working-directory: app/client
