@@ -1,183 +1,151 @@
 "use client";
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAccount } from "@starknet-react/core";
-import WalletConnector from "@/components/Connector";
-import Modal from "@/components/Modal/Modal";
-import { Button } from "@/components/Button/Button";
+import React from "react";
+import { useConnect } from "@starknet-react/core";
+import type { Connector } from "@starknet-react/core";
 import Image from "next/image";
-import { useLoginStore } from "@/store/loginStore";
-import { LandPlot, ShieldCheck, Wallet, ArrowRight } from "lucide-react";
-import { MoonLoader } from "react-spinners";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+const walletIdToName = new Map([
+  ["argentX", "Argent X"],
+  ["braavos", "Braavos"],
+  ["argentWebWallet", "Web Wallet"],
+  ["argentMobile", "Argent Mobile"],
+]);
+
+const walletIcons: { [key: string]: string } = {
+  braavos: "/icons/wallets/braavos.svg",
+  argentX: "/icons/wallets/argent-x.svg",
+  argentWebWallet: "/icons/wallets/web.svg",
+  argentMobile: "/icons/wallets/argent-x.svg",
+};
 
 const Home = () => {
-    const loginStore = useLoginStore();
-    const { status, address } = useAccount();
-    const [isModalOpen, setModalOpen] = useState(false);
-    const [userType, setUserType] = useState<"inspector" | "owner" | null>(
-        null
-    );
-    const [error, setError] = useState<string | null>(null);
-    const router = useRouter();
-    const [isLoading, setIsLoading] = useState(false);
+  const { connectors, connectAsync } = useConnect();
 
-    const toggleModal = () => setModalOpen(!isModalOpen);
-
-    const handleFormSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsLoading(true);
-        if (!userType) {
-            setError("Please select a user type.");
-            return;
+  const connect = async (connector: Connector) => {
+    try {
+      await connectAsync({ connector });
+      localStorage.setItem("landver-connector", connector.id);
+      toast.success("Wallet connected successfully!");
+    } catch (error: unknown) {
+      let errorMessage = "Failed to connect wallet.";
+      if (error instanceof Error) {
+        if (error.message.includes("rejected")) {
+          errorMessage =
+            "Connection rejected. Please try again and approve the connection request.";
+        } else if (error.message.includes("Connector not found")) {
+          errorMessage = `${
+            walletIdToName.get(connector.id) ?? connector.name
+          } is not installed. Please install the wallet extension first.`;
+        } else {
+          errorMessage +=
+            "Please check if your wallet is properly configured and try again.";
         }
+      }
 
-        const allowedUserTypes = ["owner", "inspector"];
-        if (!allowedUserTypes.includes(userType)) {
-            setError("Not allowed user type.");
-            return;
-        }
-        window.localStorage.setItem("user-type", userType);
-        loginStore.setUserType(userType);
-        router.push("/dashboard");
-    };
+      toast.error(errorMessage);
+      console.error("Wallet connection error:", error);
+    }
+  };
 
-    const UserTypeCard = ({
-        type,
-        icon: Icon,
-        title,
-        description,
-    }: {
-        type: "owner" | "inspector";
-        icon: React.ElementType;
-        title: string;
-        description: string;
-    }) => (
+  return (
+        <div className="min-h-screen bg-gray-50 flex flex-col py-8 px-4 overflow-y-auto">
+          <ToastContainer />
+          <div className="flex-grow overflow-y-auto">
+            <Image
+              src="/images/logo.svg"
+              alt="landver logo"
+              height={100}
+              width={100}
+              className="mb-6"
+            />
+            <div className="w-full flex flex-col lg:flex-row items-center lg:items-start">
+              <div className="w-full lg:w-1/2 p-6 lg:p-8 flex flex-col items-center lg:items-start text-center lg:text-left">
+                <h1 className="text-3xl lg:text-4xl font-bold mb-4 text-[#6E62E5]">
+                  Land Registry Protocol
+                </h1>
+                <p className="text-lg mb-6 opacity-80 text-[#5E5B5B]">
+                  Secure, transparent, and efficient land registration powered by
+                  blockchain technology.
+                </p>
+                <p className="text-lg mb-6 text-[#6b21a8] font-semibold">
+                  A Secure Platform for Land Registration, Inspection, and Validation
+                  on Starknet
+                </p>
+                <div className="space-y-4">
+      {[
+        "Effortless land registration with unique property IDs.",
+        "Streamlined land inspection and verification for trusted records.",
+        "Immutable, blockchain security for ownership and transactions.",
+      ].map((text, index) => (
         <div
-            onClick={() => setUserType(type)}
-            className={`
-        border-2 p-4 rounded-lg cursor-pointer transition-all duration-300
-        ${
-            userType === type
-                ? "border-purple-600 bg-purple-50 scale-105"
-                : "border-gray-200 hover:border-purple-300"
-        }
-      `}
+          key={index}
+          className="flex items-center gap-4 text-[#1F1F1F]"
         >
-            <div className="flex items-center mb-3">
-                <Icon
-                    className={`mr-3 ${
-                        userType === type ? "text-purple-600" : "text-gray-500"
-                    }`}
+          <div className="flex items-center justify-center h-6 w-5 rounded-full bg-[#E9E7F9]">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+              stroke="#6E62E5"
+              className="h-5 w-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M5 13l4 4L19 7"
+              />
+            </svg>
+          </div>
+          <p className="text-base">{text}</p>
+        </div>
+      ))}
+    </div>
+
+              </div>
+              <div className="w-full lg:w-1/2 p-6 flex justify-center">
+                <Image
+                  src="/images/WalletCard.png"
+                  alt="landver logo"
+                  height={400}
+                  width={400}
+                  className="mb-6 max-w-full"
                 />
-                <h3 className="text-lg font-semibold">{title}</h3>
+              </div>
             </div>
-            <p className="text-gray-600">{description}</p>
-        </div>
-    );
-
-    return (
-        <div className="min-h-screen bg-[#E9F3F1] py-8 px-4 overflow-y-auto flex flex-col justify-center items-center">
-            <div className="max-w-4xl w-full mx-auto grid md:grid-cols-2 gap-8 bg-white rounded-2xl shadow-2xl">
-                {/* Left Side - Descriptive Section */}
-                <div className="bg-gradient-to-br from-purple-400 to-indigo-700 p-8 md:flex flex-col justify-center text-white hidden">
+            <div className="w-full flex flex-col items-center text-center py-6">
+              <h3 className="text-2xl lg:text-3xl font-bold mb-4 text-[#6E62E5]">
+                Connect Your Wallet
+              </h3>
+              <p className="text-sm lg:text-base mb-6 text-[#1F1F1F]">
+                Connect a supported wallet to access Land Registry
+              </p>
+              <h5 className="text-base font-semibold mb-6 text-[#6B21A8]">
+                Choose Wallet
+              </h5>
+              <div className="flex flex-col gap-4 items-center w-full px-4">
+                {connectors.map((connector) => (
+                  <div
+                    key={connector.id}
+                    onClick={() => connect(connector)}
+                    className="flex flex-row justify-center items-center gap-4 rounded-lg border-2 py-2 px-10 md:px-20 lg:px-40 border-[#d3d3f3] text-[#6364D5] cursor-pointer hover:scale-95 transition-transform w-full max-w-lg"
+                  >
                     <Image
-                        src="/images/logo.svg"
-                        alt="landver logo"
-                        height={100}
-                        width={100}
-                        className="mb-6"
+                      src={walletIcons[connector.id]}
+                      alt={`${connector.name} logo`}
+                      height={20}
+                      width={20}
                     />
-                    <h1 className="text-3xl font-bold mb-4">Land Registry Protocol</h1>
-                    <p className="text-lg mb-6 opacity-80">
-                        Secure, transparent, and efficient land registration powered by blockchain technology.
-                    </p>
-                    <div className="space-y-4">
-                        <div className="flex items-center">
-                            <LandPlot className="mr-3 text-yellow-300" />
-                            <span>Immutable Land Records</span>
-                        </div>
-                        <div className="flex items-center">
-                            <ShieldCheck className="mr-3 text-green-300" />
-                            <span>Verified Ownership Verification</span>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Right Side - Connection & User Type */}
-                <div className="p-8 flex flex-col justify-center">
-                    {status !== "connected" ? (
-                        <div className="text-center">
-                            <Wallet className="mx-auto text-purple-600 mb-4" size={64} />
-                            <h2 className="text-2xl font-bold mb-4">Connect Your Wallet</h2>
-                            <p className="text-gray-600 mb-6">Connect a supported wallet to access Land Registry</p>
-                            <Button
-                                onClick={toggleModal}
-                                classname="mx-auto flex items-center gap-2 bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700"
-                            >
-                                {!isModalOpen ? (
-                                    <>
-                                        Connect Wallet
-                                        <ArrowRight size={20} />
-                                    </>
-                                ) : (
-                                    <MoonLoader color="#fff" size={20} />
-                                )}
-                            </Button>
-
-                            {isModalOpen && (
-                                <Modal onClose={toggleModal} isOpen={isModalOpen}>
-                                    <div className="text-center">
-                                        <h2 className="text-2xl font-bold mb-4">Connect Your Wallet</h2>
-                                        <WalletConnector />
-                                    </div>
-                                </Modal>
-                            )}
-                        </div>
-                    ) : (
-                        <form onSubmit={handleFormSubmit}>
-                            <div className="text-center mb-6">
-                                <p className="text-gray-600">Connected Wallet:</p>
-                                <p className="font-bold text-purple-600">{address?.slice(0, 6)}...{address?.slice(-4)}</p>
-                            </div>
-
-                            <h2 className="text-2xl font-bold mb-4 text-center">Select Your Role</h2>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                                <UserTypeCard
-                                    type="owner"
-                                    icon={LandPlot}
-                                    title="Land Owner"
-                                    description="Manage and verify your land ownership"
-                                />
-                                <UserTypeCard
-                                    type="inspector"
-                                    icon={ShieldCheck}
-                                    title="Land Inspector"
-                                    description="Verify and validate land records"
-                                />
-                            </div>
-
-                            {error && <p className="text-red-500 text-sm mb-4 text-center">{error}</p>}
-
-                            <Button
-                                type="submit"
-                                classname="w-full bg-purple-600 text-white py-3 rounded-lg hover:bg-purple-700 flex items-center justify-center gap-2"
-                            >
-                                {!isLoading ? (
-                                    <>
-                                        Proceed to Dashboard
-                                        <ArrowRight size={20} />
-                                    </>
-                                ) : (
-                                    <MoonLoader color="#fff" size={20} />
-                                )}
-                            </Button>
-                        </form>
-                    )}
-                </div>
+                    <span>{walletIdToName.get(connector.id) ?? connector.name}</span>
+                  </div>
+                ))}
+              </div>
             </div>
+          </div>
         </div>
-    );
+  );
 };
 
 export default Home;
