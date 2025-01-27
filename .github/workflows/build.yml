@@ -35,7 +35,7 @@ jobs:
     name: tests
     steps:
       - name: Checkout code
-        uses: actions/checkout@main
+        uses: actions/checkout@v3
 
       - name: Set up Scarb
         uses: software-mansion/setup-scarb@v1
@@ -50,3 +50,39 @@ jobs:
       - name: Run tests
         run: snforge test
         working-directory: land_registry
+
+  build-client:
+    runs-on: ubuntu-latest
+    name: Build app/client and landing page
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20  # Use the version required by your project
+
+      - name: Cache pnpm modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: pnpm-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            pnpm-${{ runner.os }}-
+
+      - name: Install dependencies for client
+        run: pnpm install
+        working-directory: app/client
+
+      - name: Build app/client
+        run: npm run build
+        working-directory: app/client
+
+      - name: Install dependencies for landing page
+        run: npm install
+        working-directory: landing_page
+
+      - name: Build landing page
+        run: npm run build
+        working-directory: landing_page
