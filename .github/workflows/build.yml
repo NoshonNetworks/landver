@@ -63,13 +63,13 @@ jobs:
         with:
           node-version: 20  # Use the version required by your project
 
-      - name: Cache Node.js modules
+      - name: Cache pnpm modules
         uses: actions/cache@v3
         with:
-          path: ~/.npm
-          key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          path: ~/.pnpm-store
+          key: pnpm-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            npm-${{ runner.os }}-
+            pnpm-${{ runner.os }}-
 
       - name: Install dependencies for client
         run: pnpm install
