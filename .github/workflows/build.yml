@@ -62,6 +62,9 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 20  # Use the version required by your project
+          
+      - name: Install pnpm
+        run: npm install -g pnpm
 
       - name: Cache pnpm modules
         uses: actions/cache@v3
