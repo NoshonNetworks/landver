@@ -12,14 +12,14 @@ export const metadata: Metadata = {
   description:
     "Landver is a blockchain-powered land management platform offering secure and transparent land registration and ownership verification.",
   icons: {
-    icon: "/images/LANDVER_BLACK.svg", 
-    apple: "/images/LANDVER_BLACK.svg", 
+    icon: "/images/LANDVER_BLACK.svg",
+    apple: "/images/LANDVER_BLACK.svg",
   },
   openGraph: {
     title: "Landver Application",
     description:
       "Experience next-generation on-chain land registration with Landver. Ensure secure, immutable, and transparent land records.",
-    url: "https://www.demo.landver.net", 
+    url: "https://www.demo.landver.net",
     type: "website",
     images: [
       {
@@ -32,14 +32,13 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    site: "@landver0", 
+    site: "@landver0",
     title: "Landver Application",
     description:
       "Discover Landver, the ultimate blockchain solution for land registration and ownership verification.",
     images: ["/images/landver-og-image.jpg"], // Replace with our image URL
   },
 };
-
 
 export default function RootLayout({
   children,
@@ -52,7 +51,7 @@ export default function RootLayout({
         <link rel="icon" href="/logo.jpeg" type="image/jpeg" />
       </head>
       <body
-        className={`${manrope.className} antialiased overflow-hidden text-black`}
+        className={`${manrope.className} antialiased overflow-x-hidden text-black`}
       >
         <Providers>{children}</Providers>
       </body>
