@@ -50,7 +50,7 @@ const Home = () => {
   };
 
   return (
-        <div className="min-h-screen bg-gray-50 flex flex-col py-8 px-4 overflow-y-auto">
+        <div className="min-h-screen bg-gray-50 flex flex-col py-8 lg:px-4 overflow-y-auto">
           <ToastContainer />
           <div className="flex-grow overflow-y-auto">
             <Image
@@ -61,11 +61,11 @@ const Home = () => {
               className="mb-6"
             />
             <div className="w-full flex flex-col lg:flex-row items-center lg:items-start">
-              <div className="w-full lg:w-1/2 p-6 lg:p-8 flex flex-col items-center lg:items-start text-center lg:text-left">
-                <h1 className="text-3xl lg:text-4xl font-bold mb-4 text-[#6E62E5]">
+              <div className="w-full lg:w-1/2 p-6 lg:p-8 flex flex-col items-center lg:items-start  lg:text-left">
+                <h1 className="text-3xl lg:text-4xl lg:w-2/3 font-bold mb-4 text-[#6E62E5]">
                   Land Registry Protocol
                 </h1>
-                <p className="text-lg mb-6 opacity-80 text-[#5E5B5B]">
+                <p className="text-lg mb-6 opacity-80 text-[#5E5B5B] text-center">
                   Secure, transparent, and efficient land registration powered by
                   blockchain technology.
                 </p>
@@ -81,13 +81,13 @@ const Home = () => {
       ].map((text, index) => (
         <div
           key={index}
-          className="flex items-center gap-4 text-[#1F1F1F]"
+          className="flex items-center gap-3 text-[#1F1F1F]"
         >
-          <div className="flex items-center justify-center h-6 w-5 rounded-full bg-[#E9E7F9]">
+          <div className="flex items-center justify-center h-6 w-6 rounded-full bg-[#E9E7F9]">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
-              viewBox="0 0 24 24"
+              viewBox="0 0 26 26"
               strokeWidth={2}
               stroke="#6E62E5"
               className="h-5 w-5"
