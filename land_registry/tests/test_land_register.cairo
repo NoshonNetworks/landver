@@ -1,11 +1,11 @@
 use snforge_std::{
     declare, ContractClassTrait, DeclareResultTrait, start_cheat_caller_address,
     stop_cheat_caller_address, start_cheat_block_timestamp, stop_cheat_block_timestamp,
-    start_cheat_max_fee, stop_cheat_max_fee, spy_events
+    start_cheat_max_fee, stop_cheat_max_fee, spy_events,
 };
 use land_registry::interface::land_register::{
     ILandRegistryDispatcher, ILandRegistryDispatcherTrait, LandUse, Location, LandStatus,
-    ListingStatus
+    ListingStatus,
 };
 use land_registry::utils::utils::MODULO_BASE;
 use starknet::ContractAddress;
@@ -181,7 +181,7 @@ fn test_can_get_is_land_approved() {
     let land_id = land_register_dispatcher.register_land(location, area, land_use);
 
     assert(
-        land_register_dispatcher.is_land_approved(land_id) == false, 'Land should not be approved'
+        land_register_dispatcher.is_land_approved(land_id) == false, 'Land should not be approved',
     );
 
     stop_cheat_caller_address(contract_address);
@@ -208,7 +208,7 @@ fn test_can_get_pending_approvals() {
 
     assert(
         land_register_dispatcher.get_pending_approvals() == array![land_id],
-        'Not enough pending approvals'
+        'Not enough pending approvals',
     );
 }
 
@@ -235,7 +235,7 @@ fn test_can_get_land_transaction_history() {
     assert(
         land_register_dispatcher
             .get_land_transaction_history(land_id) == array![(caller_address, 1)],
-        'Inaccurate land history'
+        'Inaccurate land history',
     );
 
     stop_cheat_caller_address(contract_address);
@@ -1236,7 +1236,9 @@ fn test_set_land_inspector() {
     // Verify that the inspector is correctly assigned
     let assigned_inspector = land_register_dispatcher.get_land_inspector(land_id);
     assert_eq!(
-        assigned_inspector, inspector_address, "Inspector address should match the assigned address"
+        assigned_inspector,
+        inspector_address,
+        "Inspector address should match the assigned address",
     );
     stop_cheat_caller_address(contract_address);
 }

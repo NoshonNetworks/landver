@@ -4,10 +4,10 @@ pub mod utils {
     use core::hash::{HashStateTrait, HashStateExTrait};
     use land_registry::interface::land_register::{Location, LandUse};
 
-    pub const MODULO_BASE: u256 = 100000000000000000000000000000000;    // reduce the id to 32 digits
+    pub const MODULO_BASE: u256 = 100000000000000000000000000000000; // reduce the id to 32 digits
 
     pub fn create_land_id(
-        caller: ContractAddress, timestamp: u64, location: Location, counter: u256
+        caller: ContractAddress, timestamp: u64, location: Location, counter: u256,
     ) -> u256 {
         let caller_hash = PoseidonTrait::new().update_with(caller).finalize();
         let timestamp_hash = PoseidonTrait::new().update_with(timestamp).finalize();

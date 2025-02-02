@@ -13,7 +13,7 @@ pub mod LandNFT {
     use super::ILandNFT;
     use starknet::ContractAddress;
     use starknet::storage::{
-        StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map
+        StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map,
     };
     use openzeppelin::token::erc721::ERC721Component;
     use openzeppelin::introspection::src5::SRC5Component;
@@ -55,7 +55,7 @@ pub mod LandNFT {
         #[substorage(v0)]
         upgradeable: UpgradeableComponent::Storage, // Openzeppelin storage for Upgradable component 
         land_registry: ContractAddress, // Address of the land registry contract
-        locked: Map<u256, bool>, // Mapping of locked status for each token
+        locked: Map<u256, bool> // Mapping of locked status for each token
     }
 
     #[event]
@@ -94,18 +94,18 @@ pub mod LandNFT {
             // Only the land registry contract can mint NFTs
             assert(
                 starknet::get_caller_address() == self.land_registry.read(),
-                custom_error::Errors::MINT_NFT
+                custom_error::Errors::MINT_NFT,
             );
             self.erc721.mint(to, token_id);
         }
 
         fn transfer(
-            ref self: ContractState, from: ContractAddress, to: ContractAddress, token_id: u256
+            ref self: ContractState, from: ContractAddress, to: ContractAddress, token_id: u256,
         ) {
             // Only the land registry contract can transfer NFTs
             assert(
                 starknet::get_caller_address() == self.land_registry.read(),
-                custom_error::Errors::TRANSFER_NFT
+                custom_error::Errors::TRANSFER_NFT,
             );
             self._assert_not_locked(token_id);
 
@@ -115,7 +115,7 @@ pub mod LandNFT {
         }
 
         fn set_base_uri(
-            ref self: ContractState, new_base_uri: ByteArray, updater: ContractAddress
+            ref self: ContractState, new_base_uri: ByteArray, updater: ContractAddress,
         ) {
             // Only the land registry contract can update the metadata URI
             assert(

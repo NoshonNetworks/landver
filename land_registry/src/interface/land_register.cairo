@@ -13,7 +13,7 @@ pub struct Land {
     pub land_use: LandUse, // Designated purpose/usage of the land
     pub status: LandStatus, // Current verification status
     pub last_transaction_timestamp: u64, // Timestamp of the most recent transaction
-    pub inspector: ContractAddress, // Address of assigned inspector
+    pub inspector: ContractAddress // Address of assigned inspector
 }
 
 // Represents the verification status of a land parcel
@@ -21,14 +21,14 @@ pub struct Land {
 pub enum LandStatus {
     Pending, // Awaiting verification
     Approved, // Verified and approved
-    Rejected, // Verification failed
+    Rejected // Verification failed
 }
 
 // Geographic coordinates of a land parcel
 #[derive(Drop, Copy, Serde, starknet::Store, PartialEq)]
 pub struct Location {
     pub latitude: felt252, // Latitude coordinate
-    pub longitude: felt252, // Longitude coordinate
+    pub longitude: felt252 // Longitude coordinate
 }
 
 // Classification of land usage types
@@ -41,7 +41,7 @@ pub enum LandUse {
     Recreational, // Parks and leisure
     Institutional, // Schools, hospitals, government buildings
     MixedUse, // Combined purposes
-    Unclassified, // Undefined usage
+    Unclassified // Undefined usage
 }
 
 // Represents a land listing in the marketplace
@@ -52,20 +52,20 @@ pub struct Listing {
     pub price: u256,
     pub status: ListingStatus,
     pub created_at: u64,
-    pub updated_at: u64
+    pub updated_at: u64,
 }
 
 #[derive(Drop, Debug, Copy, Serde, Clone, starknet::Store, PartialEq)]
 pub enum ListingStatus {
     Active,
     Sold,
-    Cancelled
+    Cancelled,
 }
 
 #[starknet::interface]
 pub trait ILandRegistry<TContractState> {
     fn upgrade(
-        ref self: TContractState, new_class_hash: starknet::class_hash::ClassHash
+        ref self: TContractState, new_class_hash: starknet::class_hash::ClassHash,
     ); // // upgrade the contract class
     fn register_land(
         ref self: TContractState, location: Location, area: u256, land_use: LandUse,
@@ -80,7 +80,7 @@ pub trait ILandRegistry<TContractState> {
         land_id: u256,
         area: u256,
         land_use: LandUse,
-        land_status: LandStatus
+        land_status: LandStatus,
     );
     fn approve_land(ref self: TContractState, land_id: u256);
     fn reject_land(ref self: TContractState, land_id: u256);
@@ -90,7 +90,7 @@ pub trait ILandRegistry<TContractState> {
     fn is_land_approved(self: @TContractState, land_id: u256) -> bool;
     fn get_pending_approvals(self: @TContractState) -> Array<u256>;
     fn get_land_transaction_history(
-        self: @TContractState, land_id: u256
+        self: @TContractState, land_id: u256,
     ) -> Array<(ContractAddress, u64)>;
     fn get_land_status(self: @TContractState, land_id: u256) -> LandStatus;
 
@@ -141,7 +141,7 @@ pub struct LandUpdated {
     pub land_id: u256,
     pub land_use: Option<felt252>,
     pub area: u256,
-    pub status: LandStatus
+    pub status: LandStatus,
 }
 
 
@@ -166,19 +166,19 @@ pub struct ListingCreated {
     pub listing_id: u256,
     pub land_id: u256,
     pub seller: ContractAddress,
-    pub price: u256
+    pub price: u256,
 }
 
 #[derive(Drop, starknet::Event)]
 pub struct ListingCancelled {
-    pub listing_id: u256
+    pub listing_id: u256,
 }
 
 #[derive(Drop, starknet::Event)]
 pub struct ListingPriceUpdated {
     pub listing_id: u256,
     pub old_price: u256,
-    pub new_price: u256
+    pub new_price: u256,
 }
 
 #[derive(Drop, starknet::Event)]
@@ -187,5 +187,5 @@ pub struct LandSold {
     pub land_id: u256,
     pub seller: ContractAddress,
     pub buyer: ContractAddress,
-    pub price: u256
+    pub price: u256,
 }
