@@ -1,11 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "primereact/resources/themes/lara-light-indigo/theme.css";
+@import "primereact/resources/primereact.min.css";
+@import "primeicons/primeicons.css";
 
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
-
 
 .container_scrollable {
   overflow-y: scroll;
