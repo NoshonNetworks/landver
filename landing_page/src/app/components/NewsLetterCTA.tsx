@@ -31,7 +31,7 @@ const handleSubmit = async (e: React.FormEvent) => {
 
     setMessage("Subscription successful! 🎉");
     setEmail("");
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Subscription error:', error);
     setMessage(error.message || "Something went wrong. Please try again.");
   } finally {
