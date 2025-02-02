@@ -5,12 +5,12 @@ use snforge_std::{
 };
 use starknet::ContractAddress;
 use land_registry::interface::land_register::{
-    ILandRegistryDispatcher, ILandRegistryDispatcherTrait
+    ILandRegistryDispatcher, ILandRegistryDispatcherTrait,
 };
 use land_registry::interface::land_register::{LandUse, Location, LandStatus};
 
 use land_registry::land_register::LandRegistryContract::{Event};
-use land_registry::interface::land_register::{LandVerified, LandTransferred,};
+use land_registry::interface::land_register::{LandVerified, LandTransferred};
 
 pub mod Accounts {
     use starknet::ContractAddress;
@@ -153,10 +153,7 @@ fn test_register_and_approve() {
     start_cheat_caller_address(contract_address, inspector);
     land_register_dispatcher.approve_land(land_id);
 
-    spy
-        .assert_emitted(
-            @array![(contract_address, Event::LandVerified(LandVerified { land_id, })),]
-        );
+    spy.assert_emitted(@array![(contract_address, Event::LandVerified(LandVerified { land_id }))]);
 }
 
 #[test]
@@ -195,10 +192,10 @@ fn test_register_approve_and_transfer() {
                 (
                     contract_address,
                     Event::LandTransferred(
-                        LandTransferred { land_id, from_owner: owner, to_owner: new_owner }
-                    )
-                )
-            ]
+                        LandTransferred { land_id, from_owner: owner, to_owner: new_owner },
+                    ),
+                ),
+            ],
         );
 }
 
@@ -245,10 +242,10 @@ fn test_register_update_approve_and_transfer() {
                 (
                     contract_address,
                     Event::LandTransferred(
-                        LandTransferred { land_id, from_owner: owner, to_owner: new_owner }
-                    )
-                )
-            ]
+                        LandTransferred { land_id, from_owner: owner, to_owner: new_owner },
+                    ),
+                ),
+            ],
         );
 }
 
@@ -296,10 +293,10 @@ fn test_register_approve_update_and_transfer() {
                 (
                     contract_address,
                     Event::LandTransferred(
-                        LandTransferred { land_id, from_owner: owner, to_owner: new_owner }
-                    )
-                )
-            ]
+                        LandTransferred { land_id, from_owner: owner, to_owner: new_owner },
+                    ),
+                ),
+            ],
         );
 }
 
