@@ -25,18 +25,23 @@ const handleSubmit = async (e: React.FormEvent) => {
     const data = await res.json();
     console.log('API response:', data);
 
-    if (!res.ok) {
-      throw new Error(data.error || "Failed to subscribe");
-    }
-
-    setMessage("Subscription successful! 🎉");
-    setEmail("");
-  } catch (error: unknown) {
-    console.error('Subscription error:', error);
-    setMessage(error.message || "Something went wrong. Please try again.");
-  } finally {
-    setIsLoading(false);
-  }
+      if (!res.ok) {
+        throw new Error(data.error || "Failed to subscribe");
+      }
+    
+      setMessage("Subscription successful! 🎉");
+      setEmail("");
+    } catch (error: unknown) {
+      console.error('Subscription error:', error);
+    
+      if (error instanceof Error) {
+        setMessage(error.message || "Something went wrong. Please try again.");
+      } else {
+        setMessage("Something went wrong. Please try again.");
+      }
+    } finally {
+      setIsLoading(false);
+    }    
 };
 
   return (
