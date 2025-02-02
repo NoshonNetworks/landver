@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@mailchimp/mailchimp_marketing": "^3.0.80",
     "@radix-ui/react-select": "^2.1.2",
     "axios": "^1.7.8",
     "clsx": "^2.1.1",
@@ -23,6 +24,7 @@
     "tailwind-merge": "^2.5.5"
   },
   "devDependencies": {
+    "@types/mailchimp__mailchimp_marketing": "^3.0.21",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
