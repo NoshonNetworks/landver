@@ -40,4 +40,11 @@ pub mod Errors {
     pub const SELLER_CANT_BUY_OWN: felt252 = 'Cannot buy own listing';
     pub const LISTING_NOT_ACTIVE: felt252 = 'Listing not active';
     pub const INSUFFICIENT_PAYMENT_TO_BUY_LAND: felt252 = 'Insufficient payment';
+
+    // Lease management
+    pub const ONLY_OWNER_CAN_LEASE: felt252 = 'Only owner can create lease';
+    pub const ONLY_PARTIES_CAN_SIGN: felt252 = 'Only parties can sign lease';
+    pub const LEASE_NOT_FOUND: felt252 = 'Lease not found';
+    pub const INVALID_LEASE_TERMS: felt252 = 'Invalid lease terms';
+    pub const LEASE_ALREADY_TERMINATED: felt252 = 'Lease already terminated';
 }

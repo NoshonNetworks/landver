@@ -698,4 +698,76 @@ pub mod LandRegistryContract {
 
         return false;
     }
+
+    #[generate_trait]
+    impl ValidationImpl of ValidationTrait {
+        fn validate_location(location: Location) -> bool {
+            // Latitude should be between -90 and 90
+            let latitude_abs = integer::abs(location.latitude);
+            if latitude_abs > 90 {
+                return false;
+            }
+            
+            // Longitude should be between -180 and 180
+            let longitude_abs = integer::abs(location.longitude);
+            if longitude_abs > 180 {
+                return false;
+            }
+            
+            true
+        }
+
+        fn validate_area(area: u256) -> bool {
+            // Area should be positive and within reasonable limits
+            if area == 0 {
+                return false;
+            }
+            
+            // Set a reasonable maximum area (adjust based on requirements)
+            if area > 1000000000 {
+                return false;
+            }
+            
+            true
+        }
+
+        fn validate_price(price: u256) -> bool {
+            // Price should be positive and within reasonable limits
+            if price == 0 {
+                return false;
+            }
+            
+            // Set a reasonable maximum price (adjust based on requirements)
+            if price > 1000000000000000000000000 {
+                return false;
+            }
+            
+            true
+        }
+    }
+
+    // Update the register_land function to include validation
+    fn register_land(
+        ref self: ContractState, 
+        location: Location, 
+        area: u256, 
+        land_use: LandUse,
+    ) -> u256 {
+        // Add validation
+        assert(ValidationImpl::validate_location(location), 'Invalid location');
+        assert(ValidationImpl::validate_area(area), 'Invalid area');
+        
+        // Rest of the implementation...
+    }
+
+    // Update the create_listing function to include validation
+    fn create_listing(
+        ref self: ContractState,
+        land_id: u256,
+        price: u256
+    ) -> u256 {
+        assert(ValidationImpl::validate_price(price), 'Invalid price');
+        
+        // Rest of the implementation...
+    }
 }
