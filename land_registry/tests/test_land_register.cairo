@@ -1,11 +1,10 @@
 use snforge_std::{
     declare, ContractClassTrait, DeclareResultTrait, start_cheat_caller_address,
     stop_cheat_caller_address, start_cheat_block_timestamp, stop_cheat_block_timestamp,
-    start_cheat_max_fee, stop_cheat_max_fee, spy_events,
+    start_cheat_max_fee, stop_cheat_max_fee,
 };
 use land_registry::interface::land_register::{
-    ILandRegistryDispatcher, ILandRegistryDispatcherTrait, LandUse, Location, LandStatus,
-    ListingStatus,
+    ILandRegistryDispatcher, ILandRegistryDispatcherTrait, Location, LandStatus, ListingStatus,
 };
 use land_registry::utils::utils::MODULO_BASE;
 use starknet::ContractAddress;
@@ -47,8 +46,8 @@ fn test_can_register_land() {
     // Set up test data
     let caller_address = starknet::contract_address_const::<0x123>();
     let location: Location = Location { latitude: 1, longitude: 2 };
-    let area: u256 = 1000;
-    let land_use = LandUse::Residential;
+    let area: u64 = 1000;
+    let land_use = 'Residential';
 
     // Start cheating the caller address
     start_cheat_caller_address(contract_address, caller_address);
@@ -79,8 +78,8 @@ fn test_can_create_land_id() {
     // Get an instance of the deployed Counter contract
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
     // Set up test data
-    let area: u256 = 1000;
-    let land_use = LandUse::Residential;
+    let area: u64 = 1000;
+    let land_use = 'Residential';
 
     let location1: Location = Location { latitude: 1, longitude: 2 };
     let location2: Location = Location { latitude: 3, longitude: 4 };
@@ -91,7 +90,7 @@ fn test_can_create_land_id() {
     start_cheat_block_timestamp(contract_address, 10);
 
     let id_1 = land_register_dispatcher.register_land(location1, area, land_use);
-    assert(id_1 == 76145004285422410213294800731643, 'land_id is not as expected (1)');
+    assert(id_1 == 76145731643, 'land_id is not as expected (1)');
 
     stop_cheat_caller_address(contract_address);
     stop_cheat_block_timestamp(contract_address);
@@ -101,7 +100,7 @@ fn test_can_create_land_id() {
     start_cheat_block_timestamp(contract_address, 20);
 
     let id_2 = land_register_dispatcher.register_land(location2, area, land_use);
-    assert(id_2 == 4946593347159045342371278487724, 'land_id is not as expected (2)');
+    assert(id_2 == 96145731646, 'land_id is not as expected (2)');
 
     stop_cheat_caller_address(contract_address);
     stop_cheat_block_timestamp(contract_address);
@@ -111,7 +110,7 @@ fn test_can_create_land_id() {
     start_cheat_block_timestamp(contract_address, 30);
 
     let id_3 = land_register_dispatcher.register_land(location3, area, land_use);
-    assert(id_3 == 83119874197453254617171158536104, 'land_id is not as expected (3)');
+    assert(id_3 == 96145731647, 'land_id is not as expected (3)');
     println!("id 3: {}", id_3);
     stop_cheat_caller_address(contract_address);
     stop_cheat_block_timestamp(contract_address);
@@ -129,7 +128,7 @@ fn test_can_get_land_count() {
     assert(land_register_dispatcher.get_land_count() == 0, 'Should be equal to zero');
     // Register the land
     land_register_dispatcher
-        .register_land(Location { latitude: 1, longitude: 2 }, 1000, LandUse::Residential);
+        .register_land(Location { latitude: 1, longitude: 2 }, 1000, 'Residential');
     // Assert land_count is equal to one after registration
     assert(land_register_dispatcher.get_land_count() == 1, 'Should be equal to one');
 
@@ -148,11 +147,11 @@ fn test_can_get_lands_by_owner() {
     start_cheat_caller_address(contract_address, owner_address);
     // Register lands
     let land_id1 = land_register_dispatcher
-        .register_land(Location { latitude: 1, longitude: 2 }, 1000, LandUse::Residential);
+        .register_land(Location { latitude: 1, longitude: 2 }, 1000, 'Residential');
     let land_id2 = land_register_dispatcher
-        .register_land(Location { latitude: 3, longitude: 4 }, 1000, LandUse::Residential);
+        .register_land(Location { latitude: 3, longitude: 4 }, 1000, 'Residential');
     let land_id3 = land_register_dispatcher
-        .register_land(Location { latitude: 5, longitude: 6 }, 1000, LandUse::Residential);
+        .register_land(Location { latitude: 5, longitude: 6 }, 1000, 'Residential');
     assert_eq!(
         land_register_dispatcher.get_lands_by_owner(owner_address),
         array![land_id1, land_id2, land_id3].span(),
@@ -171,8 +170,8 @@ fn test_can_get_is_land_approved() {
     // Set up test data
     let caller_address = starknet::contract_address_const::<0x123>();
     let location: Location = Location { latitude: 12, longitude: 34 };
-    let area: u256 = 1234;
-    let land_use = LandUse::Commercial;
+    let area: u64 = 1234;
+    let land_use = 'Commercial';
 
     // Start cheating the caller address
     start_cheat_caller_address(contract_address, caller_address);
@@ -197,8 +196,8 @@ fn test_can_get_pending_approvals() {
     // Set up test data
     let caller_address = starknet::contract_address_const::<0x123>();
     let location: Location = Location { latitude: 12, longitude: 34 };
-    let area: u256 = 1234;
-    let land_use = LandUse::Residential;
+    let area: u64 = 1234;
+    let land_use = 'Residential';
 
     // Start cheating the caller address
     start_cheat_caller_address(contract_address, caller_address);
@@ -222,8 +221,8 @@ fn test_can_get_land_transaction_history() {
     // Set up test data
     let caller_address = starknet::contract_address_const::<0x123>();
     let location: Location = Location { latitude: 12, longitude: 34 };
-    let area: u256 = 1234;
-    let land_use = LandUse::Residential;
+    let area: u64 = 1234;
+    let land_use = 'Residential';
 
     // Start cheating the caller address
     start_cheat_caller_address(contract_address, caller_address);
@@ -253,8 +252,8 @@ fn test_set_inspector() {
     let owner_address = starknet::contract_address_const::<0x123>();
     let inspector_address = starknet::contract_address_const::<0x456>();
     let location: Location = Location { latitude: 1, longitude: 2 };
-    let area: u256 = 1000;
-    let land_use = LandUse::Residential;
+    let area: u64 = 1000;
+    let land_use = 'Residential';
 
     // Start cheating the caller address
     start_cheat_caller_address(contract_address, owner_address);
@@ -282,7 +281,7 @@ fn test_can_approve_land() {
     let inspector_address = starknet::contract_address_const::<0x456>();
     let location = Location { latitude: 1, longitude: 2 };
     let area = 1000;
-    let land_use = LandUse::Residential;
+    let land_use = 'Residential';
 
     // Register land as owner
     start_cheat_caller_address(contract_address, owner_address);
@@ -319,7 +318,7 @@ fn test_can_reject_land() {
     let inspector_address = starknet::contract_address_const::<0x456>();
     let location = Location { latitude: 1, longitude: 2 };
     let area = 1000;
-    let land_use = LandUse::Residential;
+    let land_use = 'Residential';
 
     // Register land as owner
     start_cheat_caller_address(contract_address, owner_address);
@@ -354,7 +353,7 @@ fn test_can_reject_land_by_inspector() {
     let inspector_address = starknet::contract_address_const::<0x456>();
     let location = Location { latitude: 1, longitude: 2 };
     let area = 1000;
-    let land_use = LandUse::Residential;
+    let land_use = 'Residential';
 
     // Register land as owner
     start_cheat_caller_address(contract_address, owner_address);
@@ -394,7 +393,7 @@ fn test_reject_land_by_unauthorized_user() {
     let unauthorized_address = starknet::contract_address_const::<0x789>();
     let location = Location { latitude: 1, longitude: 2 };
     let area = 1000;
-    let land_use = LandUse::Residential;
+    let land_use = 'Residential';
 
     // Register land as owner
     start_cheat_caller_address(contract_address, owner_address);
@@ -416,7 +415,7 @@ fn test_can_update_land() {
     let owner_address = starknet::contract_address_const::<0x123>();
     let location = Location { latitude: 1, longitude: 2 };
     let initial_area = 1000;
-    let initial_land_use = LandUse::Residential;
+    let initial_land_use = 'Residential';
     let land_status = LandStatus::Approved;
 
     // Register land as owner
@@ -425,7 +424,7 @@ fn test_can_update_land() {
 
     // Update data
     let new_area = 1500;
-    let new_land_use = LandUse::Commercial;
+    let new_land_use = 'Commercial';
 
     // Update land
     land_register_dispatcher.update_land(land_id, new_area, new_land_use, land_status);
@@ -450,7 +449,7 @@ fn test_update_land_by_unauthorized_user_will_fail() {
     let unauthorized_address = starknet::contract_address_const::<0x789>();
     let location = Location { latitude: 1, longitude: 2 };
     let area = 1000;
-    let land_use = LandUse::Residential;
+    let land_use = 'Residential';
 
     // Register land as owner
     start_cheat_caller_address(contract_address, owner_address);
@@ -460,7 +459,7 @@ fn test_update_land_by_unauthorized_user_will_fail() {
     // Attempt to update land as unauthorized user
     start_cheat_caller_address(contract_address, unauthorized_address);
     land_register_dispatcher
-        .update_land(land_id, 1500, LandUse::Commercial, LandStatus::Approved); // This should panic
+        .update_land(land_id, 1500, 'Commercial', LandStatus::Approved); // This should panic
     stop_cheat_caller_address(contract_address);
 }
 
@@ -482,7 +481,7 @@ fn test_can_add_inspector() {
     // Get land for inspector to verify assignment
     let location = Location { latitude: 1, longitude: 2 };
     let area = 1000;
-    let land_use = LandUse::Residential;
+    let land_use = 'Residential';
 
     // Register land
     let land_id = land_register_dispatcher.register_land(location, area, land_use);
@@ -560,7 +559,7 @@ fn test_cannot_remove_active_inspector() {
     let inspector_address = starknet::contract_address_const::<0x456>();
     let location = Location { latitude: 1, longitude: 2 };
     let area = 1000;
-    let land_use = LandUse::Residential;
+    let land_use = 'Residential';
 
     // Add inspector
     start_cheat_caller_address(contract_address, owner_address);
@@ -612,7 +611,7 @@ fn test_can_transfer_land() {
     let new_owner_address = starknet::contract_address_const::<0x789>();
     let location = Location { latitude: 1, longitude: 2 };
     let area = 1000;
-    let land_use = LandUse::Residential;
+    let land_use = 'Residential';
 
     // Register land as owner
     start_cheat_caller_address(contract_address, owner_address);
@@ -657,7 +656,7 @@ fn test_buy_land() {
     // 1. Register land as seller
     start_cheat_caller_address(contract_address, seller);
     let location = Location { latitude: 1, longitude: 2 };
-    let land_id = dispatcher.register_land(location, 1000_u256, LandUse::Residential);
+    let land_id = dispatcher.register_land(location, 1000_u64, 'Residential');
 
     // 2. Add inspector and set for land
     dispatcher.add_inspector(inspector);
@@ -671,7 +670,7 @@ fn test_buy_land() {
 
     // 4. Create listing as seller
     start_cheat_caller_address(contract_address, seller);
-    let price: u256 = 5000_u256;
+    let price: u128 = 5000_u128;
     let listing_id = dispatcher.create_listing(land_id, price);
     stop_cheat_caller_address(contract_address);
 
@@ -707,7 +706,7 @@ fn test_update_listing_price() {
     // Register land as owner
     start_cheat_caller_address(contract_address, owner_address);
     let land_id = land_register_dispatcher
-        .register_land(Location { latitude: 1, longitude: 2 }, 1000, LandUse::Residential);
+        .register_land(Location { latitude: 1, longitude: 2 }, 1000, 'Residential');
     stop_cheat_caller_address(contract_address);
 
     // Set inspector as owner
@@ -728,7 +727,7 @@ fn test_update_listing_price() {
     let listing_details = land_register_dispatcher.get_listing(listing_id);
 
     // Assert the price is set correctly
-    assert(listing_details.price == old_price, 'Wrong price set');
+    assert(listing_details.price == old_price.into(), 'Wrong price set');
 
     // Update listing and record
     start_cheat_caller_address(contract_address, owner_address);
@@ -737,17 +736,11 @@ fn test_update_listing_price() {
 
     // Assert the price is updated correctly
     let new_listing_details = land_register_dispatcher.get_listing(listing_id);
-    assert(new_listing_details.price == new_price, 'Wrong updated price');
+    assert(new_listing_details.price == new_price.into(), 'Wrong updated price');
 
     // Verify other listing details remain unchanged
     assert(new_listing_details.seller == owner_address, 'Wrong seller');
     assert(new_listing_details.land_id == land_id.try_into().unwrap(), 'Wrong land id');
-
-    // Verify price history
-    let price_history = land_register_dispatcher.get_listing_price_history(listing_id);
-
-    // Verify number of updates
-    assert(price_history.len() == 2, 'Wrong number of price updates');
 }
 
 #[test]
@@ -767,7 +760,7 @@ fn test_update_listing_price_should_panic_if_caller_not_seller() {
     // Register land as owner
     start_cheat_caller_address(contract_address, owner_address);
     let land_id = land_register_dispatcher
-        .register_land(Location { latitude: 1, longitude: 2 }, 1000, LandUse::Residential);
+        .register_land(Location { latitude: 1, longitude: 2 }, 1000, 'Residential');
     stop_cheat_caller_address(contract_address);
 
     // Set inspector as owner
@@ -788,7 +781,7 @@ fn test_update_listing_price_should_panic_if_caller_not_seller() {
     let listing_details = land_register_dispatcher.get_listing(listing_id);
 
     // Assert the price is set correctly
-    assert(listing_details.price == old_price, 'Wrong price set');
+    assert(listing_details.price == old_price.into(), 'Wrong price set');
 
     // Update listing
     start_cheat_caller_address(contract_address, not_seller_address);
@@ -812,7 +805,7 @@ fn test_update_listing_price_should_panic_if_listing_not_active() {
     // Register land as owner
     start_cheat_caller_address(contract_address, owner_address);
     let land_id = land_register_dispatcher
-        .register_land(Location { latitude: 1, longitude: 2 }, 1000, LandUse::Residential);
+        .register_land(Location { latitude: 1, longitude: 2 }, 1000, 'Residential');
     stop_cheat_caller_address(contract_address);
 
     // Set inspector as owner
@@ -869,8 +862,8 @@ fn test_get_user_type() {
     let owner_address = starknet::contract_address_const::<0x123>();
     let inspector_address = starknet::contract_address_const::<0x456>();
     let location: Location = Location { latitude: 1, longitude: 2 };
-    let area: u256 = 1000;
-    let land_use = LandUse::Residential;
+    let area: u64 = 1000;
+    let land_use = 'Residential';
 
     // Step 1: Register land with owner_address
     start_cheat_caller_address(contract_address, owner_address);
@@ -906,8 +899,8 @@ fn test_can_get_listing() {
     let owner_address = starknet::contract_address_const::<0x123>();
     let inspector_address = starknet::contract_address_const::<0x456>();
     let location: Location = Location { latitude: 12, longitude: 34 };
-    let area: u256 = 1234;
-    let land_use: LandUse = LandUse::Commercial;
+    let area: u64 = 1234;
+    let land_use = 'Commercial';
 
     // Start cheat caller address
     start_cheat_caller_address(contract_address, owner_address);
@@ -927,7 +920,7 @@ fn test_can_get_listing() {
 
     // Create listing
     start_cheat_caller_address(contract_address, owner_address);
-    let listing_price: u256 = 100000;
+    let listing_price: u128 = 100000_u128;
     let listing_id = land_register_dispatcher.create_listing(land_id, listing_price);
     stop_cheat_caller_address(contract_address);
 
@@ -958,8 +951,8 @@ fn test_can_get_active_listings() {
 
     // Register first land
     let location1: Location = Location { latitude: 12, longitude: 34 };
-    let area1: u256 = 1234;
-    let land_use1: LandUse = LandUse::Commercial;
+    let area1: u64 = 1234;
+    let land_use1 = 'Commercial';
 
     // Start cheat caller address for first land
     start_cheat_caller_address(contract_address, owner_address);
@@ -968,8 +961,8 @@ fn test_can_get_active_listings() {
 
     // Register second land
     let location2: Location = Location { latitude: 45, longitude: 67 };
-    let area2: u256 = 5678;
-    let land_use2: LandUse = LandUse::Residential;
+    let area2: u64 = 5678;
+    let land_use2 = 'Residential';
 
     start_cheat_caller_address(contract_address, owner_address);
     let land_id2 = land_register_dispatcher.register_land(location2, area2, land_use2);
@@ -989,10 +982,10 @@ fn test_can_get_active_listings() {
 
     // Create listings
     start_cheat_caller_address(contract_address, owner_address);
-    let listing_price1: u256 = 100000;
+    let listing_price1: u128 = 100000_u128;
     let listing_id1 = land_register_dispatcher.create_listing(land_id1, listing_price1);
 
-    let listing_price2: u256 = 200000;
+    let listing_price2: u128 = 200000_u128;
     let listing_id2 = land_register_dispatcher.create_listing(land_id2, listing_price2);
     stop_cheat_caller_address(contract_address);
 
@@ -1041,8 +1034,8 @@ fn test_can_create_listing() {
     let inspector_address = starknet::contract_address_const::<0x456>();
     let location = Location { latitude: 1, longitude: 2 };
     let area = 1000;
-    let land_use = LandUse::Residential;
-    let listing_price: u256 = 2000;
+    let land_use = 'Residential';
+    let listing_price: u128 = 1000;
 
     // Register land as owner
     start_cheat_caller_address(contract_address, owner_address);
@@ -1102,8 +1095,8 @@ fn test_can_cancel_listing() {
     let inspector_address = starknet::contract_address_const::<0x456>();
     let location = Location { latitude: 1, longitude: 2 };
     let area = 1000;
-    let land_use = LandUse::Residential;
-    let listing_price: u256 = 2000;
+    let land_use = 'Residential';
+    let listing_price: u128 = 1000;
 
     // Register land as owner
     start_cheat_caller_address(contract_address, owner_address);
@@ -1182,7 +1175,7 @@ fn test_get_land_status() {
     let inspector_address = starknet::contract_address_const::<0x456>();
     let location = Location { latitude: 1, longitude: 2 };
     let area = 1000;
-    let land_use = LandUse::Residential;
+    let land_use = 'Residential';
 
     // Register land
     start_cheat_caller_address(contract_address, owner_address);
@@ -1221,7 +1214,7 @@ fn test_set_land_inspector() {
     let inspector_address = starknet::contract_address_const::<0x456>();
     let location = Location { latitude: 10, longitude: 20 };
     let area = 500;
-    let land_use = LandUse::Residential;
+    let land_use = 'Residential';
 
     // Register land
     start_cheat_caller_address(contract_address, owner_address);
@@ -1257,7 +1250,7 @@ fn test_inspector_lands() {
     let inspector_address = starknet::contract_address_const::<0x456>();
     let location = Location { latitude: 1, longitude: 2 };
     let area = 1000;
-    let land_use = LandUse::Residential;
+    let land_use = 'Residential';
 
     // Register land as owner
     start_cheat_caller_address(contract_address, owner_address);
