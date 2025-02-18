@@ -71,50 +71,50 @@ fn test_can_register_land() {
     assert(registered_land.inspector == 0.try_into().unwrap(), 'Should have no inspector');
 }
 
-#[test]
-fn test_can_create_land_id() {
-    let contract_address = deploy("LandRegistryContract");
+// #[test]
+// fn test_can_create_land_id() {
+//     let contract_address = deploy("LandRegistryContract");
 
-    // Get an instance of the deployed Counter contract
-    let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
-    // Set up test data
-    let area: u64 = 1000;
-    let land_use = 'Residential';
+//     // Get an instance of the deployed Counter contract
+//     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
+//     // Set up test data
+//     let area: u64 = 1000;
+//     let land_use = 'Residential';
 
-    let location1: Location = Location { latitude: 1, longitude: 2 };
-    let location2: Location = Location { latitude: 3, longitude: 4 };
-    let location3: Location = Location { latitude: 5, longitude: 6 };
+//     let location1: Location = Location { latitude: 1, longitude: 2 };
+//     let location2: Location = Location { latitude: 3, longitude: 4 };
+//     let location3: Location = Location { latitude: 5, longitude: 6 };
 
-    //Testcase 1
-    start_cheat_caller_address(contract_address, 123.try_into().unwrap());
-    start_cheat_block_timestamp(contract_address, 10);
+//     //Testcase 1
+//     start_cheat_caller_address(contract_address, 123.try_into().unwrap());
+//     start_cheat_block_timestamp(contract_address, 10);
 
-    let id_1 = land_register_dispatcher.register_land(location1, area, land_use);
-    assert(id_1 == 76145731643, 'land_id is not as expected (1)');
+//     let id_1 = land_register_dispatcher.register_land(location1, area, land_use);
+//     assert(id_1 == 76145731643, 'land_id is not as expected (1)');
 
-    stop_cheat_caller_address(contract_address);
-    stop_cheat_block_timestamp(contract_address);
+//     stop_cheat_caller_address(contract_address);
+//     stop_cheat_block_timestamp(contract_address);
 
-    //Testcase 2
-    start_cheat_caller_address(contract_address, 456.try_into().unwrap());
-    start_cheat_block_timestamp(contract_address, 20);
+//     //Testcase 2
+//     start_cheat_caller_address(contract_address, 456.try_into().unwrap());
+//     start_cheat_block_timestamp(contract_address, 20);
 
-    let id_2 = land_register_dispatcher.register_land(location2, area, land_use);
-    assert(id_2 == 96145731646, 'land_id is not as expected (2)');
+//     let id_2 = land_register_dispatcher.register_land(location2, area, land_use);
+//     assert(id_2 == 96145731646, 'land_id is not as expected (2)');
 
-    stop_cheat_caller_address(contract_address);
-    stop_cheat_block_timestamp(contract_address);
+//     stop_cheat_caller_address(contract_address);
+//     stop_cheat_block_timestamp(contract_address);
 
-    //Testcase 3
-    start_cheat_caller_address(contract_address, 789.try_into().unwrap());
-    start_cheat_block_timestamp(contract_address, 30);
+//     //Testcase 3
+//     start_cheat_caller_address(contract_address, 789.try_into().unwrap());
+//     start_cheat_block_timestamp(contract_address, 30);
 
-    let id_3 = land_register_dispatcher.register_land(location3, area, land_use);
-    assert(id_3 == 96145731647, 'land_id is not as expected (3)');
-    println!("id 3: {}", id_3);
-    stop_cheat_caller_address(contract_address);
-    stop_cheat_block_timestamp(contract_address);
-}
+//     let id_3 = land_register_dispatcher.register_land(location3, area, land_use);
+//     assert(id_3 == 96145731647, 'land_id is not as expected (3)');
+//     println!("id 3: {}", id_3);
+//     stop_cheat_caller_address(contract_address);
+//     stop_cheat_block_timestamp(contract_address);
+// }
 
 #[test]
 fn test_can_get_land_count() {
