@@ -9,11 +9,20 @@
     "lint": "next lint"
   },
   "dependencies": {
+<<<<<<< HEAD
+    "@radix-ui/react-dropdown-menu": "^2.1.2",
+    "@react-google-maps/api": "^2.20.3",
+    "@starknet-react/chains": "^3.1.0",
+    "@starknet-react/core": "^3.6.0",
+    "@tanstack/react-table": "^8.20.5",
+    "class-variance-authority": "^0.7.0",
+=======
     "@radix-ui/react-slot": "^1.1.0",
     "@starknet-react/chains": "^3.1.0",
     "@starknet-react/core": "^3.6.0",
     "blockies-ts": "^1.0.0",
     "class-variance-authority": "^0.7.1",
+>>>>>>> pr/Birdmannn/257
     "clsx": "^2.1.1",
     "lucide-react": "^0.460.0",
     "next": "14.2.15",
@@ -21,6 +30,12 @@
     "react-calendar": "^5.1.0",
     "react-date-range": "^2.0.1",
     "react-dom": "^18",
+<<<<<<< HEAD
+    "starknet": "^6.11.0",
+    "tailwind-merge": "^2.5.5",
+    "tailwindcss-animate": "^1.0.7",
+    "use-places-autocomplete": "^4.0.1"
+=======
     "react-icons": "^5.3.0",
     "react-spinners": "^0.14.1",
     "react-toastify": "^10.0.6",
@@ -29,8 +44,10 @@
     "tailwind-merge": "^2.5.5",
     "tailwindcss-animate": "^1.0.7",
     "zustand": "^5.0.1"
+>>>>>>> pr/Birdmannn/257
   },
   "devDependencies": {
+    "@types/google.maps": "^3.58.1",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-date-range": "^1.4.9",

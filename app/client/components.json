@@ -1,13 +1,22 @@
 {
   "$schema": "https://ui.shadcn.com/schema.json",
+<<<<<<< HEAD
+  "style": "new-york",
+=======
   "style": "default",
+>>>>>>> pr/Birdmannn/257
   "rsc": true,
   "tsx": true,
   "tailwind": {
     "config": "tailwind.config.ts",
     "css": "src/app/globals.css",
+<<<<<<< HEAD
+    "baseColor": "zinc",
+    "cssVariables": true,
+=======
     "baseColor": "neutral",
     "cssVariables": false,
+>>>>>>> pr/Birdmannn/257
     "prefix": ""
   },
   "aliases": {
@@ -16,5 +25,10 @@
     "ui": "@/components/ui",
     "lib": "@/lib",
     "hooks": "@/hooks"
+<<<<<<< HEAD
+  },
+  "iconLibrary": "lucide"
+=======
   }
+>>>>>>> pr/Birdmannn/257
 }

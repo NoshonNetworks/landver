@@ -1,4 +1,8 @@
 import type { Metadata } from "next";
+<<<<<<< HEAD
+// import localFont from "next/font/local";
+=======
+>>>>>>> pr/Birdmannn/257
 import "./globals.css";
 import { Providers } from "./Providers";
 
