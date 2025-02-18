@@ -1,7 +1,5 @@
 pub mod utils {
     use starknet::ContractAddress;
-    use core::poseidon::PoseidonTrait;
-    use core::hash::{HashStateTrait, HashStateExTrait};
     use land_registry::interface::land_register::Location;
 
     pub const MODULO_BASE: u64 = 1000000000; // reduce the id to 9 digits
