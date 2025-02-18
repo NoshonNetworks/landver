@@ -9,16 +9,19 @@ pub mod utils {
     pub fn create_land_id(
         caller: ContractAddress, timestamp: u64, location: Location, counter: u64,
     ) -> u64 {
-        // Combine all inputs into a single hash operation
-        let hash = PoseidonTrait::new()
-            .update_with(caller)
-            .update_with(timestamp)
-            .update_with(location.latitude + location.longitude)
-            .update_with(counter)
-            .finalize();
+        // Simple deterministic combination of inputs
+        let caller_felt: felt252 = caller.into();
+        let caller_num: u64 = (caller_felt.try_into().unwrap_or(0_u64)) % 1000000;
 
-        // Convert to u64 and ensure it's within range
-        let land_id = hash.try_into().unwrap_or(0_u64);
-        land_id % MODULO_BASE
+        // Combine location coordinates into a single number
+        let loc_num = ((location.latitude.try_into().unwrap_or(0_u64) % 1000) * 1000
+            + (location.longitude.try_into().unwrap_or(0_u64) % 1000)) % 1000000;
+
+        // Final combination
+        let id = (timestamp % 1000) * 1000000
+            + (counter % 100) * 10000
+            + (caller_num + loc_num) % 10000;
+
+        id % MODULO_BASE
     }
 }
