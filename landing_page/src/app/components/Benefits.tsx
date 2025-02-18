@@ -1,6 +1,7 @@
 import React from "react";
 import P from "./P/P";
 import Image from "next/image";
+
 const Benefits = () => {
   const benefits = [
     {
@@ -40,14 +41,15 @@ const Benefits = () => {
       color: "white",
     },
   ];
+
   return (
     <div className="mb-10" id="experience">
       <div className="flex flex-col justify-center items-center gap-1">
-        <P classname="capitalize text-center  mt-10" size="h4">
+        <P classname="capitalize text-center mt-10 text-2xl font-semibold">
           Experience The Unique Benefits of Landver
         </P>
-        <P classname="w-[100%] md:w-[40%] text-center p-5">
-          LandVer offers secure, NFT-backed land ownership that’s easy to
+        <P classname="w-[100%] md:w-[40%] text-center p-5 text-base">
+          LandVer offers secure, NFT-backed land ownership that&apos;s easy to
           register, verify, and transfer on the blockchain. Trust in
           transparent, immutable records for seamless land management.
         </P>
@@ -70,8 +72,8 @@ const Benefits = () => {
                   height={30}
                   width={30}
                 />
-                <P size="h6">{benefit.header}</P>
-                <P classname="text-center leading-relaxed">
+                <P classname="text-lg font-medium">{benefit.header}</P>
+                <P classname="text-center leading-relaxed text-sm">
                   {benefit.description}
                 </P>
               </div>

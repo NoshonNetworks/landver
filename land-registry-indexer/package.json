@@ -1,24 +1,23 @@
 {
   "name": "land-registry-indexer",
   "version": "1.0.0",
-  "description": "Apibara indexer for Land Registry events",
-  "main": "src/index.ts",
+  "main": "dist/indexer.js",
   "scripts": {
     "build": "tsc",
-    "start": "node dist/index.js",
-    "dev": "ts-node src/index.ts"
+    "start": "node dist/indexer.js",
+    "dev": "ts-node src/indexer.ts"
   },
   "dependencies": {
-    "@apibara/indexer": "^0.3.0",
-    "@apibara/protocol": "^0.4.0",
-    "@apibara/starknet": "^0.3.0",
-    "dotenv": "^16.0.3",
-    "pg": "^8.11.0",
-    "typescript": "^5.0.4"
+    "@apibara/protocol": "^2.0.0-beta.28",
+    "@apibara/starknet": "^2.0.0-beta.28",
+    "pg": "^8.11.3",
+    "dotenv": "^16.3.1"
   },
   "devDependencies": {
-    "@types/node": "^20.2.5",
-    "@types/pg": "^8.10.1",
-    "ts-node": "^10.9.1"
+    "@types/node": "^20.8.0",
+    "@types/pg": "^8.10.3",
+    "@types/dotenv": "^8.2.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
   }
 } 

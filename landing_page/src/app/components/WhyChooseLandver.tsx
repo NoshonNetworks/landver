@@ -48,21 +48,24 @@ const WhyChooseLandver = () => {
   });
 
   return (
-    <div className="grid justify-center place-content-center place-items-center gap-4 p-4 " id="about">
-      <P size="h4" classname="text-center">
+    <div
+      className="grid justify-center place-content-center place-items-center gap-4 p-4"
+      id="about"
+    >
+      <P size="h4" classname="text-center text-2xl font-semibold">
         Our Unique Offerings
       </P>
-      <P classname="text-center w-full md:w-[80%] lg:w-[60%] leading-relaxed">
+      <P classname="text-center w-full md:w-[80%] lg:w-[60%] leading-relaxed text-base">
         Our Unique Offerings LandVer offers secure, NFT-backed land ownership
-        that’s easy to register, verify, and transfer on the blockchain. Trust
-        in transparent, immutable records for seamless land management.
+        that&apos;s easy to register, verify, and transfer on the blockchain.
+        Trust in transparent, immutable records for seamless land management.
       </P>
 
-      <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mt-3 ">
+      <div className="hidden md:grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 mt-3">
         {uniqueOfferings.map((offering, index) => (
           <div
             key={index}
-            className="w-[250px] p-4 border bg-[#e9f3f1] rounded-lg flex flex-col "
+            className="w-[250px] p-4 border bg-[#e9f3f1] rounded-lg flex flex-col"
           >
             <Image
               src={offering.url}
@@ -71,10 +74,12 @@ const WhyChooseLandver = () => {
               width={250}
               className="object-cover rounded"
             />
-            <p className="text-purple-800 font-semibold mt-2">
+            <p className="text-purple-800 font-semibold mt-2 text-lg">
               {offering.heading}
             </p>
-            <P classname="leading-relaxed mt-1">{offering.description}</P>
+            <P classname="leading-relaxed mt-1 text-sm">
+              {offering.description}
+            </P>
           </div>
         ))}
       </div>
@@ -96,10 +101,10 @@ const WhyChooseLandver = () => {
                 width={150}
                 className="object-cover rounded"
               />
-              <p className="text-purple-800 font-semibold mt-2">
+              <p className="text-purple-800 font-semibold mt-2 text-lg">
                 {offering.heading}
               </p>
-              <P classname="leading-relaxed text-center mt-1">
+              <P classname="leading-relaxed text-center mt-1 text-sm">
                 {offering.description}
               </P>
             </div>

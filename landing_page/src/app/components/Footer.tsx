@@ -1,7 +1,8 @@
 import React from "react";
 import { FaTelegram, FaGithub, FaTwitter } from "react-icons/fa";
 import Link from "next/link";
-const Footer = () => {
+
+const Footer: React.FC = () => {
   const links = [
     { name: "Home", href: "#" },
     { name: "Experience", href: "#experience" },
@@ -28,13 +29,13 @@ const Footer = () => {
       <div className="max-w-6xl mx-auto">
         <nav className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 mb-6">
           {links.map((link) => (
-            <a
+            <Link
               key={link.name}
               href={link.href}
-              className="text-[#6e62e5] hover:text-gray-900 transition-colors"
+              className="text-[#6e62e5] hover:text-gray-900 transition-colors text-sm"
             >
               {link.name}
-            </a>
+            </Link>
           ))}
         </nav>
 
@@ -44,8 +45,7 @@ const Footer = () => {
               key={social.label}
               href={social.href}
               scroll={false}
-
-              className="hover:text-gray-900 transition-colors"
+              className="hover:text-gray-900 transition-colors text-sm"
               aria-label={social.label}
               target="_blank"
             >

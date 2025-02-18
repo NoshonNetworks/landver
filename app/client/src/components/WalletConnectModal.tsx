@@ -36,7 +36,8 @@ export function WalletConnectorModal({
   async function connect(connector: Connector) {
     try {
       await connectAsync({ connector });
-      if (setShowWalletsModal) setShowWalletsModal(false);
+      localStorage.setItem("landver-connector", connector.id)
+      if(setShowWalletsModal) setShowWalletsModal(false)
     } catch (error: unknown) {
       // Create user-friendly error message
       let errorMessage = "Failed to connect wallet. ";

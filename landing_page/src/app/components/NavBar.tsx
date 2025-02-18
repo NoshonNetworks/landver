@@ -16,28 +16,45 @@ const NavBar = () => {
       <div className="flex justify-between items-center p-4 md:p-8">
         <div className="flex items-center gap-2">
           <Image src="/images/logo.svg" alt="logo" height={100} width={100} />
-          <nav className="md:flex items-center gap-6 text-sm hidden">
-            <Link href="https://demo.landver.net/" className="hover:text-gray-600 transition-colors text-xs" target="_blank">
+          <nav className="md:flex items-center gap-6 hidden">
+            <Link
+              href="https://demo.landver.net/"
+              className="hover:text-gray-600 transition-colors text-sm"
+              target="_blank"
+            >
               Register Land
             </Link>
-            <Link href="https://demo.landver.net/" className="hover:text-gray-600 transition-colors text-xs"target="_blank">
+            <Link
+              href="https://demo.landver.net/"
+              className="hover:text-gray-600 transition-colors text-sm"
+              target="_blank"
+            >
               Inspect Land
             </Link>
-            <Link href="https://demo.landver.net" className="hover:text-gray-600 transition-colors text-xs" target="_blank">
+            <Link
+              href="https://demo.landver.net"
+              className="hover:text-gray-600 transition-colors text-sm"
+              target="_blank"
+            >
               Buy Land
             </Link>
           </nav>
         </div>
 
         <div className="hidden md:flex items-center gap-8">
-          <div className="flex items-center gap-4 text-sm">
+          <div className="flex items-center gap-4">
             <Link
               href="/signin"
-              className="text-[#6364d5] hover:text-[#4e4fb8] transition-colors text-xs"
+              className="text-[#6364d5] hover:text-[#4e4fb8] transition-colors text-sm"
             >
               Login
             </Link>
-            <Link className="text-white rounded text-xs py-3 px-6 bg-[#6364d5]" href='/signup'>Sign Up</Link>
+            <Link 
+              className="text-white rounded text-sm py-3 px-6 bg-[#6364d5]" 
+              href='/signup'
+            >
+              Sign Up
+            </Link>
           </div>
         </div>
 
@@ -57,7 +74,7 @@ const NavBar = () => {
             <Link
               href="https://demo.landver.net"
               target="_blank"
-              className="p-2 hover:bg-gray-50 rounded-lg transition-colors"
+              className="p-2 hover:bg-gray-50 rounded-lg transition-colors text-sm"
               onClick={() => setIsMenuOpen(false)}
             >
               Register Land
@@ -65,7 +82,7 @@ const NavBar = () => {
             <Link
               href="https://demo.landver.net"
               target="_blank"
-              className="p-2 hover:bg-gray-50 rounded-lg transition-colors"
+              className="p-2 hover:bg-gray-50 rounded-lg transition-colors text-sm"
               onClick={() => setIsMenuOpen(false)}
             >
               Inspect Land
@@ -73,7 +90,7 @@ const NavBar = () => {
             <Link
               href="https://demo.landver.net"
               target="_blank"
-              className="p-2 hover:bg-gray-50 rounded-lg transition-colors"
+              className="p-2 hover:bg-gray-50 rounded-lg transition-colors text-sm"
               onClick={() => setIsMenuOpen(false)}
             >
               Buy Land
@@ -81,13 +98,18 @@ const NavBar = () => {
             <div className="flex flex-col gap-2 pt-2 border-t">
               <Link
                 href="/signin"
-                className="p-2 text-[#6364d5] hover:bg-gray-50 rounded-lg transition-colors"
+                className="p-2 text-[#6364d5] hover:bg-gray-50 rounded-lg transition-colors text-sm"
                 onClick={() => setIsMenuOpen(false)}
               >
                 Login
               </Link>
               <div className="px-2">
-                <Link className="text-white rounded text-xs py-3 px-6 bg-[#6364d5]" href='/signup'>Sign Up</Link>
+                <Link 
+                  className="text-white rounded text-sm py-3 px-6 bg-[#6364d5]" 
+                  href='/signup'
+                >
+                  Sign Up
+                </Link>
               </div>
             </div>
           </nav>

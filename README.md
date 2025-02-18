@@ -51,7 +51,7 @@ Steps to build and run LandVer locally.
 ```bash 
 cd app/client
  pnpm install 
- pnpm start
+ pnpm run dev
 ```
  In a separate terminal, navigate to the server directory, install the packages, and start the server
 
@@ -98,8 +98,24 @@ npm start
 ### Build for production:
 
 ```bash
-pnpm build
+npm run build
 ```
+
+# Project Flow Chart
+Landver as a decentralized land registration and verification protocol has a very easy navigation system as illustrated below. 
+- Once the project is set up on your device as illustrated above,  
+- You can navigate through the protocol .
+- Connect a Starknet compatible wallet. This sends a transaction to the starknet blockchain.
+- This navigates to a Landing page that gives an option of the users; a Land owner or a Land Inspector. This sends another transaction to the starknet blockchain.
+- On the Land owner's dashboard, a user can register a land with details like Longitude, Latitude, Area and the type of Land use. On submission, another successful transaction when the required tokens are available in the connected wallet. Other side bar links on the dashboard includes the Market store, Collection, Favorites, Notification, Wallet and the Log out button. An NFT is rewarded to a Landowner user on successful registration.
+
+
+- On the Land Inspector's dashboard, Available side bar action links include Land, verify user, Transfer ownership, Reports & Logs, Notifications and Log out button.
+
+- All onchain transactions are fetched on the Starknet blockchain while the offchain data are fetched the Land Registery backend.
+
+![FlowChart](<landing_page/public/images/Landver Flowchart.drawio.png>)
+
 
 ## Contributors
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
