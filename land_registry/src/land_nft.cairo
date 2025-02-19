@@ -12,9 +12,7 @@ pub mod LandNFT {
     use core::num::traits::Zero;
     use super::ILandNFT;
     use starknet::ContractAddress;
-    use starknet::storage::{
-        StoragePointerReadAccess, StoragePointerWriteAccess, StoragePathEntry, Map,
-    };
+    use starknet::storage::{StoragePointerReadAccess, StoragePointerWriteAccess, Map};
     use openzeppelin::token::erc721::ERC721Component;
     use openzeppelin::introspection::src5::SRC5Component;
     use openzeppelin::token::erc721::ERC721HooksEmptyImpl;
@@ -55,7 +53,7 @@ pub mod LandNFT {
         #[substorage(v0)]
         upgradeable: UpgradeableComponent::Storage, // Openzeppelin storage for Upgradable component 
         land_registry: ContractAddress, // Address of the land registry contract
-        locked: Map<u256, bool> // Mapping of locked status for each token
+        locked: Map<u64, bool> // Mapping of locked status for each token
     }
 
     #[event]
@@ -90,28 +88,27 @@ pub mod LandNFT {
             self.upgradeable.upgrade(new_class_hash);
         }
 
-        fn mint(ref self: ContractState, to: ContractAddress, token_id: u256) {
+        fn mint(ref self: ContractState, to: ContractAddress, token_id: u64) {
             // Only the land registry contract can mint NFTs
             assert(
                 starknet::get_caller_address() == self.land_registry.read(),
                 custom_error::Errors::MINT_NFT,
             );
-            self.erc721.mint(to, token_id);
+            self.erc721.mint(to, token_id.into());
         }
 
         fn transfer(
-            ref self: ContractState, from: ContractAddress, to: ContractAddress, token_id: u256,
+            ref self: ContractState, from: ContractAddress, to: ContractAddress, token_id: u64,
         ) {
             // Only the land registry contract can transfer NFTs
             assert(
                 starknet::get_caller_address() == self.land_registry.read(),
                 custom_error::Errors::TRANSFER_NFT,
             );
-            self._assert_not_locked(token_id);
 
             // ERC721::transfer ensures the token already existed and that
             // from was really its previous owner
-            self.erc721.transfer(from, to, token_id);
+            self.erc721.transfer(from, to, token_id.into());
         }
 
         fn set_base_uri(
@@ -125,47 +122,6 @@ pub mod LandNFT {
             assert(Zero::is_non_zero(@updater), custom_error::Errors::INVALID_ADDRESS);
             self.erc721._set_base_uri(new_base_uri.clone());
             self.emit(BaseURIUpdated { caller: updater, new_base_uri });
-        }
-
-        fn lock(ref self: ContractState, token_id: u256) {
-            // Only land registry can lock
-            assert(
-                starknet::get_caller_address() == self.land_registry.read(),
-                custom_error::Errors::LOCK_NFT_ONLY_LAND_REGISTRY,
-            );
-            self.erc721._require_owned(token_id);
-            self._assert_not_locked(token_id);
-            self.locked.entry(token_id).write(true);
-            self.emit(Locked { token_id });
-        }
-
-        fn unlock(ref self: ContractState, token_id: u256) {
-            // Only land registry can unlock
-            assert(
-                starknet::get_caller_address() == self.land_registry.read(),
-                custom_error::Errors::UNLOCK_NFT_ONLY_LAND_REGISTRY,
-            );
-            self.erc721._require_owned(token_id);
-            self._assert_locked(token_id);
-            self.locked.entry(token_id).write(false);
-            self.emit(Unlocked { token_id });
-        }
-
-        fn is_locked(self: @ContractState, token_id: u256) -> bool {
-            self.locked.entry(token_id).read()
-        }
-    }
-
-    #[generate_trait]
-    impl Internal of InternalTrait {
-        /// Makes a function only callable when the contract is not locked.
-        fn _assert_not_locked(self: @ContractState, token_id: u256) {
-            assert(!self.is_locked(token_id), custom_error::Errors::LOCKED);
-        }
-
-        /// Makes a function only callable when the contract is locked.
-        fn _assert_locked(self: @ContractState, token_id: u256) {
-            assert(self.is_locked(token_id), custom_error::Errors::NOT_LOCKED);
         }
     }
 }
