@@ -7,7 +7,7 @@ use starknet::ContractAddress;
 use land_registry::interface::land_register::{
     ILandRegistryDispatcher, ILandRegistryDispatcherTrait,
 };
-use land_registry::interface::land_register::{LandUse, Location, LandStatus};
+use land_registry::interface::land_register::{Location, LandStatus};
 
 use land_registry::land_register::LandRegistryContract::{Event};
 use land_registry::interface::land_register::{LandVerified, LandTransferred};
@@ -46,11 +46,11 @@ fn test_register_and_get_land() {
     let contract_address = deploy("LandRegistryContract");
     let land_register_dispatcher = ILandRegistryDispatcher { contract_address };
 
-    // // Set up test data
+    // Set up test data
     let owner = Accounts::ADDR1();
     let location: Location = Location { latitude: 1, longitude: 2 };
-    let area: u256 = 1000;
-    let land_use = LandUse::Residential;
+    let area: u64 = 1000;
+    let land_use = 'Residential';
 
     start_cheat_caller_address(contract_address, owner);
     let land_id = land_register_dispatcher.register_land(location, area, land_use);
@@ -78,12 +78,12 @@ fn test_register_multiple_lands() {
     let location_1: Location = Location { latitude: 1, longitude: 2 };
     let location_2: Location = Location { latitude: 3, longitude: 4 };
     let location_3: Location = Location { latitude: 5, longitude: 6 };
-    let area_1: u256 = 1000;
-    let area_2: u256 = 2000;
-    let area_3: u256 = 3000;
-    let land_use_1 = LandUse::Residential;
-    let land_use_2 = LandUse::Commercial;
-    let land_use_3 = LandUse::Industrial;
+    let area_1: u64 = 1000;
+    let area_2: u64 = 2000;
+    let area_3: u64 = 3000;
+    let land_use_1 = 'Residential';
+    let land_use_2 = 'Commercial';
+    let land_use_3 = 'Industrial';
 
     start_cheat_caller_address(contract_address, owner);
     land_register_dispatcher.register_land(location_1, area_1, land_use_1);
@@ -140,8 +140,8 @@ fn test_register_and_approve() {
     // // Set up test data
     let owner = Accounts::ADDR1();
     let location: Location = Location { latitude: 1, longitude: 2 };
-    let area: u256 = 1000;
-    let land_use = LandUse::Residential;
+    let area: u64 = 1000;
+    let land_use = 'Residential';
     let inspector = Accounts::ADDR2();
 
     start_cheat_caller_address(contract_address, owner);
@@ -165,8 +165,8 @@ fn test_register_approve_and_transfer() {
     let owner = Accounts::ADDR1();
     let inspector = Accounts::ADDR2();
     let location: Location = Location { latitude: 1, longitude: 2 };
-    let area: u256 = 1000;
-    let land_use = LandUse::Residential;
+    let area: u64 = 1000;
+    let land_use = 'Residential';
 
     // register and add inspector
     start_cheat_caller_address(contract_address, owner);
@@ -208,8 +208,8 @@ fn test_register_update_approve_and_transfer() {
     let owner = Accounts::ADDR1();
     let inspector = Accounts::ADDR2();
     let location: Location = Location { latitude: 1, longitude: 2 };
-    let area: u256 = 1000;
-    let land_use = LandUse::Residential;
+    let area: u64 = 1000;
+    let land_use = 'Residential';
     let land_status = LandStatus::Pending;
 
     // register and add inspector
@@ -218,8 +218,8 @@ fn test_register_update_approve_and_transfer() {
     land_register_dispatcher.set_land_inspector(land_id, inspector);
 
     // update land
-    let new_area: u256 = 1000;
-    let new_land_use = LandUse::Residential;
+    let new_area: u64 = 1000;
+    let new_land_use = 'Residential';
     land_register_dispatcher.update_land(land_id, new_area, new_land_use, land_status);
 
     stop_cheat_caller_address(contract_address);
@@ -258,8 +258,8 @@ fn test_register_approve_update_and_transfer() {
     let owner = Accounts::ADDR1();
     let inspector = Accounts::ADDR2();
     let location: Location = Location { latitude: 1, longitude: 2 };
-    let area: u256 = 1000;
-    let land_use = LandUse::Residential;
+    let area: u64 = 1000;
+    let land_use = 'Residential';
 
     // register and add inspector
     start_cheat_caller_address(contract_address, owner);
@@ -274,8 +274,8 @@ fn test_register_approve_update_and_transfer() {
 
     // update land
     start_cheat_caller_address(contract_address, owner);
-    let new_area: u256 = 1000;
-    let new_land_use = LandUse::Residential;
+    let new_area: u64 = 1000;
+    let new_land_use = 'Residential';
     let land_status = LandStatus::Approved;
     land_register_dispatcher.update_land(land_id, new_area, new_land_use, land_status);
     stop_cheat_caller_address(contract_address);
@@ -309,8 +309,8 @@ fn test_register_approve_transfer_and_update_by_new_owner() {
     let owner = Accounts::ADDR1();
     let inspector = Accounts::ADDR2();
     let location: Location = Location { latitude: 1, longitude: 2 };
-    let area: u256 = 1000;
-    let land_use = LandUse::Residential;
+    let area: u64 = 1000;
+    let land_use = 'Residential';
     let land_status = LandStatus::Approved;
 
     // register and add inspector
@@ -331,8 +331,8 @@ fn test_register_approve_transfer_and_update_by_new_owner() {
 
     // update land
     start_cheat_caller_address(contract_address, new_owner);
-    let new_area: u256 = 2000;
-    let new_land_use = LandUse::Commercial;
+    let new_area: u64 = 2000;
+    let new_land_use = 'Commercial';
     land_register_dispatcher.update_land(land_id, new_area, new_land_use, land_status);
 }
 
@@ -345,8 +345,8 @@ fn try_to_transfer_before_approve() {
     // // Set up test data
     let owner = Accounts::ADDR1();
     let location: Location = Location { latitude: 1, longitude: 2 };
-    let area: u256 = 1000;
-    let land_use = LandUse::Residential;
+    let area: u64 = 1000;
+    let land_use = 'Residential';
 
     // register and add inspector
     start_cheat_caller_address(contract_address, owner);
@@ -367,8 +367,8 @@ fn previous_owner_tries_to_update_after_transfer_should_fail() {
     let owner = Accounts::ADDR1();
     let inspector = Accounts::ADDR2();
     let location: Location = Location { latitude: 1, longitude: 2 };
-    let area: u256 = 1000;
-    let land_use = LandUse::Residential;
+    let area: u64 = 1000;
+    let land_use = 'Residential';
     let land_status = LandStatus::Approved;
 
     // register and add inspector
@@ -388,8 +388,8 @@ fn previous_owner_tries_to_update_after_transfer_should_fail() {
     land_register_dispatcher.transfer_land(land_id, new_owner);
 
     // update land
-    let new_area: u256 = 2000;
-    let new_land_use = LandUse::Commercial;
+    let new_area: u64 = 2000;
+    let new_land_use = 'Commercial';
     land_register_dispatcher.update_land(land_id, new_area, new_land_use, land_status);
 }
 
@@ -403,8 +403,8 @@ fn test_no_inspector_tries_to_approve_should_fail() {
     let owner = Accounts::ADDR1();
     let no_inspector = Accounts::ADDR2();
     let location: Location = Location { latitude: 1, longitude: 2 };
-    let area: u256 = 1000;
-    let land_use = LandUse::Residential;
+    let area: u64 = 1000;
+    let land_use = 'Residential';
 
     // register and add inspector
     start_cheat_caller_address(contract_address, owner);
@@ -448,8 +448,8 @@ fn test_try_to_update_a_not_existant_land_should_fail() {
     let owner = Accounts::ADDR1();
     let not_owner = Accounts::ADDR2();
     let location: Location = Location { latitude: 1, longitude: 2 };
-    let area: u256 = 1000;
-    let land_use = LandUse::Residential;
+    let area: u64 = 1000;
+    let land_use = 'Residential';
     let land_status = LandStatus::Approved;
 
     // register and add inspector
@@ -458,6 +458,6 @@ fn test_try_to_update_a_not_existant_land_should_fail() {
     stop_cheat_caller_address(contract_address);
     start_cheat_caller_address(contract_address, not_owner);
     let new_area = 2000;
-    let new_land_use = LandUse::Commercial;
+    let new_land_use = 'Commercial';
     land_register_dispatcher.update_land(land_id, new_area, new_land_use, land_status);
 }
