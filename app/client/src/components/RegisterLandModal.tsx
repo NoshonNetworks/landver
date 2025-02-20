@@ -165,7 +165,7 @@ const RegisterLandModal: React.FC<RegisterLandModalProps> = ({
 			setError(false);
 			setLoading(false);
 		}
-	}, [isOpen]);
+	}, [isOpen, editData]);
 
 	if (!isOpen) return null;
 
