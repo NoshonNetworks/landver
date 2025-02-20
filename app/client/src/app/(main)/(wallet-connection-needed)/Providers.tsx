@@ -1,69 +1,68 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React, { useEffect, useState } from "react";
 import { useConnect, useAccount } from "@starknet-react/core";
 import type { Connector } from "@starknet-react/core";
 import FadeLoader from "react-spinners/FadeLoader";
 
- 
 export function Providers({ children }: { children: React.ReactNode }) {
+	const { connectors, connectAsync } = useConnect({});
+	const { address, status, connector } = useAccount();
 
-  const { connectors, connectAsync } = useConnect({  });
-  const { address, status, connector } = useAccount();
+	const [connecting, setConnecting] = useState(true);
 
-  const [connecting, setConnecting] = useState(true)
+	// const [currentModal, setCurrentModal] = useState<"intro"|"connect">("connect")
 
-  // const [currentModal, setCurrentModal] = useState<"intro"|"connect">("connect")
+	useEffect(() => {
+		(async () => {
+			if (status === "disconnected") {
+				const localStorage = window.localStorage;
+				if (localStorage.getItem("landver-connector")) {
+					const selectedConnector = connectors.find(
+						(con: any) =>
+							con.id === localStorage.getItem("landver-connector")
+					);
+					if (selectedConnector) await connect(selectedConnector);
+				}
+				setConnecting(false);
+			} else if (status === "connected") {
+				setConnecting(false);
+			}
+		})();
+		async function connect(connector: typeof Connector) {
+			try {
+				await connectAsync({ connector });
+				localStorage.setItem("landver-connector", connector.id);
+			} catch (error) {
+				console.log(error);
+				const localStorage = window.localStorage;
+				localStorage.removeItem("landver-connector");
+			}
+		}
+	}, [address, status, connectors]);
 
-  async function connect(connector: Connector) {
-    try {
-      await connectAsync({ connector });
-      localStorage.setItem("landver-connector", connector.id)
-    } catch (error) {
-      console.log(error);
-      const localStorage = window.localStorage;
-      localStorage.removeItem("landver-connector")
-    }
-  }
+	// set connector used in LS to try to reconnect if user refresh screen or logs again (it's a kind of remember me)
+	useEffect(() => {
+		if (connector?.id) {
+			const localStorage = window.localStorage;
+			localStorage.setItem("landver-connector", connector.id);
+		}
+	}, [connector]);
 
-  useEffect(() => {
-    (async()=>{
-      if (status === "disconnected") {
-        const localStorage = window.localStorage;
-        if(localStorage.getItem("landver-connector")) {
-          const selectedConnector = connectors.find(con => con.id === localStorage.getItem("landver-connector"))
-          if(selectedConnector) await connect(selectedConnector)
-        }
-        setConnecting(false)
-      } else if (status === "connected") {
-        setConnecting(false)
-      }
-    })()
-  }, [address, status])
-
-  // set connector used in LS to try to reconnect if user refresh screen or logs again (it's a kind of remember me)
-  useEffect(()=>{
-    if(connector?.id){
-      const localStorage = window.localStorage;
-      localStorage.setItem("landver-connector", connector.id)
-    }
-  }, [connector])
-
-
-  return (
-    <div>
-      {
-        connecting && (
-          <div className="h-72 flex justify-center items-center">
-            <FadeLoader 
-              color="#6E62E5"
-              speedMultiplier={3}
-              radius={30}
-            />
-          </div>
-        )
-      }
-      { (!connecting&&!!address) && children }
-      {/* { (!connecting&&!address) && (
+	return (
+		<div>
+			{connecting && (
+				<div className="h-72 flex justify-center items-center">
+					<FadeLoader
+						color="#6E62E5"
+						speedMultiplier={3}
+						radius={30}
+					/>
+				</div>
+			)}
+			{!connecting && !!address && children}
+			{/* { (!connecting&&!address) && (
         <div className="fixed top-0 left-0 right-0 bottom-0 bg-black bg-opacity-40 flex justify-center items-center" style={{ zIndex:1000 }}>
       
           {
@@ -90,6 +89,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
   
         </div>
       ) } */}
-    </div>
-  );
+		</div>
+	);
 }
