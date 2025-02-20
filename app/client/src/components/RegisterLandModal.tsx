@@ -65,7 +65,7 @@ const RegisterLandModal: React.FC<RegisterLandModalProps> = ({
 	});
 
 	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState(false);
+	const [, setError] = useState(false);
 
 	const showError = (message: string) => {
 		toast.current?.show({
