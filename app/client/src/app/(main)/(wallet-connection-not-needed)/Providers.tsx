@@ -4,45 +4,48 @@ import { useConnect, useAccount } from "@starknet-react/core";
 import type { Connector } from "@starknet-react/core";
 
 export function Providers({ children }: { children: React.ReactNode }) {
-	const { connectors, connectAsync } = useConnect({});
-	const { address, status, connector } = useAccount();
 
-	const [, setConnecting] = useState(true);
+  const { connectors, connectAsync } = useConnect({  });
+  const { address, status, connector } = useAccount();
 
-	async function connect(connector: typeof Connector) {
-		try {
-			await connectAsync({ connector });
-			localStorage.setItem("landver-connector", connector.id);
-		} catch (error) {
-			console.log(error);
-		}
-	}
+  const [, setConnecting] = useState(true)
 
-	useEffect(() => {
-		(async () => {
-			if (status === "disconnected") {
-				const localStorage = window.localStorage;
-				if (localStorage.getItem("landver-connector")) {
-					const selectedConnector = connectors.find(
-						(con) =>
-							con.id === localStorage.getItem("landver-connector")
-					);
-					if (selectedConnector) await connect(selectedConnector);
-				}
-				setConnecting(false);
-			} else if (status === "connected") {
-				setConnecting(false);
-			}
-		})();
-	}, [address, status, connect, connectors]);
+  async function connect(connector: Connector) {
+    try {
+      await connectAsync({ connector });
+      localStorage.setItem("landver-connector", connector.id)
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
-	// set connector used in LS to try to reconnect if user refresh screen or logs again (it's a kind of remember me)
-	useEffect(() => {
-		if (connector?.id) {
-			const localStorage = window.localStorage;
-			localStorage.setItem("landver-connector", connector.id);
-		}
-	}, [connector]);
+  useEffect(() => {
+    (async()=>{
+      if (status === "disconnected") {
+        const localStorage = window.localStorage;
+        if(localStorage.getItem("landver-connector")) {
+          const selectedConnector = connectors.find(con => con.id === localStorage.getItem("landver-connector"))
+          if(selectedConnector) await connect(selectedConnector)
+        }
+        setConnecting(false)
+      } else if (status === "connected") {
+        setConnecting(false)
+      }
+    })()
+  }, [address, status])
 
-	return <div>{children}</div>;
+  // set connector used in LS to try to reconnect if user refresh screen or logs again (it's a kind of remember me)
+  useEffect(()=>{
+    if(connector?.id){
+      const localStorage = window.localStorage;
+      localStorage.setItem("landver-connector", connector.id)
+    }
+  }, [connector])
+
+
+  return (
+    <div>
+      { children }
+    </div>
+  );
 }
