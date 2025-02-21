@@ -33,7 +33,7 @@ export const Navbar = () => {
         starkProfile?.profilePicture ?? blockieImage.blockiesImageSrc;
 
     return (
-        <div className="bg-white py-5 px-5 flex items-center">
+        <div className="bg-white py-5 px-5 flex items-center sticky top-0 z-10">
             <div className="w-4/6 hidden md:block">
                 <Searchbar />
             </div>
