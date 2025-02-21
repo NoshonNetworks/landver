@@ -1,6 +1,9 @@
+"use client";
 import React from "react";
 import P from "./P/P";
 import Image from "next/image";
+import { motion } from "framer-motion";
+import { fadeInUp, staggerContainer, scaleIn } from "../utils/animations";
 
 const Benefits = () => {
   const benefits = [
@@ -43,8 +46,18 @@ const Benefits = () => {
   ];
 
   return (
-    <div className="mb-10" id="experience">
-      <div className="flex flex-col justify-center items-center gap-1">
+    <motion.div
+      className="mb-10"
+      id="experience"
+      initial="initial"
+      whileInView="animate"
+      viewport={{ once: true }}
+      variants={staggerContainer}
+    >
+      <motion.div
+        className="flex flex-col justify-center items-center gap-1"
+        variants={fadeInUp}
+      >
         <P classname="capitalize text-center mt-10 text-2xl font-semibold">
           Experience The Unique Benefits of Landver
         </P>
@@ -53,18 +66,21 @@ const Benefits = () => {
           register, verify, and transfer on the blockchain. Trust in
           transparent, immutable records for seamless land management.
         </P>
-      </div>
+      </motion.div>
       <div className="grid justify-center">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 justify-center w-fit place-content-center place-items-center">
-          {benefits.map((benefit, i: number) => {
+          {benefits.map((benefit, i) => {
             return (
-              <div
-                className="w-full max-w-[400px] h-[250px] flex flex-col justify-center p-3 items-center gap-3"
+              <motion.div
                 key={benefit.header + i}
+                className="w-full max-w-[400px] h-[250px] flex flex-col justify-center p-3 items-center gap-3"
                 style={{
                   background: benefit.bColor,
                   color: benefit.color,
                 }}
+                variants={scaleIn}
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.3 }}
               >
                 <Image
                   src={benefit.url}
@@ -76,12 +92,12 @@ const Benefits = () => {
                 <P classname="text-center leading-relaxed text-sm">
                   {benefit.description}
                 </P>
-              </div>
+              </motion.div>
             );
           })}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
