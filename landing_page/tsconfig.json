@@ -34,7 +34,7 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "build/types/**/*.ts"
-  ],
+, "src/app/utils/animations.js"  ],
   "exclude": [
     "node_modules"
   ]
