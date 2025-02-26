@@ -52,7 +52,7 @@ export default function RootLayout({
         <link rel="icon" href="/logo.jpeg" type="image/jpeg" />
       </head>
       <body
-        className={`${manrope.className} antialiased overflow-hidden text-black`}
+        className={`${manrope.className} antialiased overflow-x-hidden text-black`}
       >
         <Providers>{children}</Providers>
       </body>
