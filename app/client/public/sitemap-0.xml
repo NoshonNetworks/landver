@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+<url><loc>https://www.demo.landver.net/favorites</loc><lastmod>2025-02-26T09:19:28.886Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.demo.landver.net/notifications</loc><lastmod>2025-02-26T09:19:28.888Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.demo.landver.net/my-collections</loc><lastmod>2025-02-26T09:19:28.888Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.demo.landver.net/verify-user</loc><lastmod>2025-02-26T09:19:28.888Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.demo.landver.net/lands</loc><lastmod>2025-02-26T09:19:28.888Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.demo.landver.net/transfer-ownership</loc><lastmod>2025-02-26T09:19:28.888Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.demo.landver.net/no-wallet-needed</loc><lastmod>2025-02-26T09:19:28.888Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.demo.landver.net</loc><lastmod>2025-02-26T09:19:28.888Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.demo.landver.net/market-store</loc><lastmod>2025-02-26T09:19:28.888Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.demo.landver.net/wallet</loc><lastmod>2025-02-26T09:19:28.888Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.demo.landver.net/dashboard</loc><lastmod>2025-02-26T09:19:28.888Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://www.demo.landver.net/reports-and-logs</loc><lastmod>2025-02-26T09:19:28.888Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+</urlset>

@@ -1,0 +1,12 @@
+# *
+User-agent: *
+Allow: /
+
+# black-listed-bot
+User-agent: black-listed-bot
+
+# Host
+Host: https://www.demo.landver.net
+
+# Sitemaps
+Sitemap: https://www.demo.landver.net/sitemap.xml
