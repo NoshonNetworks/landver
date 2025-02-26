@@ -38,6 +38,16 @@ export const metadata: Metadata = {
       "Discover Landver, the ultimate blockchain solution for land registration and ownership verification.",
     images: ["/images/landver-og-image.jpg"], // Replace with our image URL
   },
+  alternates: {
+    canonical: "https://www.demo.landver.net", // Replace with your actual URL
+  },
+  keywords: [
+    "blockchain land management",
+    "onchain land registration",
+    "secure land ownership",
+    "Landver",
+  ],
+  authors: [{ name: "Landver Team", url: "https://www.demo.landver.net" }],
 };
 
 
