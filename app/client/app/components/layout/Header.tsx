@@ -73,7 +73,6 @@ const Header = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
             <span className="text-sm text-gray-600"></span>
           </div>
 
-       
           {showProfileMenu && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-200">
               <button
