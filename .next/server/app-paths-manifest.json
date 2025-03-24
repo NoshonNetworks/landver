@@ -1,18 +1,18 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/client/app/page": "app/client/app/page.js",
   "/client/app/settings/page": "app/client/app/settings/page.js",
-  "/client/app/dashboard/inspector/notifications/page": "app/client/app/dashboard/inspector/notifications/page.js",
-  "/client/app/dashboard/inspector/page": "app/client/app/dashboard/inspector/page.js",
-  "/client/app/dashboard/inspector/reports/page": "app/client/app/dashboard/inspector/reports/page.js",
-  "/client/app/dashboard/inspector/verifyland/page": "app/client/app/dashboard/inspector/verifyland/page.js",
+  "/client/app/page": "app/client/app/page.js",
   "/client/app/dashboard/inspector/transferownership/page": "app/client/app/dashboard/inspector/transferownership/page.js",
-  "/client/app/dashboard/inspector/verifyuser/page": "app/client/app/dashboard/inspector/verifyuser/page.js",
+  "/client/app/dashboard/inspector/notifications/page": "app/client/app/dashboard/inspector/notifications/page.js",
+  "/client/app/dashboard/inspector/verifyland/page": "app/client/app/dashboard/inspector/verifyland/page.js",
+  "/client/app/dashboard/inspector/reports/page": "app/client/app/dashboard/inspector/reports/page.js",
   "/client/app/dashboard/owner/collections/page": "app/client/app/dashboard/owner/collections/page.js",
+  "/client/app/dashboard/inspector/page": "app/client/app/dashboard/inspector/page.js",
+  "/client/app/dashboard/inspector/verifyuser/page": "app/client/app/dashboard/inspector/verifyuser/page.js",
   "/client/app/dashboard/owner/favorites/page": "app/client/app/dashboard/owner/favorites/page.js",
   "/client/app/dashboard/owner/marketstore/page": "app/client/app/dashboard/owner/marketstore/page.js",
-  "/client/app/dashboard/owner/notifications/page": "app/client/app/dashboard/owner/notifications/page.js",
-  "/client/app/dashboard/owner/page": "app/client/app/dashboard/owner/page.js",
   "/client/app/dashboard/owner/wallet/page": "app/client/app/dashboard/owner/wallet/page.js",
-  "/client/app/dashboard/page": "app/client/app/dashboard/page.js"
+  "/client/app/dashboard/owner/notifications/page": "app/client/app/dashboard/owner/notifications/page.js",
+  "/client/app/dashboard/page": "app/client/app/dashboard/page.js",
+  "/client/app/dashboard/owner/page": "app/client/app/dashboard/owner/page.js"
 }

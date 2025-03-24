@@ -1,41 +1,43 @@
 "use client";
-import React, {  useEffect, } from "react";
+import React, { useEffect, useCallback } from "react";
 import { useConnect, useAccount } from "@starknet-react/core";
 
 export function Providers({ children }: { children: React.ReactNode }) {
-  const { connectors, connectAsync } = useConnect({});
-  const {status,address}=useAccount()
-  // const { address, status, connector } = useAccount();
+  const { connectors, connectAsync } = useConnect();
+  const { status, address } = useAccount();
 
-  // const [connecting, setConnecting] = useState(true)
-  useEffect(() => {
+  // Memoized function to avoid re-creating on every render
+  const connectWallet = useCallback(async () => {
     const LS_connector = localStorage.getItem("connector");
-   
-    (async () => {
-      if (LS_connector) {
-        const connector = connectors.find(
-          (con) => con.id === LS_connector
-        );
-        console.log(status)
-        try {
-             if (connector)
-               await connectAsync({ connector }).then(() =>
-                 console.log("connected successfully!!!")
-               ).catch(err=>console.log('error',err));
-        } catch (error) {
-            console.log(error)
-        }
-      
-     
-        console.log(status,address)
-      
-      if(status=='disconnected'){
 
-        await connectAsync({ connector }).then(()=>console.log('connected successfully!!!')).catch(err=>console.log(err));
-        console.log(status,address)
-      }}
-    })();
-  }, [address,status]);
+    if (LS_connector) {
+      const connector = connectors.find((con) => con.id === LS_connector);
+
+      if (connector) {
+        try {
+          await connectAsync({ connector });
+          console.log("Connected successfully!");
+        } catch (error) {
+          console.error("Connection error:", error);
+        }
+      }
+    }
+
+    if (status === "disconnected" && LS_connector) {
+      try {
+        await connectAsync({
+          connector: connectors.find((con) => con.id === LS_connector),
+        });
+        console.log("Reconnected successfully!");
+      } catch (error) {
+        console.error("Reconnection error:", error);
+      }
+    }
+  }, [connectAsync, connectors, status]);
+
+  useEffect(() => {
+    connectWallet();
+  }, [connectWallet]);
 
   return <>{children}</>;
 }

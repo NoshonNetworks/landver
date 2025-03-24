@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import WalletModal from "../ui/walletModal";
 import { useAppContext } from "../../../app/context/appContext";
 import { useBalance } from "@starknet-react/core";

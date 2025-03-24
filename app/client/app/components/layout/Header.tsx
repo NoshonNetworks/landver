@@ -1,6 +1,9 @@
+"use client";
+
 import { Menu, LogOut, User } from "lucide-react";
 import { useAppContext } from "../../../app/context/appContext";
 import { useState, useRef, useEffect } from "react";
+import Image from "next/image";
 
 const Header = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
   const { disconnectWallet, balance, status } = useAppContext();
@@ -49,9 +52,11 @@ const Header = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
         {/* Balance */}
         {status === "connected" ? (
           <div className="flex items-center space-x-1 bg-gray-100 px-3 py-1 rounded-full">
-            <img
+            <Image
               src="/icons/currencies/ether.svg"
               alt="ETH"
+              width={16}
+              height={16}
               className="w-4 h-4"
             />
             <span className="text-gray-700 font-medium">
@@ -73,7 +78,6 @@ const Header = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
             <span className="text-sm text-gray-600"></span>
           </div>
 
-       
           {showProfileMenu && (
             <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 border border-gray-200">
               <button
