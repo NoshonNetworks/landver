@@ -6,10 +6,6 @@ import { useBalance } from "@starknet-react/core";
 import { useRouter } from "next/navigation";
 import Button from "../ui/button";
 
-function parseAddress(addr: string | undefined) {
-  if (!addr) return "";
-  return ` ${addr?.slice(0, 8)}...${addr.slice(addr.length - 8, addr.length)}`;
-}
 const Connector: React.FC = () => {
   const { disconnectWallet, address, status } = useAppContext();
   const { data } = useBalance({ address: address as "0x" });
@@ -17,6 +13,7 @@ const Connector: React.FC = () => {
 
   console.log(data);
   console.log(status);
+
   return (
     <div className="p-6 text-center">
       {status === "connected" && (
@@ -33,6 +30,10 @@ const Connector: React.FC = () => {
             onClick={() => router.push("/dashboard/inspector")}
           >
             Inspector
+          </Button>
+          {/* Added disconnect button */}
+          <Button variant="ghost" onClick={disconnectWallet}>
+            Disconnect
           </Button>
         </div>
       )}

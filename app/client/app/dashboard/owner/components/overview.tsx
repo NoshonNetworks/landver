@@ -16,7 +16,10 @@ const Overview = () => {
     address: contactAddress as "0x",
     args: [address as string],
   });
-  let landCount = contract.data ? contract.data.length : 0;
+
+  // Use 'const' instead of 'let' since landCount is never reassigned
+  const landCount = contract.data ? contract.data.length : 0;
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-2 w-full">
       {/* Discover Now Card with SVG */}

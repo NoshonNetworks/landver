@@ -4,7 +4,7 @@ import { useConnect, useAccount } from "@starknet-react/core";
 
 export function Providers({ children }: { children: React.ReactNode }) {
   const { connectors, connectAsync } = useConnect();
-  const { status, address } = useAccount();
+  const { status } = useAccount();
 
   // Memoized function to avoid re-creating on every render
   const connectWallet = useCallback(async () => {
