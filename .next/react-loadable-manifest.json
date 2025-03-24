@@ -1,0 +1,26 @@
+{
+  "node_modules\\.pnpm\\next@15.2.3_react-dom@19.0.0_react@19.0.0__react@19.0.0\\node_modules\\next\\dist\\client\\index.js -> ../pages/_app": {
+    "id": 3620,
+    "files": [
+      "static/chunks/620.50be4589a76e5aca.js"
+    ]
+  },
+  "node_modules\\.pnpm\\next@15.2.3_react-dom@19.0.0_react@19.0.0__react@19.0.0\\node_modules\\next\\dist\\client\\index.js -> ../pages/_error": {
+    "id": 7609,
+    "files": [
+      "static/chunks/609.8f8834650e5f20af.js"
+    ]
+  },
+  "node_modules\\.pnpm\\viem@2.23.14_zod@3.24.1\\node_modules\\viem\\_esm\\actions\\public\\call.js -> ../../utils/ccip.js": {
+    "id": null,
+    "files": []
+  },
+  "node_modules\\.pnpm\\viem@2.23.14_zod@3.24.1\\node_modules\\viem\\_esm\\utils\\rpc\\webSocket.js -> isows": {
+    "id": null,
+    "files": []
+  },
+  "node_modules\\.pnpm\\viem@2.23.14_zod@3.24.1\\node_modules\\viem\\_esm\\utils\\signature\\recoverPublicKey.js -> @noble/curves/secp256k1": {
+    "id": null,
+    "files": []
+  }
+}

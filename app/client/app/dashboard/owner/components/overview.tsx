@@ -1,11 +1,11 @@
 "use client";
-import Card from "@/app/components/ui/overviewcard";
+import Card from "../../../../app/components/ui/overviewcard";
 import { PlusCircle } from "lucide-react";
 import React from "react";
 import OverviewSvg from "./overviewsvg";
-import { useAppContext } from "@/app/context/appContext";
+import { useAppContext } from "../../../../app/context/appContext";
 import { useReadContract } from "@starknet-react/core";
-import { ABI } from "@/app/abis/landRegistry.abi";
+import { ABI } from "../../../../app/abis/landRegistry.abi";
 
 const Overview = () => {
   const { contactAddress, address } = useAppContext();

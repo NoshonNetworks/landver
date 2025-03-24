@@ -1,5 +1,5 @@
 import { Menu, LogOut, User } from "lucide-react";
-import { useAppContext } from "@/app/context/appContext";
+import { useAppContext } from "../../../app/context/appContext";
 import { useState, useRef, useEffect } from "react";
 
 const Header = ({ toggleSidebar }: { toggleSidebar: () => void }) => {

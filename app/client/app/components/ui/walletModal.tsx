@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { useConnect } from "@starknet-react/core";
-import { useAppContext } from "@/app/context/appContext";
+import { useAppContext } from "../../../app/context/appContext";
 
 const WalletModal = () => {
   const { connectors } = useConnect();

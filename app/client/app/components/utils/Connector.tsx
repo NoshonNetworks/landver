@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect } from "react";
 import WalletModal from "../ui/walletModal";
-import { useAppContext } from "@/app/context/appContext";
+import { useAppContext } from "../../../app/context/appContext";
 import { useBalance } from "@starknet-react/core";
 import { useRouter } from "next/navigation";
 import Button from "../ui/button";
@@ -14,7 +14,7 @@ const Connector: React.FC = () => {
   const { disconnectWallet, address, status } = useAppContext();
   const { data } = useBalance({ address: address as "0x" });
   const router = useRouter();
- 
+
   console.log(data);
   console.log(status);
   return (
