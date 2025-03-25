@@ -3,6 +3,9 @@
 /backend/env
 /backend/.env
 .DS_Store
+node_modules/
+.next/
+app/client/node_modules/
 
 .snfoundry_cache/
 target/
