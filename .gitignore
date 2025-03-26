@@ -6,6 +6,8 @@
 node_modules/
 .next/
 app/client/node_modules/
+next-env.d.ts
+
 
 .snfoundry_cache/
 target/
