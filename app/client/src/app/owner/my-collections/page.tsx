@@ -1,5 +1,4 @@
 import React from "react";
-import Button from "@/app/components/Button/Button";
 import P from "@/app/components/P/P";
 import InfoCard from "@/app/components/InfoCard";
 import SearchBar from "@/app/components/SearchBar";
