@@ -1,5 +1,4 @@
 import React from "react";
-import P from "@/app/components/P/P";
 import InfoCard from "@/app/components/InfoCard";
 import SearchBar from "@/app/components/SearchBar";
 import CollectionsTable from "./components/CollectionsTable";
@@ -9,9 +8,9 @@ const page = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-[21px]">
-        <P size="h5" classname="font-semibold text-[#090914]">
+        <h2 className="text-[24px] leading-[26.4px] font-semibold text-[#090914]">
           Collections
-        </P>
+        </h2>
         <button className="bg-[#6E62E5] hover:bg-[#5353c5] disabled:bg-[#a0a0d8] px-6 py-2 text-base text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed">
           Register New Land
         </button>
