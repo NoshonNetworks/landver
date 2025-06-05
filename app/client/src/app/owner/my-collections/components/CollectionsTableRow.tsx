@@ -1,4 +1,4 @@
-import { Land } from "@/app/utils/types";
+import { Land } from "../../../utils/types";
 
 function CollectionsTableRow({ land }: { land: Land }) {
   let statusBadgeClasses = () => {
