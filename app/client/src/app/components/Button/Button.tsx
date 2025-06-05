@@ -29,7 +29,7 @@ const Button: React.FC<ButtonProps> = ({
       case "gray":
         return "bg-gray-500 hover:bg-gray-600 disabled:bg-gray-300";
       default:
-        return "bg-[#6364d5] hover:bg-[#5353c5] disabled:bg-[#a0a0d8]";
+        return "bg-[#6E62E5] hover:bg-[#5353c5] disabled:bg-[#a0a0d8]";
     }
   };
 
@@ -54,7 +54,7 @@ const Button: React.FC<ButtonProps> = ({
       disabled={disabled}
       onClick={onClick}
       aria-label={ariaLabel}
-      className={`${getVariantStyles()} ${getSizeStyles()} ${classname} text-white rounded focus:outline-none focus:ring-2 focus:ring-offset-2 ${
+      className={`${getVariantStyles()} ${getSizeStyles()} ${classname} text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 ${
         disabled ? "cursor-not-allowed" : ""
       }`}
     >
