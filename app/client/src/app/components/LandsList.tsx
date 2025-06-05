@@ -108,17 +108,18 @@ export const LandList = () => {
       try {
         if (status == "connected" && address) {
           setLoadingList(true);
-          const addresses = await contract.get_lands_by_owner(address);
+          const addresses = await contract?.get_lands_by_owner(address);
+          if (!addresses?.length) return;
           const newLands = [];
           for await (const address of addresses) {
-            const land = await contract.get_land(address);
+            const land = await contract?.get_land(address);
             newLands.push({
               ...land,
               id: address,
               inspector_sliced:
-                `${land.inspector}`.slice(0, 4) +
+                `${land?.inspector}`.slice(0, 4) +
                 "..." +
-                `${land.inspector}`.slice(-4),
+                `${land?.inspector}`.slice(-4),
             });
           }
           setLands(newLands as any);

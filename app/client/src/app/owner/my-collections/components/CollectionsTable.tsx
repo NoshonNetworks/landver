@@ -1,6 +1,6 @@
 import React from "react";
 import CollectionsTableRow from "./CollectionsTableRow";
-import { Land } from "@/app/utils/types";
+import { Land } from "../../../utils/types";
 
 const dummyLands: Land[] = [
   {
